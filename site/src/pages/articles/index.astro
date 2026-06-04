@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('articles')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<Base title="記事 — 動物から組織を読む" description="二層の組織理論からの、検証可能で非自明な記事。">
+  <h1>記事</h1>
+  <p class="muted">通俗経営論と分岐する、検証可能な帰結を動物行動学のレンズで。</p>
+  {posts.length === 0 ? (
+    <p>準備中です。</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((p) => (
+        <li>
+          <a href={`/articles/${p.id}/`}>
+            <span class="post-title">{p.data.title}</span>
+            <time datetime={p.data.pubDate.toISOString()}>{p.data.pubDate.toLocaleDateString('ja-JP')}</time>
+            <span class="post-desc">{p.data.description}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>
