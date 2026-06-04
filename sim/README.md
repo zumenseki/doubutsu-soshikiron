@@ -56,4 +56,45 @@ python sim/theorem_b_controllability.py
 `Ghat0, beta, theta, lam`（エージェント）、`p_punish_if_act`（随伴）、`n_agents, T, intensity_fig1`（規模）。
 
 ### 非目標
-多エージェント化しない／実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）／定理A（報酬撤回=罰）は別スクリプト（次）。
+多エージェント化しない／実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）／定理A（報酬撤回=罰）は別スクリプト（下記）。
+
+---
+
+## theorem_a_reward_withdrawal.py — 定理A（報酬撤回 = 罰）
+
+### 検証する主張
+> u は参照点依存で κ>1。R_eff を ρ 未満に下げると δ は負かつ κ倍に増幅され、恐怖系の動態（τ↓）を呼ぶ。
+> 報酬の撤回・相対的減額は「baseline に戻る」ではなく破壊エンジンへ押し込む別カテゴリ。
+> **維持できない報酬は据え付けてはいけない。**（[正本 §4 修正項2, §6 定理A](../docs/正本_ミクロ機構.md)）
+
+### 3条件
+- **never** … 報酬を上げない（baseline のまま）
+- **sustained** … 上げて維持する（撤回しない）
+- **withdraw** … 上げてから撤回する（baseline へ戻す）
+
+### 機構
+- 参照点 ρ が経験報酬へ適応（快楽の踏み車）。引き上げを維持すると ρ も上昇。
+- 撤回時 R<ρ → `u=κ(R−ρ)` で負の δ が κ倍に増幅 → V 急落。
+- 負の損失 δ が恐怖エンジンを起動し τ を狭める（V には書かない）。
+- 結果は「baseline 復帰」でなく、never 条件より一時的に悪化する（破壊エンジン）。
+
+### 実行
+```powershell
+python sim/theorem_a_reward_withdrawal.py
+```
+既定は決定論（`reward_noise=0`）。`reward_noise>0` にすると確率的になり seed が効く。
+
+### 出力（3枚）
+| ファイル | 何を示すか |
+|---|---|
+| `out/figA1_timeseries.png` | V(t)・δ(t)。撤回時のみ κ倍の負δ → V が baseline 以下へ |
+| `out/figA2_fear_tau.png` | τ(t)。撤回条件でのみ恐怖エンジンが起動し τ 崩壊（探索狭窄） |
+| `out/figA3_asymmetry.png` | 損失/利得 ≈ κ の非対称 ＋ Phase C 最小V（withdraw < never） |
+
+### 結果（seed=20260604・決定論）
+- δ：raise **+1.00**（非増幅）／ withdraw **−2.25**（κ倍）、比 **2.25 = κ**。
+- 最小V（t1以降）：never 0.00 ／ sustained 0.00 ／ withdraw **−1.49**（＝ baseline より悪い）。
+- τ：withdraw 最小 **0.13**（baseline 1.0）＝ 探索の崩壊。
+
+### 非目標
+多エージェント化しない／実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）。

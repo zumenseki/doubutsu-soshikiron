@@ -46,3 +46,39 @@ class Config:
 
 
 CONFIG = Config()
+
+
+@dataclass(frozen=True)
+class ConfigA:
+    """定理A（報酬撤回 = 罰）シミュレーションの設定。
+
+    マスター方程式 §5 ＋ 参照点依存 §4 修正項2 を使う。3条件（never/sustained/withdraw）を比較。
+    """
+    # --- 乱数（再現性）※ reward_noise=0 のときは決定論的で seed は無関係 ---
+    seed: int = 20260604
+
+    # --- エージェント（§5 マスター方程式 ＋ §4 修正項2）---
+    eta: float = 0.20          # V の学習率
+    kappa: float = 2.25        # 損失回避 κ>1。撤回時の負の δ を κ 倍に増幅（K&T の標準値 2.25）
+    g: float = 1.0             # 帰属ゲート。ここでは統制可能と仮定し 1 に固定して κ/ρ 効果を分離
+    rho_rate: float = 0.05     # 参照点 ρ が経験報酬へ適応する速さ（快楽の踏み車）
+
+    # --- 恐怖エンジン（負の損失 δ が τ を狭める。V には書かない）---
+    tau_base: float = 1.0      # 平常の探索温度
+    tau_min: float = 0.10      # τ の下限
+    fear_c: float = 0.30       # 損失 δ が τ を狭める強さ
+    tau_recover: float = 0.03  # τ が平常へ戻る速さ
+
+    # --- 報酬スケジュール ---
+    R_base: float = 1.0        # 基準報酬
+    R_high: float = 2.0        # 引き上げ後の報酬
+    reward_noise: float = 0.0  # 報酬ノイズ σ（0＝決定論。定理Aは構造的必然なので既定0）
+
+    # --- フェーズ ---
+    t1: int = 100              # 報酬引き上げ開始（全条件の give イベント）
+    t2: int = 250              # 撤回（withdraw 条件のみ baseline へ戻す）
+    T: int = 500               # 総ステップ
+    n_agents: int = 1          # reward_noise>0 のとき平均を取る個体数
+
+
+CONFIG_A = ConfigA()
