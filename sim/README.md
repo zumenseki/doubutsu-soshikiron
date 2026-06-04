@@ -287,3 +287,51 @@ python sim/multiagent_policy_imitation.py
 
 ### 非目標
 実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）。1結合機構（方策模倣）のみ。
+
+---
+
+## multiagent_archetypes.py — 多エージェント MA-4（5類型の創発的導出・橋の完成）
+
+> 3結合チャネルを統合した1つの population 模型。設計は [docs/多エージェント設計.md §4](../docs/多エージェント設計.md)。
+
+### 検証する主張
+> 経営者の (C,A) 設計＝ノブ (fear / f / kconf / ineq / omega / c) を変えると、5動物類型が
+> 「安定した集団 regime」として創発し、[比喩 §2](../docs/比喩_5類型マクロ.md) の4軸署名と一致するか。
+> 一致する範囲で、5類型は「対応表 → **導出**」へ格上げされる。
+
+### 統一模型
+各エージェント: morale/controllability M∈[floor,1]、option価値 V[K]。
+M↑＝統制可能な成功（帰属ゲート）／ M↓＝統制不能罰（無力感）・相対的剥奪（κ・可視報酬で社会比較）・恐怖伝染。
+choice = softmax(V + kconf·人気)/τ_eff（fear が τ を狭める）。
+
+### 出力（3枚）
+```powershell
+python sim/multiagent_archetypes.py
+```
+| ファイル | 何を示すか |
+|---|---|
+| `out/figG1_fingerprints.png` | 5プリセットの fingerprint（5指標）。各々 distinct |
+| `out/figG2_phase_diagram.png` | (fear×conformity) の regime landscape。morale=fear崖／innovation=conformity崖 |
+| `out/figG3_trait_space.png` | performance×morale 空間で5プリセットが分離（点サイズ＝無力感） |
+
+### 結果（seed=20260604）— 5類型が distinct な regime として創発
+| type | morale | innov | perf | split | helpless | 解釈 |
+|---|---|---|---|---|---|---|
+| wolf（オオカミ） | 0.76 | 0.78 | 1.30 | ~0 | 0.00 | 高革新・高成果・健全 |
+| ant（アリ） | 0.71 | 0.00 | 0.80 | ~0 | 0.00 | 規範固着・革新ゼロ・安定 |
+| chimp（チンパン） | 0.45 | 0.01 | 0.64 | **0.48** | 0.27 | morale 分断（厚遇↑/不遇↓）・政治 |
+| bonobo（ボノボ） | 0.94 | 0.34 | 1.00 | ~0 | 0.00 | 高morale・低革新・中成果（slack/安全） |
+| hyena（ハイエナ） | 0.02 | — | 0.00 | ~0 | 1.00 | 崩落＋burnout（perfE 0.19→perfL 0.00） |
+
+### §0 正直な照合（一致/部分/欠落）
+- ✅ **5類型とも互いに distinct** な regime として出て、比喩署名の主要点と一致。
+- ⚠️ wolf の consensus は高い（予測 low）＝**最良への集中**（同調でなく個人学習で全員が同じ最良へ）。良性のズレ。
+- ⚠️ chimp の「分断」を出すには社会比較を **可視報酬(ext)基準** にする必要があった（恐怖の罰が参照点を下げると剥奪が相殺される、という統合上の発見）。
+- ⚠️ innovation 指標は engagement 非gated＝崩落中の hyena も「最良を選ぶ」ため高く出る（実効は performance=0）。trait space は performance 軸を使用。
+- → 「(C,A) から5 regime が創発」は **プリセット5点で成立**。盲目的クラスタリングで丁度5個出る、とは主張しない（誇張回避＝§0）。
+
+### 次（[設計 §3](../docs/多エージェント設計.md)）
+階層別（層ごとに別 regime）・規模(Dunbar 壁)・再野生化（Stage5→外生注入で脱出）の集団版、業種別最適化。
+
+### 非目標
+実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）。5プリセットは比喩の4軸傾向の写像であって最適化した値ではない。

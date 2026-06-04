@@ -191,6 +191,46 @@ CONFIG_CF = ConfigCF()
 
 
 @dataclass(frozen=True)
+class ConfigMA4:
+    """多エージェント MA-4（5類型の創発的導出）の共有パラメータ。
+
+    全チャネルを統合した統一 population 模型。経営者の (C,A) 設計＝ノブ
+    (fear, f, kconf, ineq, omega, contingency) を振り、集団 regime を測る。
+    5プリセット（type 別ノブ）は multiagent_archetypes.py の PRESETS。
+    """
+    seed: int = 20260604
+    N: int = 400
+    K: int = 4
+    T: int = 300
+    true_value: tuple = (1.0, 1.5, 0.6, 0.6)   # option1=最良, option0=status quo
+    incumbent: int = 0
+    best: int = 1
+    theta: float = 0.30        # これ未満で撤退（無力・離脱）
+    floor: float = 0.02
+    M0: float = 0.60           # 初期 morale
+    eta_M: float = 0.10        # morale 更新率
+    eta_V: float = 0.15        # 方策（option価値）更新率
+    rho_rate: float = 0.05     # 参照点の適応速度
+    tau_base: float = 0.35     # 基礎探索温度
+    tau_min: float = 0.08
+    fear_tau: float = 0.80     # 恐怖が τ を狭める強さ（τ_eff=max(tau_min, tau_base(1−fear_tau·fear)))
+    kappa: float = 2.25        # 損失回避
+    lam_contagion: float = 0.20  # 恐怖伝染係数（fear·崩落率でスケール・runaway 抑制）
+    p_try: float = 0.05        # 崩落者の再挑戦率
+    R_ext: float = 1.0         # 外発報酬スケール
+    I0: float = 0.60           # 内在価値（f で抑制される）
+    punish_mag: float = 1.0    # 統制不能罰の大きさ
+    frac_fav: float = 0.30     # 厚遇される割合（不平等）
+    ineq_boost: float = 1.2    # 厚遇の上乗せ（ineq でスケール）
+    # 相図スイープ（fear × conformity）
+    sweep_points: int = 15
+    kconf_max: float = 3.0
+
+
+CONFIG_MA4 = ConfigMA4()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
