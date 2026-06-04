@@ -106,6 +106,36 @@ CONFIG_C = ConfigC()
 
 
 @dataclass(frozen=True)
+class ConfigMA:
+    """多エージェント層 MA-1（恐怖伝播＝粛清カスケード）の設定。
+
+    N=L×L 体をトーラス格子に置き、観察学習＋情動伝染で Ĝ の崩落が伝播する
+    （docs/多エージェント設計.md §4）。
+    """
+    seed: int = 20260604
+    L: int = 24                 # 格子の一辺（N=L*L 体）
+    Ghat0: float = 0.70         # 全員の初期 Ĝ
+    theta_giveup: float = 0.30  # この値未満で「崩落（撤退）」＝helpless 信号 s=0 を発する
+    Ghat_floor: float = 0.02
+    lam_direct: float = 0.15    # 直接経験での Ĝ 更新率（自分の統制成功＝回復／自分の罰＝下落）
+    lam_obs: float = 0.40       # 恐怖の伝染率（恐怖の隣人観察→Ĝ↓のみ。上方伝染はない＝§1）
+    #                             既定は tipping(≈0.35) の少し上＝front が時間をかけて広がる cascade regime
+    p_try: float = 0.06         # 崩落者が稀に再挑戦する確率（統制可能なら回復＝tipping の対抗力）
+    purge_side: int = 6         # 粛清シードのパッチ（角 purge_side×purge_side）
+    t_purge_start: int = 20
+    t_purge_end: int = 80       # 粛清は窓 [start,end)。その後 環境は全員 統制可能へ戻る
+    T: int = 300
+    # Fig2 スイープ（伝染強度 → 最終崩落率）
+    sweep_lo: float = 0.0
+    sweep_hi: float = 0.5
+    sweep_points: int = 21
+    sweep_seeds: int = 4
+
+
+CONFIG_MA = ConfigMA()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
