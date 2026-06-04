@@ -12,6 +12,9 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
+# 生成図・出力（再現は seed で担保）
+sim/out/
+
 # --- Node / Astro (site/) ---
 node_modules/
 dist/
