@@ -1,0 +1,30 @@
+# --- 秘密（セキュリティ絶対ルール・絶対に追跡しない） ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# --- Python (sim/) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# --- Node / Astro (site/) ---
+node_modules/
+dist/
+.astro/
+.output/
+.vercel/
+.netlify/
+
+# --- OS / エディタ ---
+Thumbs.db
+ehthumbs.db
+.DS_Store
+*.swp
+
+# --- ローカル Claude 設定（共有しない） ---
+.claude/settings.local.json
