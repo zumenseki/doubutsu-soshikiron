@@ -103,3 +103,38 @@ class ConfigC:
 
 
 CONFIG_C = ConfigC()
+
+
+@dataclass(frozen=True)
+class ConfigD:
+    """定理D（恐怖の複合コスト）の設定。
+
+    恐怖は τ↓（狭窄）・k↑（近視眼）・習慣化 を同時に起こす独立3チャネルの劣化、を多腕タスクで検証。
+    """
+    seed: int = 20260604
+
+    # --- タスク（多腕）---
+    K: int = 6                 # 腕の数
+    r_arm0_pre: float = 1.0    # arm0＝即時・小（局所最適）。途中で価値が下がる
+    r_arm0_post: float = 0.3   # devaluation 後の arm0 報酬
+    r_arm1: float = 3.0        # arm1＝遅延・大（大域最適。要探索＋遠視）
+    delay_arm1: int = 5        # arm1 の遅延（割引 D(d)=1/(1+k·d) で効く）
+    r_distractor: float = 0.2  # arm2..K-1（探索コスト）
+    t_change: int = 300        # arm0 を devalue する時点
+    T: int = 600               # 総ステップ
+    n_agents: int = 200
+
+    # --- 学習 ---
+    eta: float = 0.10          # V（目標志向価値）の学習率
+    habit_lr: float = 0.05     # 習慣 H の更新率
+
+    # --- 恐怖の3チャネル（calm 値 と fear 値）---
+    tau_calm: float = 0.60     # 探索温度（高＝広く探索）
+    tau_fear: float = 0.12     # 恐怖で狭窄
+    k_calm: float = 0.02       # 双曲割引（低＝遠い報酬も保つ）
+    k_fear: float = 0.60       # 恐怖で近視眼（遅延大報酬を割り引いて消す）
+    habit_calm: float = 0.0    # 習慣の重み（0＝目標志向）
+    habit_fear: float = 4.0    # 恐怖で習慣優位（過去の選択を価値と無関係に反復）
+
+
+CONFIG_D = ConfigD()
