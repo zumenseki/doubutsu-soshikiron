@@ -162,6 +162,35 @@ CONFIG_SR = ConfigSR()
 
 
 @dataclass(frozen=True)
+class ConfigCF:
+    """多エージェント MA-3（方策模倣＝規範・同調）の設定。
+
+    他者の選択（人気）を観察して模倣。score = V + κ_conf·人気。
+    同調が強いと、より良い選択肢があっても status quo にロックインする（前例主義）。
+    """
+    seed: int = 20260604
+    N: int = 400
+    K: int = 4
+    # 真の平均報酬。option1 が最良(1.5)、option0 は全員が最初にやっている status quo(1.0)
+    true_r: tuple = (1.0, 1.5, 0.6, 0.6)
+    incumbent: int = 0         # 初期規範（status quo）
+    best: int = 1              # 真の最良
+    reward_noise: float = 0.30
+    eta: float = 0.15          # 個人の RL 学習率
+    tau: float = 0.30          # 探索温度
+    V_init_incumbent: float = 1.0   # 全員 status quo を「知っている」状態から開始
+    kappa_conf: float = 3.0    # 同調強度の既定（FigF1 の high 側。low は 0 と比較）
+    T: int = 300
+    # FigF2 スイープ（同調強度 → 合意 と 最適性）
+    sweep_points: int = 21
+    kappa_max: float = 4.0
+    sweep_seeds: int = 6
+
+
+CONFIG_CF = ConfigCF()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
