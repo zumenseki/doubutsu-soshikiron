@@ -3,6 +3,9 @@
 各シミュレーションが「[理論](../docs/正本_ミクロ機構.md)のどの主張を検証しているか」を明記する。
 再現性のため乱数シードは固定（`config.py` の `seed`）。新規依存なし（numpy / matplotlib のみ）。
 
+**全実行**：`python sim/run_all.py` で全シム（§6 全4定理 ＋ 多エージェント MA-1〜4）を再生成し、
+代表図を集約した総括図 `out/fig_overview.png`（理論の検証 一覧・発信素材）を作る。
+
 ---
 
 ## theorem_b_controllability.py — 定理B（統制可能性の崖）
