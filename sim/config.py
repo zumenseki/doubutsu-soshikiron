@@ -136,6 +136,32 @@ CONFIG_MA = ConfigMA()
 
 
 @dataclass(frozen=True)
+class ConfigSR:
+    """多エージェント MA-2（社会的参照点＝公平性）の設定。
+
+    ρ_i = ω·E_self + (1−ω)·(他者の結果) を集団へ（§4 修正項2）。決定論なので seed 不要。
+    """
+    N: int = 400               # エージェント数（well-mixed）
+    eta: float = 0.20          # V（士気）の学習率
+    kappa: float = 2.25        # 損失回避（>1）。相対的剥奪の損を κ倍に増幅
+    rho_rate: float = 0.05     # 参照点 ρ の適応速度
+    omega: float = 0.50        # 自己重み。(1−ω)＝社会比較の重み（FigE1/E3 既定）
+    R_base: float = 1.0        # 基準報酬
+    phi: float = 0.50          # 厚遇される割合
+    Delta: float = 0.60        # 不平等の大きさ（厚遇=+Δ, 不遇=−Δ。平均は不変）
+    t_intro: int = 150         # 不平等を導入する時点（FigE1）
+    T: int = 400
+    # FigE2 スイープ（不平等度 → 平均士気）と社会比較の強弱
+    sweep_points: int = 21
+    Delta_max: float = 1.0
+    omega_high_compare: float = 0.15   # 社会比較が強い（他者参照が重い）
+    omega_low_compare: float = 0.85    # 社会比較が弱い（自己参照が重い）
+
+
+CONFIG_SR = ConfigSR()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
