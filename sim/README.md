@@ -98,3 +98,41 @@ python sim/theorem_a_reward_withdrawal.py
 
 ### 非目標
 多エージェント化しない／実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）。
+
+---
+
+## theorem_c_undermining.py — 定理C（アンダーマイニング罠）
+
+### 検証する主張
+> f が x_ext より速く立ち上がる領域で dR_eff/dR_ext < 0。内在価値の高い（I₀大）役割では、
+> 関与に対する顕著な金銭報酬は実効動機を下げる。
+> → 危険な役割（高I₀）と安全な報酬形態（情報的・予期せぬもの, f≈0）を式が指定する。
+> （[正本 §4 修正項3, §6 定理C](../docs/正本_ミクロ機構.md)）
+
+### 機構
+`R_eff = D·(w·x_ext) + I₀·(1 − f(x_ext))`。f は内在価値の抑制関数。
+統制的・有形・予期される報酬 → f 大（ここでは `f=f_max·x/(x+x_half)`、小 x で急峻）。
+情報的・予期せぬ報酬 → f≈0。外発項が増えるより速く `I₀·f` が内発を削るとき `dR_eff/dx_ext<0`。
+
+### 3ケース
+- **high I0, controlling** … 内在価値の高い役割に統制的（金銭）報酬 → 罠
+- **low I0, controlling** … 削る内発が小さく罠は出ない
+- **high I0, informational** … f≈0 で内発を削らず罠は出ない
+
+### 実行 / 出力（3枚・決定論）
+```powershell
+python sim/theorem_c_undermining.py
+```
+| ファイル | 何を示すか |
+|---|---|
+| `out/figC1_reffective.png` | R_eff(x_ext)。高I₀×統制的 は no-reward baseline を下回る（罠） |
+| `out/figC2_derivative.png` | dR_eff/dx_ext。高I₀×統制的 のみ符号が負へ |
+| `out/figC3_region.png` | (I₀, x_ext) 平面で逆効果領域（赤）＝式が高I₀役割を危険と指定 |
+
+### 結果
+- x_ext→0 の限界効果：high-I0 controlling **−3.50**（逆効果）／ low-I0 +0.33 ／ informational +1.00。
+- undermining 閾値 **I₀>0.44** で x_ext→0 から逆効果。
+- 罠：R_eff 2.00 → 最小 **1.50** @ x_ext=0.45（無報酬より悪い）、baseline 復帰に x_ext≈1.40。
+
+### 非目標
+多エージェント化しない／実データへの係数フィットをしない（[§0](../docs/正本_ミクロ機構.md)）。

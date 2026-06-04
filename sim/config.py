@@ -82,3 +82,24 @@ class ConfigA:
 
 
 CONFIG_A = ConfigA()
+
+
+@dataclass(frozen=True)
+class ConfigC:
+    """定理C（アンダーマイニング罠）の設定。
+
+    R_eff = D·(w·x_ext) + I₀·(1−f) を解析（§4 修正項3, §6 定理C）。
+    f は内在価値の抑制関数：統制的報酬で大きく、情報的報酬で f≈0。決定論なので seed 不要。
+    """
+    I0_high: float = 2.0       # 内在価値の高い役割（危険：抑制される余地が大きい）
+    I0_low: float = 0.3        # 内在価値の低い役割
+    f_max: float = 0.9         # 統制的報酬による内発抑制の上限（最大 90%）
+    x_half: float = 0.4        # f の半飽和点（小さいほど f が x_ext に対し急峻に立ち上がる）
+    w: float = 1.0             # 外発報酬の重み
+    D: float = 1.0             # 遅延割引（ここでは即時 = 1）
+    x_max: float = 3.0         # x_ext スイープ上限
+    n_points: int = 241        # スイープ解像度
+    I0_max: float = 3.0        # ヒートマップの I₀ 上限
+
+
+CONFIG_C = ConfigC()
