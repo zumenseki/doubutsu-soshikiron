@@ -53,6 +53,9 @@ export const TYPES = {
     article: 'fear-kills-learning',
     articleHint: 'なぜ恐怖が、悪い情報と学習を止めるのか',
     kit: 'ヒヤリが上がる10分朝礼キット＋叱り方を“統制可能”にする声かけ表',
+    // ↓ note / Stripe の購入URLを貼ると、結果カードのCTAが「相談」から「購入」へ自動で切替わる。
+    //    空文字のままなら相談導線にフォールバック（壊れたリンクを出さない）。原稿＝docs/note_恐怖ハイエナ型_ヒヤリ朝礼キット.md
+    kitUrl: '',
   },
   chimp: {
     key: 'chimp',

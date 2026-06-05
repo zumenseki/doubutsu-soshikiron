@@ -80,7 +80,12 @@ const num = (id) => id.replace('q', '');
     const el = document.getElementById('result');
     const t = res.type;
     const articleUrl = url('articles/' + t.article + '/');
-    const kitUrl = url('about/'); // TODO: note / Stripe Payment Link の購入URLに差し替え
+    // 型別の購入URL（types.js の t.kitUrl）。設定済なら「購入」CTA、未設定なら無料相談へフォールバック。
+    const kitCta = t.kitUrl
+      ? `<a class="cta" href="${t.kitUrl}" target="_blank" rel="noopener">このキットを入手する（¥980・早割¥500）</a>
+        <span class="muted small">明日の現場で使う実務キット（noteで販売）。</span>`
+      : `<a class="cta" href="${url('about/')}">キットの相談をする</a>
+        <span class="muted small">※型別キットは順次提供。まずは無料相談から。</span>`;
     const altHtml = res.alt.length
       ? `<p class="muted small">次に近いタイプ：${res.alt.map((a) => a.label).join(' / ')}（混成・移行期の可能性）</p>`
       : '';
@@ -104,8 +109,7 @@ const num = (id) => id.replace('q', '');
       <p><a href="${articleUrl}">詳しく：${t.articleHint} →</a></p>
       <div class="kit-cta">
         <p><b>この型の実務キット</b><br>${t.kit}</p>
-        <a class="cta" href="${kitUrl}">キットの相談をする</a>
-        <span class="muted small">※型別キットは順次提供。まずは無料相談から。</span>
+        ${kitCta}
       </div>
       ${altHtml}
       <details class="scores">
