@@ -361,6 +361,47 @@ CONFIG_MA7 = ConfigMA7()
 
 
 @dataclass(frozen=True)
+class ConfigMA8:
+    """多エージェント MA-8（蜂起カスケード＝MA-1 恐怖伝播の双対）の設定。
+
+    MA-1 は Ĝ↓（恐怖）が観察で「容易に」伝染することを示した（下方・帰属ゲートなし）。
+    MA-8 はその双対：Ĝ↑（有効性・勇気）も観察で伝播しうるが、帰属ゲート（現 Ĝ）で重く
+    抑制される（§4 修正項1：低 Ĝ では他者の成功を自分に帰属できない＝「あいつは特別」）。
+    だから無力感アトラクタ（低 Ĝ で全員撤退＝長い忍従）は安定で、蜂起は稀かつ突発的：
+    外生 seed（指導者＝確実に勝てる統制可能経験の体現・定理B の脱出注入）が臨界質量を
+    超えて初めて帰属ゲートを突破しカスケードする。figK3 で恐怖伝播（下方・ゲートなし）と
+    有効性伝播（上方・帰属ゲート）を同条件で並べ「なぜ抑圧は安定で蜂起は稀か」を機構の
+    非対称として示す。（docs/応用_集団蜂起.md §2,§4／docs/多エージェント設計.md §1 結合③）
+    """
+    seed: int = 20260604
+    L: int = 24                  # 格子の一辺（N=L*L 体）
+    Ghat0_low: float = 0.15      # 無力感アトラクタ初期（全員 theta_giveup 未満＝撤退・長い忍従）
+    Ghat0_high: float = 0.85     # 恐怖対照（figK3）の健全初期
+    theta: float = 0.45          # 行動ゲート閾値：Ĝ>theta で「動員（立ち上がった）」と判定
+    theta_giveup: float = 0.30   # 撤退ラッチ：Ĝ<この値 で自発行動停止（§1 自己封止）
+    Ghat_floor: float = 0.02
+    lam_direct: float = 0.15     # 自分の行動成功による Ĝ↑（上方＝帰属ゲート Ĝ·(1−Ĝ) 付き）
+    lam_obs: float = 0.40        # 観察伝播率（恐怖down／有効性up 共通係数。非対称はゲートの有無から創発）
+    p_try: float = 0.0           # 0＝撤退ラッチは吸収的（定理B：忍従は自然回復しない）。
+    #                              MA-1 と違い自発再挑戦の対抗力は置かない＝蜂起は観察伝播でのみ着火する。
+    #                              （>0 にすると統制可能環境で自発成功が snowball し無力感が自然回復してしまう）
+    decay: float = 0.05          # 撤退者の Ĝ が floor へ引かれる速さ＝無力の再強化（諦めへの引力）。
+    #                              定理B 低活動アトラクタの動的表現。弱い伝播 front を消し、臨界質量を
+    #                              超える seed だけがカスケードを着火させる＝蜂起の閾値性（Granovetter）。
+    seed_side: int = 8           # 指導者 patch（中央 seed_side×seed_side）。外生注入の核（スイープ中は固定）
+    t_seed_start: int = 20       # 指導者の出現（以降 seed を外生 clamp）
+    T: int = 300
+    # figK2/K3 スイープ（観察伝播強度 lam_obs → 最終動員率／崩落率）。seed_side 固定で社会的結合を振る。
+    sweep_lo: float = 0.0
+    sweep_hi: float = 0.5
+    sweep_points: int = 21
+    sweep_seeds: int = 4
+
+
+CONFIG_MA8 = ConfigMA8()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 

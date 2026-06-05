@@ -34,6 +34,7 @@ import multiagent_archetypes as MA4
 import multiagent_rewilding as MA5
 import multiagent_dunbar as MA6
 import multiagent_hierarchy as MA7
+import multiagent_uprising as MA8
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -50,6 +51,7 @@ SIMS = [
     ("MA-5 再野生化（Stage5脱出）", "MA-5: rewilding (escape lock-in)", MA5, "figH1_rewilding.png"),
     ("MA-6 規模（Dunbar壁）", "MA-6: Dunbar wall (size)", MA6, "figI2_dunbar_wall.png"),
     ("MA-7 階層別最適化", "MA-7: layered optima (per-layer)", MA7, "figJ2_differentiation.png"),
+    ("MA-8 蜂起カスケード（有効性伝播の双対）", "MA-8: uprising cascade (efficacy)", MA8, "figK1_uprising_cascade.png"),
 ]
 
 
@@ -71,7 +73,7 @@ def main():
         ax.set_title(ascii_title, fontsize=10)
     for ax in flat[len(SIMS):]:        # 余った枠は消す（SIMS が枠数未満でも安全）
         ax.axis("off")
-    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..7",
+    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..8",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     overview = os.path.join(OUT, "fig_overview.png")
