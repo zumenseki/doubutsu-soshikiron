@@ -28,6 +28,7 @@ jobs:
         uses: withastro/action@v3
         with:
           path: site
+          node-version: 22 # Astro 6 は Node >=22.12 必須（既定の Node 20 では astro build が落ちる）
   deploy:
     needs: build
     runs-on: ubuntu-latest
