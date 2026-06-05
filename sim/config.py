@@ -231,6 +231,55 @@ CONFIG_MA4 = ConfigMA4()
 
 
 @dataclass(frozen=True)
+class ConfigMA5:
+    """多エージェント MA-5（再野生化＝Stage5硬直からの集団脱出）の設定。
+
+    硬直した ant/Stage5 集団（高 kconf・status quo へ固着・MA-3/MA-4 の ant regime）は、
+    より良い option1 が在っても人気バイアスで離陸できない。脱出機構を検証する：
+      - 全体を少し緩めるだけ（kconf 微減）では谷に留まる（exhortation は効かない）。
+      - 独自ルールの隔離細胞（低 kconf・多数派の人気から遮断）を注入し、発見後に
+        再結合すると規範が反転しうる。ただし細胞が autonomy を保つ場合のみ。
+        再吸収（細胞を多数派の高 kconf に戻す）すると人気に飲まれ元へ戻る。
+    ＝定理B「外生注入だけが脱出路」の集団版（橋渡し：再野生化）。
+    """
+    seed: int = 20260604
+    N: int = 400
+    K: int = 4
+    true_value: tuple = (1.0, 1.5, 0.6, 0.6)   # option1=最良, option0=status quo（既知）
+    incumbent: int = 0
+    best: int = 1
+    T: int = 400
+    eta: float = 0.15          # 個人 RL（option 価値）の学習率
+    tau: float = 0.30          # 探索温度
+    reward_noise: float = 0.30
+    V_init_incumbent: float = 1.0   # 全員 status quo を「知っている」状態から開始
+
+    kconf_locked: float = 3.0  # ant/Stage5：硬直集団の同調強度（単独でロック）
+    kconf_nudge: float = 1.2   # 全体微緩：緩めても相転移閾値(≈0.8)超で谷に留まる
+    kconf_iso: float = 0.0     # 隔離細胞：多数派の人気から自由（独自ルール）
+
+    iso_frac: float = 0.30     # Fig1 の隔離細胞サイズ（母集団比）
+    t_recouple: int = 150      # 隔離窓 [0,t_recouple)。以降は再結合
+    # 観察的価値学習（実績デモ）：隔離細胞が示す option の実現 payoff を多数派が観察し
+    # V を少し寄せる。0 なら人気(同調)のみで規範伝播（MA-3 と同型）。
+    demo_rate: float = 0.05
+    # 可視化閾値：ある option を実践する者が母集団比でこれ以上いて初めて「見える手本」となり
+    # demo 対象になる。単発の偶発探索（pop≈1/N）は手本にならず、臨界質量（隔離細胞）が要る。
+    vis_thresh: float = 0.05
+
+    # Fig2 隔離サイズ スイープ
+    sweep_points: int = 21
+    iso_frac_max: float = 0.5
+    sweep_seeds: int = 4
+    # Fig3 相図（多数派 kconf × 隔離サイズ）
+    grid_points: int = 15
+    kconf_major_max: float = 3.0
+
+
+CONFIG_MA5 = ConfigMA5()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
