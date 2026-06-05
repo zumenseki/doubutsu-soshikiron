@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
+import { groupedQuestions, SCALE } from '../data/questions.js';
+const groups = groupedQuestions();
+const num = (id) => id.replace('q', '');
+---
+<Base
+  title="現場どうぶつ診断 — 60秒で組織タイプ診断"
+  description="部下が動かない・若手が辞める・ヒヤリが上がらない。その背景にある恐怖・報酬・学習・連携のズレを、動物行動学のレンズで見える化する無料の自己点検。"
+>
+  <section class="hero">
+    <span class="tag">無料・60秒・登録不要</span>
+    <h1>現場どうぶつ診断</h1>
+    <p class="lede">
+      部下が動かないのは、性格ではなく<strong>「群れの設計」</strong>かもしれない。
+      恐怖・報酬・学習・連携の4つから、あなたの現場がどの動物タイプに寄っているかを見る。
+    </p>
+    <p class="muted small">
+      15問・各5段階。これは実測モデルではなく、行動学の知見を使った<strong>仮説生成ツール</strong>です。
+      組織の自己点検であり、個人の評価・医療や心理の診断ではありません。
+    </p>
+  </section>
+
+  <form id="shindan-form" novalidate>
+    {groups.map((g) => (
+      <fieldset class="q-group">
+        <legend>{g.group}</legend>
+        {g.items.map((q) => (
+          <div class="q-item">
+            <p class="q-text"><span class="q-num">Q{num(q.id)}</span>{q.text}</p>
+            <div class="scale" role="radiogroup" aria-label={q.text}>
+              {SCALE.map((s) => (
+                <label class="scale-opt">
+                  <input type="radio" name={q.id} value={s.v} required />
+                  <span class="scale-v">{s.v}</span>
+                </label>
+              ))}
+            </div>
+            <div class="scale-ends"><span>全くそう思わない</span><span>とてもそう思う</span></div>
+          </div>
+        ))}
+      </fieldset>
+    ))}
+    <p id="form-error" class="form-error" hidden>未回答の質問があります。すべて選んでください。</p>
+    <button type="submit" class="cta">診断する</button>
+  </form>
+
+  <section id="result" class="result-card" hidden aria-live="polite"></section>
+</Base>
+
+<script>
+  import { diagnose } from '../lib/diagnosis.js';
+  import { TYPES } from '../data/types.js';
+  import { url } from '../lib/url.js';
+
+  const LABELS = Object.fromEntries(Object.values(TYPES).map((t) => [t.key, t.label]));
+
+  function radarSVG(axes) {
+    const labels = ['安全', '報酬', '学習', '連携'];
+    const vals = [axes.fear, axes.reward, axes.learn, axes.conform];
+    const cx = 100, cy = 100, R = 70;
+    const ang = (i) => ((-90 + i * 90) * Math.PI) / 180;
+    const P = (i, rad) => [cx + rad * Math.cos(ang(i)), cy + rad * Math.sin(ang(i))];
+    const poly = (rad) => [0, 1, 2, 3].map((i) => P(i, rad).join(',')).join(' ');
+    const grid = [0.25, 0.5, 0.75, 1]
+      .map((g) => `<polygon points="${poly(R * g)}" class="r-grid"/>`)
+      .join('');
+    const axisLines = [0, 1, 2, 3]
+      .map((i) => { const [x, y] = P(i, R); return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="r-axis"/>`; })
+      .join('');
+    const shape = `<polygon points="${[0, 1, 2, 3].map((i) => P(i, (R * vals[i]) / 100).join(',')).join(' ')}" class="r-shape"/>`;
+    const labelEls = labels
+      .map((l, i) => { const [x, y] = P(i, R + 17); return `<text x="${x}" y="${y}" class="r-label" text-anchor="middle">${l} ${vals[i]}</text>`; })
+      .join('');
+    return `<svg viewBox="-18 -12 236 224" role="img" aria-label="4軸の健全度レーダー">${grid}${axisLines}${shape}${labelEls}</svg>`;
+  }
+
+  function render(res) {
+    const el = document.getElementById('result');
+    const t = res.type;
+    const articleUrl = url('articles/' + t.article + '/');
+    const kitUrl = url('about/'); // TODO: note / Stripe Payment Link の購入URLに差し替え
+    const altHtml = res.alt.length
+      ? `<p class="muted small">次に近いタイプ：${res.alt.map((a) => a.label).join(' / ')}（混成・移行期の可能性）</p>`
+      : '';
+    const scoreRows = Object.entries(res.scores)
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => `<tr><td>${LABELS[k]}</td><td>${v}</td></tr>`)
+      .join('');
+
+    el.innerHTML = `
+      <div class="result-head">
+        <span class="tag">${res.splitted ? '混成タイプ' : 'あなたの現場タイプ'}</span>
+        <h2>〈${t.label}〉</h2>
+        <p class="muted">Stage ${res.stage.n}：${res.stage.name}</p>
+      </div>
+      <div class="radar-wrap">${radarSVG(res.axes)}</div>
+      <p class="lede">${t.finding}</p>
+      <div class="card-row">
+        <div class="mini-card weak"><b>いちばんの弱点</b><p>${t.weakness}</p></div>
+        <div class="mini-card act"><b>明日からの打ち手</b><p>${t.action}</p></div>
+      </div>
+      <p><a href="${articleUrl}">詳しく：${t.articleHint} →</a></p>
+      <div class="kit-cta">
+        <p><b>この型の実務キット</b><br>${t.kit}</p>
+        <a class="cta" href="${kitUrl}">キットの相談をする</a>
+        <span class="muted small">※型別キットは順次提供。まずは無料相談から。</span>
+      </div>
+      ${altHtml}
+      <details class="scores">
+        <summary>判定の内訳（透明性）</summary>
+        <p class="muted small">「当てる」ためではなく、どの型に寄っているかを示す指標です。</p>
+        <table><thead><tr><th>型</th><th>適合度</th></tr></thead><tbody>${scoreRows}</tbody></table>
+      </details>
+      <p class="muted small disclaimer">これは実測モデルではなく、行動学の知見を使った仮説生成ツールです。組織の自己点検であり、個人の評価・医療や心理の診断ではありません。</p>
+      <div class="result-actions">
+        <button type="button" class="cta" id="print-btn">カルテを印刷 / PDF保存</button>
+        <button type="button" class="ghost-btn" id="retry-btn">もう一度診断する</button>
+      </div>`;
+
+    el.hidden = false;
+    document.getElementById('print-btn').addEventListener('click', () => window.print());
+    document.getElementById('retry-btn').addEventListener('click', () => location.reload());
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  const form = document.getElementById('shindan-form');
+  const errEl = document.getElementById('form-error');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const answers = {};
+      let missing = false;
+      for (let i = 1; i <= 15; i++) {
+        const v = fd.get('q' + i);
+        if (v == null) { missing = true; break; }
+        answers['q' + i] = Number(v);
+      }
+      if (missing) {
+        errEl.hidden = false;
+        errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      errEl.hidden = true;
+      render(diagnose(answers));
+    });
+  }
+</script>
