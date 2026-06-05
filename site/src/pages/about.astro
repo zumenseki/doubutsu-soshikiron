@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
 ---
 <Base title="About — 動物から組織を読む" description="動物行動学をレンズにした組織論の理論＋発信プロジェクト。">
   <h1>About</h1>
@@ -27,5 +28,5 @@ import Base from '../layouts/Base.astro';
     思想の正本を置く「母艦（archive）」。YouTube・note・SNS は外部チャネル。
     実装は<strong>運用が軽く・壊れにくく・積み上がる</strong>ことを最優先する（静的サイト・完全無料）。
   </p>
-  <p><a class="cta" href="/theory/">理論を読む</a></p>
+  <p><a class="cta" href={url('theory/')}>理論を読む</a></p>
 </Base>

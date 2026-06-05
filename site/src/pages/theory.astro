@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
 const fiveTypes = [
   ['オオカミ', '学習＋承認', 'スピード・創造・変化対応', '属人化・拡大耐性弱', 'スタートアップ／R&D'],
   ['アリ', '同調＋中央理念', '大規模化・再現性・拡張', '創造性低下・官僚化', 'チェーン／工場／行政'],
@@ -66,5 +67,5 @@ const fiveTypes = [
   <p class="muted">
     ※ 本サイトは発信の母艦。形式的な式・定理・シミュレーションの詳細はリポジトリ（docs／sim）に置く。比喩を薄めず、式が説明する構図を保つ。
   </p>
-  <p><a class="cta" href="/articles/">記事を読む</a></p>
+  <p><a class="cta" href={url('articles/')}>記事を読む</a></p>
 </Base>

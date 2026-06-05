@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { url } from '../lib/url.js';
 const types = [
   { name: 'オオカミ', line: '学習と承認・少数精鋭。スピードと創造（スタートアップ／R&D／精鋭営業）。' },
   { name: 'アリ', line: '同調と再現性・中央理念。大規模化と安定供給（チェーン／工場／行政）。' },
@@ -18,8 +19,8 @@ const types = [
       両層を「多エージェント集計＝文化」で接続する。
     </p>
     <p>
-      <a class="cta" href="/theory/">理論を読む</a>
-      <a class="cta" href="/articles/">記事一覧</a>
+      <a class="cta" href={url('theory/')}>理論を読む</a>
+      <a class="cta" href={url('articles/')}>記事一覧</a>
     </p>
   </section>
 
@@ -38,5 +39,5 @@ const types = [
     「報酬を増やせば効く」式の暗黙仮定を式の上で反証できる<strong>前提の可視化</strong>。
     比喩（5類型）を式が説明する、という構図を保つ。
   </p>
-  <p><a href="/about/">このプロジェクトについて →</a></p>
+  <p><a href={url('about/')}>このプロジェクトについて →</a></p>
 </Base>

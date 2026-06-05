@@ -1,14 +1,16 @@
 ---
 import '../styles/global.css';
+import { url } from '../lib/url.js';
 const { title, description = '動物行動学をレンズに、組織を二層で読む理論と発信。' } = Astro.props;
 const nav = [
-  { href: '/', label: 'ホーム' },
-  { href: '/theory/', label: '理論' },
-  { href: '/articles/', label: '記事' },
-  { href: '/about/', label: 'About' },
+  { href: url(''), label: 'ホーム' },
+  { href: url('theory/'), label: '理論' },
+  { href: url('articles/'), label: '記事' },
+  { href: url('about/'), label: 'About' },
 ];
+const home = url('');
 const path = Astro.url.pathname;
-const isActive = (href) => href === '/' ? path === '/' : path.startsWith(href);
+const isActive = (href) => href === home ? path === home : path.startsWith(href);
 ---
 <!doctype html>
 <html lang="ja">
@@ -23,7 +25,7 @@ const isActive = (href) => href === '/' ? path === '/' : path.startsWith(href);
   </head>
   <body>
     <header class="site-header">
-      <a href="/" class="brand">動物から組織を読む</a>
+      <a href={url('')} class="brand">動物から組織を読む</a>
       <nav>
         {nav.map((n) => <a href={n.href} class={isActive(n.href) ? 'active' : ''}>{n.label}</a>)}
       </nav>

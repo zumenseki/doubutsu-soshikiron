@@ -1,0 +1,40 @@
+name: Deploy site to GitHub Pages
+
+# site/（Astro 静的サイト）を build して GitHub Pages へ公開する。
+# 公式テンプレ（withastro/action → actions/deploy-pages）。run: に外部入力を直書きしない＝注入面なし。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時実行は1つに集約（公開中のデプロイは中断しない）。
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build Astro site (in site/)
+        uses: withastro/action@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
