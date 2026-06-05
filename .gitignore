@@ -37,3 +37,6 @@ ehthumbs.db
 # 公開 repo ゆえ、誤 add -A での流出を防ぐため追跡除外。理論 docs は公開のまま。
 docs/コンテスト企画書.md
 docs/診断ロジック仕様.md
+docs/note_*.md
+docs/直送*.md
+docs/デモ*.md
