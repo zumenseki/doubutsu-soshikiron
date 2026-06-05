@@ -313,6 +313,54 @@ CONFIG_MA6 = ConfigMA6()
 
 
 @dataclass(frozen=True)
+class ConfigMA7:
+    """多エージェント MA-7（階層別最適化＝層ごとに別 regime）の設定。
+
+    比喩 §5「同じ会社でも層で最適な生き物は違う」を形式化。層ごとに『タスク』が違う：
+      - 現場（floor）＝探索タスク（真実=より良い practice の発見）。低同調が最適（wolf）。
+      - 管理（body）＝調整タスク（整列=皆が同じ規格に揃う）。高同調が最適（ant）。
+    経営（exec）＝この architecture（各層の regime と結合 λ）を設計する層。
+    org 性能 P = 現場探索 E × 管理調整 Co。
+
+    非自明な帰結（通俗版＝「全社を1つの型で揃える」と分岐）:
+      - 一律 regime（全 wolf / 全 ant）は必ずどこかの層を犠牲にし劣る。
+      - 最適は差別化（現場=低同調・管理=高同調）＝(c_F,c_B) 平面の対角線(一律)でなく off-diagonal。
+      - ただし結合 λ が強い（管理の同調が現場へ漏れ＝process 押し付け）と現場の実効同調
+        c_F+λ·c_B が上がり探索が死に P が崩落＝現場の autonomy が要る（MA-5 と連結）。
+    """
+    seed: int = 20260604
+    K: int = 4
+    true_value: tuple = (1.0, 1.5, 0.6, 0.6)   # 現場の探索: option1=最良, option0=status quo
+    incumbent: int = 0
+    best: int = 1
+    N_floor: int = 200         # 現場（探索）人数
+    N_body: int = 400          # 管理下の本体（調整）人数
+    T: int = 150
+    eta: float = 0.15          # RL 学習率（共通）
+    tau: float = 0.30          # 現場の探索温度
+    tau_body: float = 0.30     # 本体の温度
+    reward_noise: float = 0.30 # 現場 報酬ノイズ
+    coord_noise: float = 0.20  # 調整ゲームのノイズ（大きいほど低同調で整列しにくい）
+    V_init_incumbent: float = 1.0
+
+    # Fig1 の4アーキテクチャ（c_F=現場同調, c_B=管理同調, lam=結合）
+    c_wolf: float = 0.2        # 低同調（wolf 寄り）
+    c_ant: float = 3.0         # 高同調（ant 寄り）
+    lam_loose: float = 0.05    # 緩い結合（現場の autonomy 保持）
+    lam_tight: float = 1.0     # 強い結合（管理が現場に process 押し付け）
+
+    # Fig2 (c_F × c_B) 相図（lam=loose）, Fig3 結合 λ スイープ
+    grid_points: int = 15
+    c_max: float = 3.0
+    lam_points: int = 16
+    lam_max: float = 1.5
+    sweep_seeds: int = 3
+
+
+CONFIG_MA7 = ConfigMA7()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 
