@@ -280,6 +280,39 @@ CONFIG_MA5 = ConfigMA5()
 
 
 @dataclass(frozen=True)
+class ConfigMA6:
+    """多エージェント MA-6（規模＝Dunbar 壁）の設定。
+
+    有界社交容量 D（各自が信頼／監視できる相手の上限）を置く。集団規模 N が増えると
+    評判被覆 coverage=min(1, D/(N-1)) が下がり、監視外の相手では裏切りが罰されず協力が
+    維持不能になる。条件付き協力（reciprocity 閾値）の閾値ダイナミクスにより、協力の
+    高位アトラクタが鞍点分岐で消え、N≈壁 で相転移的に崩落する（＝Dunbar 壁）。
+    壁は普遍数でなく容量 D に比例する（§0：「150」は人の容量推定であって普遍定数でない）。
+
+    脱「通俗版」：規模の問題を「もっと管理職を増やせ」でなく、容量 D に対する構造問題として
+    示す。N>壁 では同じ施策でも cohesion が崩れ chimp 的な分断・政治が創発しうる。
+    """
+    seed: int = 20260604
+    D: int = 40                # Dunbar 容量（監視/信頼できる相手数の上限）
+    beta: float = 8.0          # 条件付き協力ゲートの急峻さ（大きいほど壁が鋭い）
+    theta: float = 0.40        # reciprocity 閾値（acquaintance の協力率がこれ未満だと裏切りへ）
+    coop0: float = 1.0         # 初期協力率（全員協力＝cohesive な小集団から成長させる）
+    T: int = 120               # ダイナミクスのステップ数
+    n_fig1: tuple = (20, 70, 250)   # Fig1 の代表規模（壁の下／近傍／上）。壁は実測で確認
+    # Fig2 規模スイープ
+    N_min: int = 5
+    N_max: int = 320
+    sweep_points: int = 32
+    sweep_seeds: int = 5
+    # Fig3 壁 × 容量 D（壁が D に比例することの確認）
+    D_values: tuple = (20, 40, 60, 80)
+    wall_thresh: float = 0.5   # 最終協力率がこれを下回る最小 N を「壁」と定義
+
+
+CONFIG_MA6 = ConfigMA6()
+
+
+@dataclass(frozen=True)
 class ConfigD:
     """定理D（恐怖の複合コスト）の設定。
 

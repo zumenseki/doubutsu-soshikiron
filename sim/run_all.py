@@ -32,6 +32,7 @@ import multiagent_social_reference as MA2
 import multiagent_policy_imitation as MA3
 import multiagent_archetypes as MA4
 import multiagent_rewilding as MA5
+import multiagent_dunbar as MA6
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -46,6 +47,7 @@ SIMS = [
     ("MA-3 方策模倣（同調）", "MA-3: conformity (norm lock-in)", MA3, "figF3_lockin.png"),
     ("MA-4 5類型の創発的導出", "MA-4: 5 archetypes emerge", MA4, "figG3_trait_space.png"),
     ("MA-5 再野生化（Stage5脱出）", "MA-5: rewilding (escape lock-in)", MA5, "figH1_rewilding.png"),
+    ("MA-6 規模（Dunbar壁）", "MA-6: Dunbar wall (size)", MA6, "figI2_dunbar_wall.png"),
 ]
 
 
@@ -57,17 +59,17 @@ def main():
         print("#" * 80)
         mod.main()
 
-    # 総括 contact sheet（代表図を 3×3 で集約）
-    fig, axes = plt.subplots(3, 3, figsize=(20, 13))
+    # 総括 contact sheet（代表図を 3×4 で集約・余り枠は消す）
+    fig, axes = plt.subplots(3, 4, figsize=(24, 13))
     flat = axes.ravel()
     for ax, (_, ascii_title, _, figname) in zip(flat, SIMS):
         path = os.path.join(OUT, figname)
         ax.imshow(mpimg.imread(path))
         ax.axis("off")
         ax.set_title(ascii_title, fontsize=10)
-    for ax in flat[len(SIMS):]:        # 余った枠は消す（SIMS が 3×3 未満でも安全）
+    for ax in flat[len(SIMS):]:        # 余った枠は消す（SIMS が枠数未満でも安全）
         ax.axis("off")
-    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..5",
+    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..6",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     overview = os.path.join(OUT, "fig_overview.png")
