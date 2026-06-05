@@ -1,21 +1,29 @@
 """
-多エージェント層 MA-8 — 蜂起カスケード（MA-1 恐怖伝播の双対）
+多エージェント層 MA-8 — 蜂起カスケード（MA-1 恐怖伝播の counterpart）
+
+MA-1 と同じ4近傍の観察伝播の枠組みを使うが、上方伝播・帰属ゲート・吸収的撤退(p_try=0)・
+無力の再強化(decay) を加えた別構成。厳密な「双対(dual)」ではない（下記の差異を参照）。
 
 検証する主張（docs/応用_集団蜂起.md §2,§4・docs/多エージェント設計.md §1 結合③）:
   MA-1 は Ĝ↓（恐怖）が観察で「容易に」伝染することを示した（下方・帰属ゲートなし）。
-  その双対：Ĝ↑（有効性・勇気）も観察で伝播しうるが、帰属ゲート（現 Ĝ）で重く抑制される
-  （§4 修正項1：低 Ĝ では他者の成功を自分に帰属できない＝「あいつは特別」）。
-  帰結：
-    (1) 低 Ĝ で全員撤退した無力感アトラクタ（＝長い忍従）は安定。自然発生の蜂起は起きない。
-    (2) 外生 seed（指導者＝確実に勝てる統制可能経験の体現・定理B の脱出注入）が
-        臨界質量を超えて初めて帰属ゲートを突破し、動員がカスケードする（突発・閾値的）。
-    (3) 同じ伝播強度 λ でも、恐怖（下方・ゲートなし）は低閾値で広がり、勇気（上方・帰属ゲート）
-        は高閾値でしか広がらない＝「なぜ抑圧は安定で蜂起は稀か」の機構的非対称。
+  対する Ĝ↑（有効性・勇気）も観察で伝播しうるが、帰属ゲート（現 Ĝ）で抑制される
+  （§4 修正項1：低 Ĝ では他者の成功を自分に帰属できない＝「あいつは特別」）。帰結：
+    (1) 外生 seed（指導者）の注入が要る＝外生性の確認。ただし自発回復は p_try=0 で封じた
+        「前提」であり、一様場が動かないのは自明な不動点。定理B の機構的再現は figK1/K2
+        （臨界質量カスケード・相転移）が担う（no-seed=0 はそれ単体では非自明な再現ではない）。
+    (2) seed が臨界質量を超えると帰属ゲートを破り動員がカスケードする（figK1/figK2）。
+    (3) 帰属ゲートのみ（figK3・decay=0 で isolate）でも、恐怖（下方・ゲートなし）は低い結合で
+        広がり、勇気（上方・ゲート）は高い結合を要する非対称が出る。差の核は帰属ゲート単独。
+        無力の再強化(decay)はこの非対称を *増幅* する（核＝ゲート／decay＝増幅器）。
 
-モデル（トーラス格子 L×L・4近傍・同期更新。MA-1 と同形・符号と帰属ゲートのみ反転）:
-  - 撤退ラッチ：Ĝ<theta_giveup で自発行動停止（§1 自己封止）。崩落者は確率 p_try で再挑戦。
-  - 直接更新（行動者・統制可能成功 g=1）：uprising は上方＝帰属ゲート Ĝ·(1−Ĝ)。
+MA-1 との差異（「同形・符号反転のみ」ではない）：p_try(0.06→0)・decay(無→有)・
+  seed(時間窓→永久clamp)・direct則(線形→ロジスティック)・初期(健全0.70→崩落0.15)。
+
+モデル（トーラス格子 L×L・4近傍・同期更新）:
+  - 撤退ラッチ：Ĝ<theta_giveup で自発行動停止（§1 自己封止）。p_try=0＝吸収的（自発再挑戦なし）。
   - 観察伝播：uprising=上方 relu(G_j−G_i) を帰属ゲート Ĝ_i で／ fear=下方 relu(G_i−G_j)・ゲートなし。
+  - 無力の再強化 decay：撤退者の Ĝ を floor へ。figK1/K2 は ON（front 抵抗＝tipping源）、
+    figK3 は OFF（帰属ゲートの効果を decay の非対称配置から isolate＝公平比較）。
   - seed（外生注入）：uprising は中央 patch を Ĝ=1 に clamp（指導者）／ fear は Ĝ=0（粛清）。
 
 出力: sim/out/figK1_uprising_cascade.png, figK2_tipping.png, figK3_asymmetry.png ＋ stdout。
@@ -51,14 +59,16 @@ def center_mask(side):
     return m
 
 
-def simulate(mode, seed_side, lam_obs, rng, record=False, pure=False):
+def simulate(mode, seed_side, lam_obs, rng, record=False, pure=False, apply_decay=True):
     """mode='uprising'（Ĝ↑・上方帰属ゲート）／'fear'（Ĝ↓・下方ゲートなし＝MA-1）。
 
     非対称の要：
       uprising … 低 Ĝ 集団＋指導者 seed(Ĝ=1)。観察は上方 relu(G_j−G_i)、帰属ゲート G_i で抑制。
       fear     … 健全 Ĝ 集団＋粛清 seed(Ĝ=0)。観察は下方 relu(G_i−G_j)、ゲートなし（容易に伝染）。
-    pure=True：direct（行動成功の self-sustain）のみ切り、観察伝播＋抵抗(decay)で比較する＝帰属
-      ゲートの効果を direct 由来の非対称から isolate（figK3 の公平な恐怖 vs 勇気比較・§0：仕込まない）。
+    pure=True：direct（行動成功の self-sustain）を切る。
+    apply_decay=False：無力 decay も切る。pure かつ apply_decay=False＝観察伝播のみ＝帰属ゲート
+      の効果を decay の非対称配置から isolate（figK3 の公平比較・§0：非対称を仕込まない）。decay は
+      崩落セルにのみ効くため低Ĝ uprising と健全 fear で発火頻度が逆＝公平比較では両 run とも切る。
     """
     L = C.L
     seed = center_mask(seed_side)
@@ -98,10 +108,12 @@ def simulate(mode, seed_side, lam_obs, rng, record=False, pure=False):
             obs = -lam_obs * down                                   # 下方・ゲートなし（恐怖は容易に伝染＝MA-1）
 
         G = np.clip(G + direct + obs, C.Ghat_floor, 1.0)
-        # 無力の再強化（諦めへの引力）：撤退者の Ĝ は floor 方向へ引かれる＝定理B 低活動アトラクタを
-        # 動的に表現。伝播 front の抵抗となり、伝播がこれに勝つ lam_obs の閾値（tipping）を作る。
-        still_collapsed = G < C.theta_giveup
-        G = G - C.decay * (G - C.Ghat_floor) * still_collapsed
+        if apply_decay:
+            # 無力の再強化（諦めへの引力）：撤退者の Ĝ は floor 方向へ引かれる＝定理B 低活動アトラクタを
+            # 動的に表現。伝播 front の抵抗となり tipping を作る。崩落セルのみ発火するため、figK3 の
+            # 公平比較（apply_decay=False）では切る（さもないと非対称が decay 配置由来に汚れる）。
+            still_collapsed = G < C.theta_giveup
+            G = G - C.decay * (G - C.Ghat_floor) * still_collapsed
         if active_seed.any():
             G[active_seed] = seed_val                               # 外生注入（指導者=1／粛清=0）を毎ステップ維持
 
@@ -117,6 +129,14 @@ def simulate(mode, seed_side, lam_obs, rng, record=False, pure=False):
 
 def _spawn(master):
     return np.random.default_rng(master.integers(0, 2**63 - 1))
+
+
+def cross50(xs, ys, thr=0.5):
+    """ys が初めて thr を超える xs（相転移の代表点）。勾配最大より頑健で、最初の刻みで飽和しても
+    0 に張り付かない。一度も超えなければ nan。"""
+    ys = np.asarray(ys)
+    idx = int(np.argmax(ys >= thr))
+    return float(xs[idx]) if ys[idx] >= thr else float("nan")
 
 
 def figK1(res):
@@ -147,21 +167,22 @@ def figK2(xs, finals):
            xlabel="lam_obs (observation coupling strength)",
            ylabel="final mobilized fraction (non-seed)", ylim=(-0.03, 1.03),
            xlim=(C.sweep_lo, C.sweep_hi))
-    d = np.gradient(finals, xs)
-    ti = int(np.argmax(d))
-    ax.axvline(xs[ti], ls="--", c="gray", lw=1)
-    ax.text(xs[ti], 0.5, f" tipping ~ {xs[ti]:.2f}", fontsize=9)
+    tp = cross50(xs, finals)
+    if not np.isnan(tp):
+        ax.axvline(tp, ls="--", c="gray", lw=1)
+        ax.text(tp, 0.5, f" 50%-reach ~ {tp:.2f}", fontsize=9)
     fig.tight_layout()
     path = os.path.join(OUT, "figK2_tipping.png")
     fig.savefig(path, dpi=130)
     plt.close(fig)
     print(f"[figK2] saved -> {path}")
-    return xs[ti]
+    return tp
 
 
 def figK3(xs, up_finals, fear_finals):
-    """非対称：同じ観察強度 lam_obs でも 恐怖(下方・ゲートなし)は低 lam_obs で広がり、
-    勇気(上方・帰属ゲート)は高 lam_obs でしか広がらない＝なぜ抑圧は安定で蜂起は稀か。"""
+    """非対称（decay=0 で帰属ゲートのみ isolate）：同じ観察強度 lam_obs でも 恐怖(下方・ゲート
+    なし)は低い結合で広がり、勇気(上方・帰属ゲート)は高い結合を要する。差の核は帰属ゲート単独。
+    無力 decay はこの差を増幅するが、figK3 では公平のため切ってある（§0：非対称を仕込まない）。"""
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(xs, fear_finals, "-o", ms=4, c="C3",
             label="fear (downhill, no gate) -> collapsed frac")
@@ -183,7 +204,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     master = np.random.default_rng(C.seed)
     print("=" * 74)
-    print("多エージェント MA-8 蜂起カスケード（MA-1 恐怖伝播の双対）— grid simulation")
+    print("多エージェント MA-8 蜂起カスケード（MA-1 恐怖伝播の counterpart・別構成）— grid simulation")
     print(f"seed={C.seed}  N={C.L*C.L} ({C.L}x{C.L} torus)  "
           f"helpless init Ghat0={C.Ghat0_low}  leader seed={C.seed_side}x{C.seed_side} "
           f"from t={C.t_seed_start}  lam_obs={C.lam_obs}")
@@ -196,7 +217,8 @@ def main():
     print(f"[leader ] final mobilized(non-seed)={up['frac_mobilized'][-1]:.3f}  "
           f"meanG: start={up['meanG_non'][0]:.2f} end={up['meanG_non'][-1]:.2f}")
     print(f"[no-seed] final mobilized(non-seed)={none['frac_mobilized'][-1]:.3f}  "
-          f"<- 指導者(外生注入)なしでは忍従は自然回復しない（定理B）")
+          f"<- 外生 seed が要る（外生性の確認）。※一様場+p_try=0 の自明な不動点であり、")
+    print("           定理B の非自明な再現は figK1/figK2（臨界質量カスケード・相転移）が担う")
 
     # figK2：蜂起本体（direct+decay 込み＝行動が信念を支える）の相転移。lam_obs スイープ・seed_side 固定。
     xs = np.linspace(C.sweep_lo, C.sweep_hi, C.sweep_points)
@@ -207,12 +229,14 @@ def main():
         up_full.append(float(np.mean(v)))
     up_full = np.array(up_full)
 
-    # figK3：帰属ゲートの効果を isolate（観察伝播のみ・pure）で 恐怖 vs 勇気を公平比較（§0：仕込まない）。
+    # figK3：観察伝播のみ（pure かつ decay OFF）で 恐怖 vs 勇気を公平比較。decay は崩落セルのみ
+    # 発火し低Ĝ uprising と健全 fear で頻度が逆＝非対称を汚すため両 run とも切る（核＝帰属ゲートを残す）。
+    # （p_try=0 で決定論なので sweep_seeds は実質1回。将来 p_try>0 用の足場として平均は残す）
     up_pure, fear_pure = [], []
     for lo in xs:
-        uv = [simulate("uprising", C.seed_side, lo, _spawn(master), pure=True)["frac_mobilized"][-1]
+        uv = [simulate("uprising", C.seed_side, lo, _spawn(master), pure=True, apply_decay=False)["frac_mobilized"][-1]
               for _ in range(C.sweep_seeds)]
-        fv = [simulate("fear", C.seed_side, lo, _spawn(master), pure=True)["frac_collapsed"][-1]
+        fv = [simulate("fear", C.seed_side, lo, _spawn(master), pure=True, apply_decay=False)["frac_collapsed"][-1]
               for _ in range(C.sweep_seeds)]
         up_pure.append(float(np.mean(uv))); fear_pure.append(float(np.mean(fv)))
     up_pure = np.array(up_pure); fear_pure = np.array(fear_pure)
@@ -220,11 +244,13 @@ def main():
     figK1(up)
     tip = figK2(xs, up_full)
     figK3(xs, up_pure, fear_pure)
-    fear_tip = xs[int(np.argmax(np.gradient(fear_pure, xs)))]
-    up_tip = xs[int(np.argmax(np.gradient(up_pure, xs)))]
+    # tipping は「50%到達 lam_obs」で定義（勾配最大は最初の刻みで飽和すると 0 に張り付くため）
+    fear_tip = cross50(xs, fear_pure)
+    up_tip = cross50(xs, up_pure)
     print(f"[tipping] 蜂起本体（行動が信念を支える）の動員カスケードは lam_obs ~ {tip:.2f} で着火")
-    print(f"[asymmetry/pure] 帰属ゲートのみ残した純伝播比較： 恐怖崩落 tipping ~ {fear_tip:.2f}  <<  "
-          f"勇気動員 tipping ~ {up_tip:.2f}  ＝同じ観察強度でも恐怖は容易・勇気は帰属ゲートで困難")
+    print(f"[asymmetry/gate-only] decay を切り帰属ゲートのみ残した公平比較（50%到達 lam_obs）："
+          f" 恐怖崩落 {fear_tip:.3f}  <<  勇気動員 {up_tip:.3f}  ＝ゲート単独でも勇気は高い結合を要する"
+          f"（差の核＝帰属ゲート。decay=無力の固着 はこの差を増幅）")
     print("=" * 74)
     print(f"done. figures in: {OUT}")
 
