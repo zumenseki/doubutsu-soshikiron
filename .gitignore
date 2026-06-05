@@ -32,3 +32,8 @@ ehthumbs.db
 # --- ローカル Claude 設定（共有しない） ---
 .claude/settings.local.json
 .claude/launch.json
+
+# --- 事業戦略 doc（公開しない・shindan/コンテスト企画の内部資料） ---
+# 公開 repo ゆえ、誤 add -A での流出を防ぐため追跡除外。理論 docs は公開のまま。
+docs/コンテスト企画書.md
+docs/診断ロジック仕様.md
