@@ -35,6 +35,7 @@ import multiagent_rewilding as MA5
 import multiagent_dunbar as MA6
 import multiagent_hierarchy as MA7
 import multiagent_uprising as MA8
+import multiagent_industry as MA9
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -52,6 +53,7 @@ SIMS = [
     ("MA-6 規模（Dunbar壁）", "MA-6: Dunbar wall (size)", MA6, "figI2_dunbar_wall.png"),
     ("MA-7 階層別最適化", "MA-7: layered optima (per-layer)", MA7, "figJ2_differentiation.png"),
     ("MA-8 蜂起カスケード（有効性伝播の双対）", "MA-8: uprising cascade (efficacy)", MA8, "figK1_uprising_cascade.png"),
+    ("MA-9 業種別最適化", "MA-9: per-industry optima", MA9, "figL2_regime_map.png"),
 ]
 
 
@@ -63,8 +65,8 @@ def main():
         print("#" * 80)
         mod.main()
 
-    # 総括 contact sheet（代表図を 3×4 で集約・余り枠は消す）
-    fig, axes = plt.subplots(3, 4, figsize=(24, 13))
+    # 総括 contact sheet（代表図を 4×4 で集約・余り枠は消す）
+    fig, axes = plt.subplots(4, 4, figsize=(24, 17))
     flat = axes.ravel()
     for ax, (_, ascii_title, _, figname) in zip(flat, SIMS):
         path = os.path.join(OUT, figname)
@@ -73,7 +75,7 @@ def main():
         ax.set_title(ascii_title, fontsize=10)
     for ax in flat[len(SIMS):]:        # 余った枠は消す（SIMS が枠数未満でも安全）
         ax.axis("off")
-    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..8",
+    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..9",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     overview = os.path.join(OUT, "fig_overview.png")
