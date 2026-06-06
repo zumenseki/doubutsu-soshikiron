@@ -33,6 +33,8 @@ export const TYPES = {
     article: 'controllability',
     articleHint: '同じ叱責が効く時と壊す時（統制可能性）',
     kit: '現場にオオカミ枠を作る再野生化チェック',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_規律アリ型_再野生化チェック.md
+    kitUrl: '',
   },
   kochoku: {
     key: 'kochoku',
@@ -97,5 +99,7 @@ export const TYPES = {
     article: 'controllability',
     articleHint: '統制と自律の継ぎ目をどう設計するか',
     kit: '層の継ぎ目点検チェックリスト（維持運用）',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_生態系混成型_層の継ぎ目点検.md
+    kitUrl: '',
   },
 };
