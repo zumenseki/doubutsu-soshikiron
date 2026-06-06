@@ -20,6 +20,8 @@ export const TYPES = {
     article: 'precedent-lockin',
     articleHint: '拡大期に効いてくる、前例と属人化の落とし穴',
     kit: '親方の頭を移植する引き継ぎ1枚＋最初の番頭の選び方',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_親方オオカミ型_引き継ぎ.md
+    kitUrl: '',
   },
   ari: {
     key: 'ari',
@@ -69,6 +71,8 @@ export const TYPES = {
     article: 'unfairness-cost',
     articleHint: '不公平感が群れを壊すコスト',
     kit: '根回しを減らす意思決定フロー1枚',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_政治チンパン型_意思決定フロー.md
+    kitUrl: '',
   },
   bonobo: {
     key: 'bonobo',
