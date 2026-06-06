@@ -43,3 +43,6 @@ docs/デモ*.md
 docs/kit_*.md
 docs/kits/
 docs/提出*.md
+
+# --- note 転載用 変換出力（再生成可・複製を追跡しない） ---
+note-export/
