@@ -36,6 +36,7 @@ import multiagent_dunbar as MA6
 import multiagent_hierarchy as MA7
 import multiagent_uprising as MA8
 import multiagent_industry as MA9
+import multiagent_industry_hierarchy as MA10
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -54,6 +55,7 @@ SIMS = [
     ("MA-7 階層別最適化", "MA-7: layered optima (per-layer)", MA7, "figJ2_differentiation.png"),
     ("MA-8 蜂起カスケード（有効性伝播の双対）", "MA-8: uprising cascade (efficacy)", MA8, "figK1_uprising_cascade.png"),
     ("MA-9 業種別最適化", "MA-9: per-industry optima", MA9, "figL2_regime_map.png"),
+    ("MA-10 階層×業種 合成", "MA-10: hierarchy x industry", MA10, "figM2_floor_conformity.png"),
 ]
 
 
@@ -75,7 +77,7 @@ def main():
         ax.set_title(ascii_title, fontsize=10)
     for ax in flat[len(SIMS):]:        # 余った枠は消す（SIMS が枠数未満でも安全）
         ax.axis("off")
-    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..9",
+    fig.suptitle("Theory validation overview — 4 theorems (single-agent) + multi-agent MA-1..10",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     overview = os.path.join(OUT, "fig_overview.png")

@@ -473,3 +473,45 @@ class ConfigMA9:
 
 
 CONFIG_MA9 = ConfigMA9()
+
+
+@dataclass(frozen=True)
+class ConfigMA10:
+    """多エージェント MA-10（階層別×業種別の合成＝最適 org 設計は業種の関数）の設定。
+
+    MA-7（層別最適：現場=探索=低同調 wolf／管理=調整=高同調 ant）を MA-9 の業種
+    （変動性 v × 失敗コスト ec）に埋め込む。すると **現場の最適同調 c_F* が業種の関数** になる:
+      - 高変動・低失敗コスト（IT/創造）：現場は低同調（wolf）＝MA-7 の差別化が最も効く。
+      - 低変動・高失敗コスト（航空/原子力/医療）：現場の逸脱が罰されるので **現場も標準化**
+        （c_F* が上がる＝差別化が圧縮）。"現場の官僚化"が高 stakes では最適。
+    通俗版「現場に一律で裁量を」とも「全社一型」とも分岐し、MA-7 の処方自体が業種依存と示す。
+
+    機構：現場＝探索タスク（正解 practice が確率 v で移る）＋ ec·逸脱の罰 → E=現場性能[0,1]。
+      管理＝調整タスク（同調 c_B で整列）→ Co=合意。org 性能 P=E×Co。c_F・c_B を業種ごとに掃引。
+    """
+    seed: int = 20260604
+    K: int = 4
+    N_floor: int = 200         # 現場（探索）人数
+    N_body: int = 400          # 管理下の本体（調整）人数
+    T: int = 300
+    eta: float = 0.20          # 現場 RL 学習率（変動を追える速さ）
+    tau: float = 0.30          # 現場の探索温度
+    tau_body: float = 0.30     # 本体の温度
+    reward_noise: float = 0.15
+    coord_noise: float = 0.20  # 調整ゲームのノイズ
+    perf_window: int = 60      # 後半 window で平均
+
+    # 業種の範囲（MA-9 と整合）
+    v_lo: float = 0.0
+    v_hi: float = 0.05         # 追従可能な変動上限
+    ec_lo: float = 0.0
+    ec_hi: float = 1.20        # 失敗コスト上限
+
+    grid_points: int = 15      # (c_F × c_B) 相図解像度（figM1）
+    c_max: float = 3.0         # 同調強度の掃引上限
+    ind_points: int = 13       # figM2 業種スイープ点（ec 軸）
+    map_points: int = 9        # figM3 c_F* ヒートマップの (v × ec) 解像度（粗め＝計算量抑制）
+    sweep_seeds: int = 8        # seed 平均（E(c_F) の最適は平坦ゆえ argmax 安定化に多めに取る）
+
+
+CONFIG_MA10 = ConfigMA10()
