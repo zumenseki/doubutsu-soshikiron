@@ -42,6 +42,8 @@ export const TYPES = {
     article: 'precedent-lockin',
     articleHint: '前例主義が組織を固める仕組みと、その壊し方',
     kit: '前例を壊す15分ふりかえり雛形＋ゾンビ手順の棚卸しリスト',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_硬直アリ型_前例ふりかえり.md
+    kitUrl: '',
   },
   hyena: {
     key: 'hyena',
@@ -77,7 +79,9 @@ export const TYPES = {
     action: '優しさは保ったまま、締切と基準だけを明確にする（高基準×高安全の学習ゾーンへ）。',
     article: 'reward-trap',
     articleHint: '報酬と随伴の設計（増やすと裏目に出る理由）',
-    kit: '健全な緊張を入れる目標設定シート',
+    kit: '若手が辞める前の班長面談シート＋歩合を壊さず効かせるチェック',
+    // ↓ note購入URLを貼ると結果カードCTAが「相談」→「購入」へ自動切替。空ならフォールバック。原稿＝docs/note_報酬の罠_班長面談シート.md
+    kitUrl: '',
   },
   ecosys: {
     key: 'ecosys',
