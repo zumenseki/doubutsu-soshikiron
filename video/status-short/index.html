@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 76px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 36px; color: #2f6f4f; background: #e6efe9; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 48px; line-height: 1.38; color: #2f6f4f; max-width: 860px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .rank-row { display: flex; gap: 26px; align-items: center; justify-content: center; margin: 6px 0; }
+      .rank-label { font-weight: 900; font-size: 44px; width: 130px; text-align: right; }
+      .stress { width: 380px; height: 40px; background: #e3e0d8; border-radius: 20px; overflow: hidden; }
+      .stress-fill { height: 100%; border-radius: 20px; }
+      .stress-cap { font-weight: 700; font-size: 32px; color: #6b7370; width: 140px; text-align: left; }
+      .graph { width: 760px; height: 380px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveUp { fill: none; stroke: #2f6f4f; stroke-width: 9; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 30px; font-weight: 700; }
+      .culture { display: flex; gap: 30px; align-items: center; justify-content: center; }
+      .c-arrow { font-weight: 900; font-size: 56px; color: #2f6f4f; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-char"><svg width="220" height="220" viewBox="0 0 280 280" aria-label="chimp">
+          <circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/>
+          <circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/>
+          <ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/>
+          <ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/>
+          <path d="M100,126 L136,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <path d="M180,126 L144,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/>
+          <circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/>
+          <ellipse cx="130" cy="188" rx="5" ry="7" fill="#3a2415"/><ellipse cx="150" cy="188" rx="5" ry="7" fill="#3a2415"/>
+          <path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s1-head" class="head">順位が、<br />その体を蝕む</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-rank">
+          <div class="rank-row">
+            <div class="rank-label" style="color:#2f6f4f">上位</div>
+            <svg width="90" height="90" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M114,200 Q140,216 166,200" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+            <div class="stress"><div class="stress-fill" style="width:28%;background:#2f6f4f"></div></div>
+            <div class="stress-cap" style="color:#2f6f4f">低</div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-label" style="color:#d9893b">下位</div>
+            <svg width="90" height="90" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M118,212 Q140,200 162,212" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+            <div class="stress"><div id="s2-bar" class="stress-fill" style="width:90%;background:#d9893b"></div></div>
+            <div class="stress-cap" style="color:#d9893b">高</div>
+          </div>
+        </div>
+        <div id="s2-telop" class="telop">下位ほど<span class="hl">ストレスホルモン</span>が高い<br />順位が生理を左右（サポルスキー）</div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:26px">
+        <div id="s3-tag" class="tag">効くのは "量" でなく "裁量"</div>
+        <svg id="s3-graph" class="graph" viewBox="0 0 760 380">
+          <line class="axis" x1="90" y1="40" x2="90" y2="320" />
+          <line class="axis" x1="90" y1="320" x2="710" y2="320" />
+          <text class="glabel" x="20" y="50" fill="#2f6f4f">健康</text>
+          <text class="glabel" x="560" y="365" fill="#6b7370">裁量 →</text>
+          <path id="s3-curve" class="curveUp" d="M110,300 C260,290 420,160 700,90" />
+        </svg>
+        <div id="s3-telop" class="telop" style="font-size:42px">統制できない慢性的な圧が体を蝕む（ホワイトホール）</div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-t1" class="head" style="font-size:58px">攻撃性は遺伝でなく<span class="hl">文化</span></div>
+        <div id="s4-culture" class="culture">
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp-aggressive"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><path d="M98,124 L138,140" stroke="#3a2415" stroke-width="7" stroke-linecap="round"/><path d="M182,124 L142,140" stroke="#3a2415" stroke-width="7" stroke-linecap="round"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M118,210 Q140,196 162,210" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="92" cy="172" r="11" fill="#d98080" opacity="0.6"/><circle cx="188" cy="172" r="11" fill="#d98080" opacity="0.6"/></svg>
+          <div id="s4-arrow" class="c-arrow">→</div>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp-calm"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><path d="M100,134 Q118,126 134,134" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M146,134 Q162,126 180,134" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M110,200 Q140,228 170,200" stroke="#2f6f4f" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div id="s4-telop" class="telop" style="font-size:44px">人の入れ替えと規範設計で変わる</div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-char"><svg width="220" height="220" viewBox="0 0 280 280" aria-label="chimp">
+          <circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/>
+          <circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/>
+          <ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/>
+          <ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/>
+          <path d="M100,126 L136,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <path d="M180,126 L144,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/>
+          <circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/>
+          <ellipse cx="130" cy="188" rx="5" ry="7" fill="#3a2415"/><ellipse cx="150" cy="188" rx="5" ry="7" fill="#3a2415"/>
+          <path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s5-head" class="head" style="font-size:58px">ストレスは量でなく<br /><span class="hl">裁量</span></div>
+        <div id="s5-sub" class="telop" style="font-size:42px">高い地位も、不安定ならコスト</div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">主役はヒヒ（サポルスキー）。機構の写像であり効果保証ではない（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.6)"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.8);
+
+      /* T->S2 順位とコルチゾール (3-15) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-rank .rank-row",{opacity:0,x:-40},3);
+      tl.set("#s2-bar",{scaleX:0,transformOrigin:"left center"},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.to("#s2-rank .rank-row",{opacity:1,x:0,duration:0.5,stagger:0.35,ease:"power3.out"},3.4);
+      tl.to("#s2-bar",{scaleX:1,duration:0.9,ease:"power2.out"},4.8);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},6.2);
+
+      /* T->S3 裁量グラフ (15-27) */
+      tl.set("#scene3 .scene-content",{y:60},14.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},15);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},15);
+      tl.set("#s3-tag",{opacity:0,scale:0.6},15);
+      tl.set("#s3-telop",{opacity:0,y:30},15);
+      tl.set("#s3-curve",{strokeDasharray:1100,strokeDashoffset:1100},15);
+      tl.to("#s3-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},15.4);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:1.8,ease:"power1.inOut"},16.0);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},18.6);
+
+      /* T->S4 文化は変えられる (27-40) */
+      tl.set("#scene4 .scene-content",{y:60},26.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},27);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},27);
+      tl.set("#s4-t1",{opacity:0,y:30},27);
+      tl.set("#s4-culture svg",{opacity:0,scale:0.6},27);
+      tl.set("#s4-arrow",{opacity:0,scale:0.4},27);
+      tl.set("#s4-telop",{opacity:0,y:30},27);
+      tl.to("#s4-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},27.4);
+      tl.to("#s4-culture svg",{opacity:1,scale:1,duration:0.45,stagger:0.7,ease:"back.out(1.6)"},28.2);
+      tl.to("#s4-arrow",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},29.0);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},30.6);
+
+      /* T->S5 オチ (40-45) */
+      tl.set("#scene5 .scene-content",{y:60},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},40);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},40);
+      tl.set("#s5-char",{opacity:0,scale:0.6},40);
+      tl.set("#s5-head",{opacity:0,y:40},40);
+      tl.set("#s5-sub",{opacity:0,y:25},40);
+      tl.set("#s5-url",{opacity:0,y:25},40);
+      tl.set("#s5-note",{opacity:0},40);
+      tl.to("#s5-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},40.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},41.0);
+      tl.to("#s5-sub",{opacity:1,y:0,duration:0.4,ease:"power2.out"},41.8);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},42.3);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},42.8);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
