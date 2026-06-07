@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 74px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 36px; color: #2f6f4f; background: #e6efe9; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 48px; line-height: 1.38; color: #2f6f4f; max-width: 860px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .bignum { font-weight: 900; font-size: 230px; color: #2f6f4f; font-variant-numeric: tabular-nums; line-height: 1; }
+      .graph { width: 780px; height: 440px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveCliff { fill: none; stroke: #d9893b; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 30px; font-weight: 700; }
+      .crowd-row { display: flex; gap: 16px; align-items: flex-end; justify-content: center; }
+      .moves { display: flex; gap: 30px; justify-content: center; }
+      .move { width: 350px; border-radius: 20px; padding: 26px 22px; background: #e6efe9;
+        font-weight: 900; font-size: 46px; color: #2f6f4f; line-height: 1.3; }
+      .move small { display: block; font-size: 32px; font-weight: 600; color: #1d2321; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-crowd" class="crowd-row"><svg width="96" height="114" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg><svg width="96" height="114" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg><svg width="96" height="114" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg><svg width="96" height="114" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg><svg width="96" height="114" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        <div id="s1-head" class="head">人を増やすと、組織は<br />ある日急に壊れる</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-num" class="bignum">150</div>
+        <div id="s2-t1" class="head" style="font-size:54px">安定して付き合える数の天井</div>
+        <div id="s2-telop" class="telop">脳の大きさが群れの大きさを決める（ダンバー）</div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:26px">
+        <div id="s3-tag" class="tag" style="color:#d9893b;background:#f7ece1">じわじわでなく "ガクッ"</div>
+        <svg id="s3-graph" class="graph" viewBox="0 0 780 440">
+          <line class="axis" x1="90" y1="40" x2="90" y2="380" />
+          <line class="axis" x1="90" y1="380" x2="730" y2="380" />
+          <text class="glabel" x="20" y="50" fill="#2f6f4f">結束</text>
+          <text class="glabel" x="610" y="425" fill="#6b7370">人数 N →</text>
+          <text class="glabel" x="150" y="120" fill="#2f6f4f" font-size="34">0.89</text>
+          <text class="glabel" x="560" y="350" fill="#d9893b" font-size="34">0.04</text>
+          <path id="s3-curve" class="curveCliff" d="M110,150 L360,158 L408,360 L700,366" />
+        </svg>
+        <div id="s3-telop" class="telop" style="font-size:44px">N=45で0.89 → N=55で<span class="hl">0.04</span><br />ある規模で高協力が消える（鞍点）</div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-t1" class="head" style="font-size:54px">「150」は定数でない<br />壁は<span class="hl">容量Dに比例</span></div>
+        <div id="s4-moves" class="moves">
+          <div class="move">① D を上げる<small>評判を可視化・透明性</small></div>
+          <div class="move">② 分割する<small>2ピザ・チーム</small></div>
+        </div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-char"><svg width="220" height="220" viewBox="0 0 280 280" aria-label="chimp">
+          <circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/>
+          <circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/>
+          <ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/>
+          <ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/>
+          <path d="M100,126 L136,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <path d="M180,126 L144,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/>
+          <circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/>
+          <ellipse cx="130" cy="188" rx="5" ry="7" fill="#3a2415"/><ellipse cx="150" cy="188" rx="5" ry="7" fill="#3a2415"/>
+          <path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s5-head" class="head" style="font-size:58px">人を足すだけでは<br />壁は越えられない</div>
+        <div id="s5-sub" class="telop" style="font-size:42px">越えた瞬間、チンパン型の政治へ</div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">「150」は推定値で普遍定数ではない。有界な容量が規模の壁を生む機構（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-crowd svg",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-crowd svg",{opacity:1,scale:1,duration:0.4,stagger:0.08,ease:"power2.out"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.9);
+
+      /* T->S2 ダンバー数150 (3-14) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-num",{opacity:0,scale:0.4},3);
+      tl.set("#s2-t1",{opacity:0,y:30},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.to("#s2-num",{opacity:1,scale:1,duration:0.7,ease:"back.out(1.8)"},3.4);
+      tl.to("#s2-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},4.6);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},5.8);
+
+      /* T->S3 崖グラフ (14-27) */
+      tl.set("#scene3 .scene-content",{y:60},13.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},14);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},14);
+      tl.set("#s3-tag",{opacity:0,scale:0.6},14);
+      tl.set("#s3-telop",{opacity:0,y:30},14);
+      tl.set("#s3-curve",{strokeDasharray:1400,strokeDashoffset:1400},14);
+      tl.to("#s3-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},14.4);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:2.2,ease:"power2.in"},15.0);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},19.6);
+
+      /* T->S4 打ち手2つ (27-40) */
+      tl.set("#scene4 .scene-content",{y:60},26.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},27);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},27);
+      tl.set("#s4-t1",{opacity:0,y:30},27);
+      tl.set("#s4-moves .move",{opacity:0,y:30},27);
+      tl.to("#s4-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},27.4);
+      tl.to("#s4-moves .move",{opacity:1,y:0,duration:0.5,stagger:0.22,ease:"back.out(1.5)"},28.4);
+
+      /* T->S5 オチ (40-45) */
+      tl.set("#scene5 .scene-content",{y:60},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},40);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},40);
+      tl.set("#s5-char",{opacity:0,scale:0.6},40);
+      tl.set("#s5-head",{opacity:0,y:40},40);
+      tl.set("#s5-sub",{opacity:0,y:25},40);
+      tl.set("#s5-url",{opacity:0,y:25},40);
+      tl.set("#s5-note",{opacity:0},40);
+      tl.to("#s5-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},40.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},41.0);
+      tl.to("#s5-sub",{opacity:1,y:0,duration:0.4,ease:"power2.out"},41.8);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},42.3);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},42.8);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

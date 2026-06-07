@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 74px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 36px; color: #d9893b; background: #f7ece1; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 48px; line-height: 1.38; color: #2f6f4f; max-width: 860px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .graph { width: 760px; height: 440px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveJ { fill: none; stroke: #2f6f4f; stroke-width: 9; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 30px; font-weight: 700; }
+      .crowd-row { display: flex; gap: 18px; align-items: flex-end; justify-content: center; }
+      .unit { position: relative; }
+      .fist { position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
+        font-weight: 900; font-size: 44px; color: #2f6f4f; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-crowd" class="crowd-row"><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg></div>
+        <div id="s1-head" class="head">なぜ人は耐え、<br />ある日いっせいに立つのか</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-char"><svg width="230" height="230" viewBox="0 0 280 280" aria-label="dog-helpless">
+          <ellipse cx="60" cy="128" rx="26" ry="52" fill="#a08a6e" transform="rotate(12 60 128)"/>
+          <ellipse cx="220" cy="128" rx="26" ry="52" fill="#a08a6e" transform="rotate(-12 220 128)"/>
+          <ellipse cx="140" cy="152" rx="84" ry="80" fill="#b59a78"/>
+          <ellipse cx="140" cy="188" rx="50" ry="42" fill="#d8c4a4"/>
+          <path d="M100,144 Q116,153 132,144" stroke="#1d2321" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M148,144 Q164,153 180,144" stroke="#1d2321" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="140" cy="176" rx="14" ry="10" fill="#1d2321"/>
+          <path d="M116,210 Q140,198 164,210" stroke="#5a4a32" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s2-t1" class="head" style="font-size:60px">学習性無力感</div>
+        <div id="s2-telop" class="telop">逃げられない電撃→逃げられても動かない<br />「何をしても無駄」が<span class="hl">固着</span></div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:28px">
+        <div id="s3-tag" class="tag">J字曲線（デイヴィス）</div>
+        <svg id="s3-graph" class="graph" viewBox="0 0 760 440">
+          <line class="axis" x1="90" y1="40" x2="90" y2="380" />
+          <line class="axis" x1="90" y1="380" x2="710" y2="380" />
+          <text class="glabel" x="20" y="50" fill="#2f6f4f">水準</text>
+          <text class="glabel" x="600" y="425" fill="#6b7370">時間 →</text>
+          <path id="s3-curve" class="curveJ" d="M110,300 C220,265 300,160 390,135 C455,165 480,300 610,320" />
+          <circle id="s3-spark" cx="486" cy="288" r="0" fill="#d9893b" />
+        </svg>
+        <div id="s3-telop" class="telop" style="font-size:44px">窮乏のピークでなく<br /><span class="hl">「統制可能と気づいた瞬間」</span></div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-t1" class="head" style="font-size:58px">勇気が<span style="color:#2f6f4f">伝播</span>する</div>
+        <div id="s4-crowd" class="crowd-row">
+          <div class="unit"><div id="s4-r1" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div id="s4-r2" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div id="s4-r3" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div id="s4-r4" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div id="s4-r5" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div id="s4-r6" class="fist">↑</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        </div>
+        <div id="s4-telop" class="telop" style="font-size:42px">恐怖は無条件・勇気は<br />「<span class="hl">自分にもできる</span>」と帰属して初めて</div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-crowd" class="crowd-row">
+          <div class="unit"><div class="fist">↑</div><svg width="105" height="124" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div class="fist">↑</div><svg width="105" height="124" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit"><div class="fist">↑</div><svg width="105" height="124" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        </div>
+        <div id="s5-head" class="head" style="font-size:62px">動かすのは苦しみでなく<br /><span class="hl">"勝てる証拠"</span></div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">機構を歴史の集団行動に当てるレンズであり、各事象の単一原因の断定ではない（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-crowd svg",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-crowd svg",{opacity:1,scale:1,duration:0.4,stagger:0.1,ease:"power2.out"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.8);
+
+      /* T->S2 学習性無力感 (3-15) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-char",{opacity:0,scale:0.6},3);
+      tl.set("#s2-t1",{opacity:0,y:30},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.to("#s2-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.4)"},3.4);
+      tl.to("#s2-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},4.0);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},5.0);
+      tl.to("#s2-char",{y:12,duration:1.0,ease:"power2.inOut"},6.2);
+
+      /* T->S3 引き金・J字 (15-27) */
+      tl.set("#scene3 .scene-content",{y:60},14.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},15);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},15);
+      tl.set("#s3-tag",{opacity:0,scale:0.6},15);
+      tl.set("#s3-telop",{opacity:0,y:30},15);
+      tl.set("#s3-curve",{strokeDasharray:1300,strokeDashoffset:1300},15);
+      tl.set("#s3-spark",{attr:{r:0}},15);
+      tl.to("#s3-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},15.4);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:2.0,ease:"power1.inOut"},16.0);
+      tl.to("#s3-spark",{attr:{r:16},duration:0.5,ease:"back.out(2.5)"},18.4);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},19.4);
+
+      /* T->S4 勇気カスケード (27-40) */
+      tl.set("#scene4 .scene-content",{y:60},26.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},27);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},27);
+      tl.set("#s4-t1",{opacity:0,y:30},27);
+      tl.set("#s4-crowd .unit",{opacity:0,scale:0.7},27);
+      tl.set("#s4-crowd .fist",{opacity:0,scale:0.3,y:12},27);
+      tl.set("#s4-telop",{opacity:0,y:30},27);
+      tl.to("#s4-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},27.4);
+      tl.to("#s4-crowd .unit",{opacity:1,scale:1,duration:0.4,stagger:0.06,ease:"power2.out"},28.0);
+      tl.to("#s4-r1",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},29.0);
+      tl.to("#s4-r2",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},29.4);
+      tl.to("#s4-r3",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},29.8);
+      tl.to("#s4-r4",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},30.2);
+      tl.to("#s4-r5",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},30.6);
+      tl.to("#s4-r6",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},31.0);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},32.0);
+
+      /* T->S5 オチ (40-45) */
+      tl.set("#scene5 .scene-content",{y:60},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},40);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},40);
+      tl.set("#s5-crowd .unit",{opacity:0,scale:0.5},40);
+      tl.set("#s5-head",{opacity:0,y:40},40);
+      tl.set("#s5-url",{opacity:0,y:25},40);
+      tl.set("#s5-note",{opacity:0},40);
+      tl.to("#s5-crowd .unit",{opacity:1,scale:1,duration:0.4,stagger:0.12,ease:"back.out(1.7)"},40.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},41.0);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},41.8);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},42.4);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
