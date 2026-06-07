@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; }
+      #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; }
+      #scene5 { z-index: 5; opacity: 0; }
+
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 140px 90px;
+        gap: 36px; box-sizing: border-box; text-align: center; }
+
+      /* typography: 見出し=明朝(声=ナレ/論)、口語=ゴシック太(声=キャラ) */
+      .serif { font-family: "Noto Sans JP", sans-serif; font-weight: 500; }
+      .head { font-family: "Noto Sans JP", sans-serif; font-weight: 900;
+        font-size: 92px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 46px; color: #6b7370; }
+      .speech { font-family: "Noto Sans JP", sans-serif; font-weight: 800;
+        font-size: 56px; line-height: 1.3; color: #1d2321;
+        background: #fff; border: 2px solid #e3e0d8; border-radius: 28px;
+        padding: 26px 38px; box-shadow: 0 6px 0 #e3e0d8; max-width: 760px; }
+      .telop { font-weight: 800; font-size: 50px; line-height: 1.35; color: #2f6f4f;
+        max-width: 800px; }
+      .hl { color: #d9893b; }
+      .formula { font-family: "Noto Sans JP", sans-serif;
+        font-variant-numeric: tabular-nums; font-size: 62px; font-weight: 700;
+        color: #1d2321; background: #e6efe9; border-radius: 18px; padding: 18px 32px; }
+      .tag { font-weight: 700; font-size: 34px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 26px; border-radius: 999px; }
+      .note { font-size: 28px; color: #6b7370; max-width: 720px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 40px; color: #2f6f4f; }
+
+      /* graph */
+      .graph { width: 760px; height: 520px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveA { fill: none; stroke: #2f6f4f; stroke-width: 8; stroke-linecap: round; }
+      .curveB { fill: none; stroke: #d9893b; stroke-width: 8; stroke-linecap: round; }
+      .cross { fill: #d9893b; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 30px; font-weight: 700; }
+
+      .row { display: flex; gap: 40px; align-items: flex-end; justify-content: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <!-- S1 フック -->
+      <div id="scene1" class="scene">
+        <div class="scene-content">
+          <div id="s1-char"><svg width="280" height="280" viewBox="0 0 280 280" aria-label="hyena">
+            <polygon points="70,70 58,12 118,55" fill="#b8a48c"/>
+            <polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+            <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+            <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+            <circle cx="108" cy="136" r="17" fill="#fff"/>
+            <circle cx="172" cy="136" r="17" fill="#fff"/>
+            <circle cx="110" cy="141" r="7.5" fill="#1d2321"/>
+            <circle cx="170" cy="141" r="7.5" fill="#1d2321"/>
+            <path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/>
+            <circle cx="96" cy="92" r="8" fill="#8a7960"/>
+            <circle cx="186" cy="98" r="7" fill="#8a7960"/>
+            <circle cx="122" cy="86" r="5" fill="#8a7960"/>
+          </svg></div>
+          <div id="s1-head" class="head">「明日やる」が<br />嘘になる理由</div>
+          <div id="s1-sub" class="sub serif">先延ばしの動物行動学</div>
+        </div>
+      </div>
+
+      <!-- S2 あるある -->
+      <div id="scene2" class="scene">
+        <div class="scene-content">
+          <div id="s2-char"><svg width="280" height="280" viewBox="0 0 280 280" aria-label="hyena">
+            <polygon points="70,70 58,12 118,55" fill="#b8a48c"/>
+            <polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+            <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+            <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+            <circle cx="108" cy="136" r="17" fill="#fff"/>
+            <circle cx="172" cy="136" r="17" fill="#fff"/>
+            <circle cx="110" cy="141" r="7.5" fill="#1d2321"/>
+            <circle cx="170" cy="141" r="7.5" fill="#1d2321"/>
+            <path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/>
+            <circle cx="96" cy="92" r="8" fill="#8a7960"/>
+            <circle cx="186" cy="98" r="7" fill="#8a7960"/>
+            <circle cx="122" cy="86" r="5" fill="#8a7960"/>
+          </svg></div>
+          <div id="s2-bubble1" class="speech">明日の俺は<br />天才だから！</div>
+          <div id="s2-bubble2" class="speech" style="color:#6b7370">……無理だった</div>
+        </div>
+      </div>
+
+      <!-- S3 ネタばらし -->
+      <div id="scene3" class="scene">
+        <div class="scene-content" style="gap:28px">
+          <div id="s3-tag" class="tag">意志じゃない</div>
+          <svg id="s3-graph" class="graph" viewBox="0 0 760 520">
+            <line class="axis" x1="80" y1="40" x2="80" y2="460" />
+            <line class="axis" x1="80" y1="460" x2="720" y2="460" />
+            <text class="glabel" x="30" y="50" fill="#6b7370">価値</text>
+            <text class="glabel" x="640" y="500" fill="#6b7370">時間</text>
+            <path id="s3-cA" class="curveA" d="M100,90 C260,110 360,420 700,452" />
+            <path id="s3-cB" class="curveB" d="M100,200 C320,230 430,430 700,448" />
+            <circle id="s3-cross" class="cross" cx="455" cy="392" r="0" />
+          </svg>
+          <div id="s3-formula" class="formula">V = A / (1 + k·D)</div>
+          <div id="s3-telop" class="telop"><span class="hl">選好の逆転</span>＝曲線の形の帰結</div>
+        </div>
+      </div>
+
+      <!-- S4 勝ち筋 -->
+      <div id="scene4" class="scene">
+        <div class="scene-content">
+          <div id="s4-char"><svg width="280" height="280" viewBox="0 0 280 280" aria-label="dove">
+            <ellipse cx="140" cy="186" rx="86" ry="74" fill="#eceef1"/>
+            <ellipse cx="78" cy="184" rx="44" ry="28" fill="#dde1e6" transform="rotate(-18 78 184)"/>
+            <circle cx="150" cy="98" r="54" fill="#f6f7f9"/>
+            <polygon points="198,96 256,84 198,116" fill="#d9893b"/>
+            <circle cx="140" cy="90" r="10" fill="#fff"/>
+            <circle cx="142" cy="92" r="5.5" fill="#1d2321"/>
+            <path d="M150,150 q-10,12 0,24" stroke="#cdd2d8" stroke-width="4" fill="none"/>
+          </svg></div>
+          <div id="s4-bubble" class="speech">来てから我慢は負け。<br />来る<span class="hl">前</span>に消す。</div>
+          <div id="s4-telop" class="telop">締切＝遠い報酬を<br />手前に引く<span class="hl">装置</span></div>
+        </div>
+      </div>
+
+      <!-- S5 オチ -->
+      <div id="scene5" class="scene">
+        <div class="scene-content">
+          <div id="s5-chars" class="row"><svg width="150" height="150" viewBox="0 0 280 280" aria-label="hyena">
+            <polygon points="70,70 58,12 118,55" fill="#b8a48c"/>
+            <polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+            <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+            <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+            <circle cx="108" cy="136" r="15" fill="#fff"/><circle cx="172" cy="136" r="15" fill="#fff"/>
+            <circle cx="110" cy="139" r="7" fill="#1d2321"/><circle cx="170" cy="139" r="7" fill="#1d2321"/>
+            <ellipse cx="140" cy="166" rx="13" ry="9" fill="#1d2321"/>
+          </svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="bonobo">
+            <circle cx="80" cy="80" r="34" fill="#2b2522"/><circle cx="200" cy="80" r="34" fill="#2b2522"/>
+            <ellipse cx="140" cy="150" rx="92" ry="92" fill="#3a322e"/>
+            <ellipse cx="140" cy="172" rx="60" ry="54" fill="#e7d8c5"/>
+            <circle cx="112" cy="140" r="24" fill="none" stroke="#2f6f4f" stroke-width="6"/>
+            <circle cx="168" cy="140" r="24" fill="none" stroke="#2f6f4f" stroke-width="6"/>
+            <line x1="136" y1="140" x2="144" y2="140" stroke="#2f6f4f" stroke-width="6"/>
+            <circle cx="112" cy="140" r="7" fill="#1d2321"/><circle cx="168" cy="140" r="7" fill="#1d2321"/>
+            <path d="M120,188 Q140,202 160,188" stroke="#1d2321" stroke-width="4" fill="none"/>
+          </svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="dove">
+            <ellipse cx="140" cy="186" rx="86" ry="74" fill="#eceef1"/>
+            <circle cx="150" cy="98" r="54" fill="#f6f7f9"/>
+            <polygon points="198,96 256,84 198,116" fill="#d9893b"/>
+            <circle cx="140" cy="92" r="8" fill="#1d2321"/>
+          </svg></div>
+          <div id="s5-head" class="head" style="font-size:56px; letter-spacing:-0.03em">先延ばしは性格じゃない。<br />曲線の形だ。</div>
+          <div id="s5-url" class="url">続きは記事へ → 動物から組織を読む</div>
+          <div id="s5-note" class="note">式で機構を表したもの。「必ず直る」効果保証ではない。</div>
+        </div>
+      </div>
+
+      <audio id="bgm" src="bgm-calm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:60},0);
+      tl.set("#s1-sub",{opacity:0,y:30},0);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.6)"},0.15);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},0.4);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.5,ease:"power2.out"},0.85);
+      tl.to("#s1-char",{y:-10,duration:0.9,ease:"sine.inOut",yoyo:true,repeat:1},1.1);
+
+      /* T1 -> S2 (3) */
+      tl.set("#scene2 .scene-content",{y:70},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.45,ease:"power2.inOut"},3.0);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.55,ease:"power3.out"},3.0);
+
+      /* S2 あるある (3-12) */
+      tl.set("#s2-char",{opacity:0,scale:0.7},3.0);
+      tl.set("#s2-bubble1",{opacity:0,scale:0.6},3.0);
+      tl.set("#s2-bubble2",{opacity:0,scale:0.6},3.0);
+      tl.to("#s2-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},3.4);
+      tl.to("#s2-bubble1",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},3.9);
+      tl.to("#s2-char",{rotation:-4,duration:0.6,ease:"sine.inOut",yoyo:true,repeat:3},4.6);
+      tl.to("#s2-bubble2",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},8.2);
+
+      /* T2 -> S3 (12) */
+      tl.set("#scene3 .scene-content",{y:70},11.9);
+      tl.to("#scene3",{opacity:1,duration:0.45,ease:"power2.inOut"},12.0);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.55,ease:"power3.out"},12.0);
+
+      /* S3 ネタばらし (12-28) */
+      tl.set("#s3-tag",{opacity:0,scale:0.6},12.0);
+      tl.set("#s3-formula",{opacity:0,y:40},12.0);
+      tl.set("#s3-telop",{opacity:0,y:40},12.0);
+      tl.set("#s3-cA",{strokeDasharray:1200,strokeDashoffset:1200},12.0);
+      tl.set("#s3-cB",{strokeDasharray:1200,strokeDashoffset:1200},12.0);
+      tl.set("#s3-cross",{attr:{r:0}},12.0);
+      tl.to("#s3-tag",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},12.5);
+      tl.to("#s3-cA",{strokeDashoffset:0,duration:1.5,ease:"power1.inOut"},13.0);
+      tl.to("#s3-cB",{strokeDashoffset:0,duration:1.5,ease:"power1.inOut"},13.6);
+      tl.to("#s3-cross",{attr:{r:15},duration:0.5,ease:"back.out(2.5)"},15.6);
+      tl.to("#s3-formula",{opacity:1,y:0,duration:0.6,ease:"power3.out"},17.0);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.6,ease:"power2.out"},18.4);
+
+      /* T3 -> S4 (28) */
+      tl.set("#scene4 .scene-content",{y:70},27.9);
+      tl.to("#scene4",{opacity:1,duration:0.45,ease:"power2.inOut"},28.0);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.55,ease:"power3.out"},28.0);
+
+      /* S4 勝ち筋 (28-40) */
+      tl.set("#s4-char",{opacity:0,scale:0.7},28.0);
+      tl.set("#s4-bubble",{opacity:0,scale:0.6},28.0);
+      tl.set("#s4-telop",{opacity:0,y:40},28.0);
+      tl.to("#s4-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},28.5);
+      tl.to("#s4-bubble",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},29.1);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.6,ease:"power3.out"},30.6);
+      tl.to("#s4-char",{y:-10,duration:0.8,ease:"sine.inOut",yoyo:true,repeat:4},31.5);
+
+      /* T4 -> S5 (40) */
+      tl.set("#scene5 .scene-content",{y:70},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.45,ease:"power2.inOut"},40.0);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.55,ease:"power3.out"},40.0);
+
+      /* S5 オチ (40-45) */
+      tl.set("#s5-head",{opacity:0,y:50},40.0);
+      tl.set("#s5-url",{opacity:0,y:30},40.0);
+      tl.set("#s5-note",{opacity:0},40.0);
+      tl.set("#s5-chars svg",{opacity:0,scale:0.5},40.0);
+      tl.to("#s5-chars svg",{opacity:1,scale:1,duration:0.5,stagger:0.12,ease:"back.out(1.8)"},40.5);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},41.2);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.5,ease:"power2.out"},42.0);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},42.6);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
