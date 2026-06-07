@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 78px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 36px; color: #d9893b; background: #f7ece1; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 50px; line-height: 1.38; color: #2f6f4f; max-width: 840px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .graph { width: 760px; height: 480px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveDown { fill: none; stroke: #2f6f4f; stroke-width: 9; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 32px; font-weight: 700; }
+      .degrade-row { display: flex; gap: 40px; justify-content: center; }
+      .degrade { display: flex; flex-direction: column; align-items: center; gap: 12px;
+        font-weight: 700; font-size: 36px; color: #1d2321; }
+      .row { display: flex; gap: 60px; align-items: flex-end; justify-content: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-char"><svg width="200" height="240" viewBox="0 0 280 280" aria-label="ant">
+          <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+          <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+          <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+          <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+          <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-head" class="head">悪い知らせが<br />上がらない組織</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content" style="gap:30px">
+        <div id="s2-tag" class="tag">恐怖 ⇄ 学習</div>
+        <svg id="s2-graph" class="graph" viewBox="0 0 760 480">
+          <line class="axis" x1="90" y1="40" x2="90" y2="420" />
+          <line class="axis" x1="90" y1="420" x2="710" y2="420" />
+          <text class="glabel" x="28" y="50" fill="#2f6f4f">学習</text>
+          <text class="glabel" x="600" y="465" fill="#d9893b">恐怖 →</text>
+          <path id="s2-curve" class="curveDown" d="M115,80 C320,100 430,380 700,408" />
+        </svg>
+        <div id="s2-telop" class="telop">締めるほど誰も実験せず<br /><span class="hl">失敗を隠す</span></div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-char"><svg width="200" height="240" viewBox="0 0 280 280" aria-label="ant">
+          <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+          <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+          <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+          <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+          <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+        </svg></div>
+        <div id="s3-t1" class="head" style="font-size:64px">恐怖は<span class="hl">同時に</span>殺す</div>
+        <div id="s3-icons" class="degrade-row">
+          <div class="degrade"><svg width="100" height="100" viewBox="0 0 100 100" aria-label="explore">
+            <ellipse cx="50" cy="50" rx="38" ry="22" fill="none" stroke="#6b7370" stroke-width="5"/>
+            <circle cx="50" cy="50" r="12" fill="#6b7370"/>
+            <line x1="22" y1="76" x2="78" y2="24" stroke="#d9893b" stroke-width="7" stroke-linecap="round"/>
+          </svg>探索</div>
+          <div class="degrade"><svg width="100" height="100" viewBox="0 0 100 100" aria-label="longterm">
+            <circle cx="50" cy="52" r="32" fill="none" stroke="#6b7370" stroke-width="5"/>
+            <line x1="50" y1="52" x2="50" y2="30" stroke="#6b7370" stroke-width="5" stroke-linecap="round"/>
+            <line x1="50" y1="52" x2="66" y2="60" stroke="#6b7370" stroke-width="5" stroke-linecap="round"/>
+            <line x1="22" y1="78" x2="78" y2="24" stroke="#d9893b" stroke-width="7" stroke-linecap="round"/>
+          </svg>長期</div>
+          <div class="degrade"><svg width="100" height="100" viewBox="0 0 100 100" aria-label="agency">
+            <circle cx="50" cy="32" r="15" fill="#6b7370"/>
+            <path d="M26,78 Q50,52 74,78 Z" fill="#6b7370"/>
+            <line x1="22" y1="78" x2="78" y2="22" stroke="#d9893b" stroke-width="7" stroke-linecap="round"/>
+          </svg>主体性</div>
+        </div>
+        <div id="s3-telop" class="telop" style="font-size:42px">Nokia ＝ 恐怖が情報を止めた</div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-char"><svg width="240" height="240" viewBox="0 0 280 280" aria-label="wolf">
+          <polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+          <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+          <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+          <circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/>
+          <circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/>
+          <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+          <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s4-t1" class="head" style="font-size:60px">高い基準 <span style="color:#2f6f4f">×</span> 高い安全</div>
+        <div id="s4-telop" class="telop">恐怖↓・説明責任は保つ<br />＝心理的安全性（Google）</div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-chars" class="row"><svg width="105" height="125" viewBox="0 0 280 280" aria-label="ant">
+          <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+          <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+          <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+          <circle cx="126" cy="76" r="5" fill="#fff"/><circle cx="154" cy="76" r="5" fill="#fff"/>
+        </svg><svg width="125" height="125" viewBox="0 0 280 280" aria-label="wolf">
+          <polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+          <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+          <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+          <circle cx="111" cy="139" r="9" fill="#c9aa3c"/><circle cx="169" cy="139" r="9" fill="#c9aa3c"/>
+          <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+          <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s5-head" class="head" style="font-size:58px">恐怖は不作為に効く。<br />創意・率直には効かない</div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">理論の型が事例に見える挿絵であり、単一原因の断定ではない（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) — アリ萎縮 */
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.4)"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.7);
+      tl.to("#s1-char",{scale:0.9,y:10,duration:0.8,ease:"power2.inOut",yoyo:true,repeat:1},1.6);
+
+      /* T->S2 グラフ (3-15) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-tag",{opacity:0,scale:0.6},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.set("#s2-curve",{strokeDasharray:1200,strokeDashoffset:1200},3);
+      tl.to("#s2-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},3.4);
+      tl.to("#s2-curve",{strokeDashoffset:0,duration:2.0,ease:"power1.inOut"},4.0);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},9.0);
+
+      /* T->S3 3劣化 (15-26) */
+      tl.set("#scene3 .scene-content",{y:60},14.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},15);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},15);
+      tl.set("#s3-char",{opacity:0,scale:0.6},15);
+      tl.set("#s3-t1",{opacity:0,y:30},15);
+      tl.set("#s3-icons .degrade",{opacity:0,y:30},15);
+      tl.set("#s3-telop",{opacity:0,y:20},15);
+      tl.to("#s3-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},15.4);
+      tl.to("#s3-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},16.0);
+      tl.to("#s3-icons .degrade",{opacity:1,y:0,duration:0.45,stagger:0.28,ease:"back.out(1.7)"},16.8);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},19.4);
+
+      /* T->S4 安全性 (26-38) */
+      tl.set("#scene4 .scene-content",{y:60},25.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},26);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},26);
+      tl.set("#s4-char",{opacity:0,scale:0.6},26);
+      tl.set("#s4-t1",{opacity:0,y:30},26);
+      tl.set("#s4-telop",{opacity:0,y:30},26);
+      tl.to("#s4-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},26.4);
+      tl.to("#s4-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},27.2);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},28.6);
+      tl.to("#s4-char",{y:-10,duration:0.9,ease:"sine.inOut",yoyo:true,repeat:3},29.6);
+
+      /* T->S5 オチ (38-45) */
+      tl.set("#scene5 .scene-content",{y:60},37.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},38);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},38);
+      tl.set("#s5-chars svg",{opacity:0,scale:0.5},38);
+      tl.set("#s5-head",{opacity:0,y:40},38);
+      tl.set("#s5-url",{opacity:0,y:25},38);
+      tl.set("#s5-note",{opacity:0},38);
+      tl.to("#s5-chars svg",{opacity:1,scale:1,duration:0.4,stagger:0.15,ease:"back.out(1.7)"},38.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},39.0);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},39.9);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},40.5);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
