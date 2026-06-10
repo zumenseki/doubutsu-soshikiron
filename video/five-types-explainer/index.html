@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      #scene6 { z-index: 6; opacity: 0; } #scene7 { z-index: 7; opacity: 0; }
+      #scene8 { z-index: 8; opacity: 0; } #scene9 { z-index: 9; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.14em; }
+      .head { font-weight: 900; font-size: 78px; line-height: 1.3; color: #1d2321;
+        letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; }
+      .hl { color: #d9893b; }
+      .row5 { display: flex; gap: 46px; align-items: flex-end; justify-content: center; }
+
+      /* s2 ダイヤル */
+      .dials { display: flex; gap: 30px; justify-content: center; }
+      .dial { width: 330px; background: #fff; border: 2px solid #e3e0d8; border-radius: 22px;
+        padding: 30px 24px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      .dial-name { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .dial-desc { font-weight: 600; font-size: 26px; color: #6b7370; line-height: 1.4; }
+      .dial-bar { width: 240px; height: 14px; border-radius: 7px; background: #e6efe9; overflow: hidden; }
+      .dial-fill { height: 100%; border-radius: 7px; background: #2f6f4f; }
+      .tradeoff { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 16px 44px; border-radius: 999px; }
+
+      /* s3-7 型シーン */
+      .type-grid { display: flex; flex-direction: row; align-items: center; gap: 80px;
+        justify-content: center; text-align: left; }
+      .type-left { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 540px; }
+      .type-name { font-weight: 900; font-size: 84px; color: #1d2321; letter-spacing: -0.02em; }
+      .type-axis { font-weight: 800; font-size: 38px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 32px; border-radius: 999px; }
+      .type-right { display: flex; flex-direction: column; gap: 22px; width: 760px; }
+      .tcard { border-radius: 18px; padding: 26px 34px; display: flex; gap: 24px; align-items: baseline; }
+      .tcard-label { font-weight: 900; font-size: 32px; flex: 0 0 130px; }
+      .tcard-body { font-weight: 700; font-size: 34px; line-height: 1.4; color: #1d2321; }
+      .tcard.strength { background: #e6efe9; } .tcard.strength .tcard-label { color: #2f6f4f; }
+      .tcard.weakness { background: #fff; border: 2px solid #e3e0d8; }
+      .tcard.weakness .tcard-label { color: #d9893b; }
+      .tcard.habitat { background: #2f6f4f; }
+      .tcard.habitat .tcard-label { color: #cfe3d8; }
+      .tcard.habitat .tcard-body { color: #fff; }
+
+      /* s8 階層図 */
+      .layers { display: flex; flex-direction: column; gap: 18px; width: 1100px; }
+      .layer { display: flex; align-items: center; gap: 28px; background: #fff;
+        border: 2px solid #e3e0d8; border-radius: 18px; padding: 14px 36px; }
+      .layer-name { font-weight: 900; font-size: 38px; color: #1d2321; flex: 0 0 190px; text-align: left; }
+      .layer-animal { font-weight: 800; font-size: 34px; color: #2f6f4f; flex: 1; text-align: left; }
+      .designer { font-weight: 900; font-size: 54px; color: #d9893b; }
+
+      /* s9 結び */
+      .end-stack { display: flex; flex-direction: column; gap: 30px; align-items: center; }
+      .note { font-size: 26px; color: #6b7370; max-width: 1100px; line-height: 1.5; }
+      .cta { font-weight: 900; font-size: 64px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 34px; color: #2f6f4f; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto;
+        width: fit-content; max-width: 1560px; padding: 16px 42px;
+        background: rgba(29,35,33,0.82); border-radius: 16px; color: #fff;
+        font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="209">
+
+      <!-- S1 フック 0-23 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">動物から組織を読む</div>
+        <div id="s1-head" class="head">あなたの組織は、<span class="hl">どの動物の群れ</span>か</div>
+        <div id="s1-chars" class="row5"><svg width="140" height="140" viewBox="0 0 280 280" aria-label="wolf"><polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/><circle cx="111" cy="139" r="9" fill="#c9aa3c"/><circle cx="169" cy="139" r="9" fill="#c9aa3c"/><circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/><ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/></svg><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="5" fill="#fff"/><circle cx="154" cy="76" r="5" fill="#fff"/></svg><svg width="140" height="140" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><circle cx="117" cy="153" r="9" fill="#1d2321"/><circle cx="163" cy="153" r="9" fill="#1d2321"/><path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg><svg width="140" height="140" viewBox="0 0 280 280" aria-label="bonobo"><circle cx="80" cy="80" r="34" fill="#2b2522"/><circle cx="200" cy="80" r="34" fill="#2b2522"/><ellipse cx="140" cy="150" rx="92" ry="92" fill="#3a322e"/><ellipse cx="140" cy="172" rx="60" ry="54" fill="#e7d8c5"/><circle cx="112" cy="140" r="22" fill="none" stroke="#2f6f4f" stroke-width="6"/><circle cx="168" cy="140" r="22" fill="none" stroke="#2f6f4f" stroke-width="6"/><circle cx="112" cy="140" r="7" fill="#1d2321"/><circle cx="168" cy="140" r="7" fill="#1d2321"/></svg><svg width="140" height="140" viewBox="0 0 280 280" aria-label="hyena"><polygon points="70,70 58,12 118,55" fill="#b8a48c"/><polygon points="210,70 222,12 162,55" fill="#b8a48c"/><ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/><ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/><circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/><ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/></svg></div>
+        <div id="s1-sub" class="sub">これは生物学ではなく、組織を読むための「レンズ」です</div>
+      </div></div>
+
+      <!-- S2 4ダイヤル 23-55.7 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:64px">すべての施策は、<span class="hl">4つのダイヤル</span>を回している</div>
+        <div id="s2-dials" class="dials">
+          <div class="dial" id="dial-fear"><div class="dial-name">恐怖</div>
+            <div class="dial-bar"><div class="dial-fill" style="width:78%"></div></div>
+            <div class="dial-desc">緊張・順守・スピード</div></div>
+          <div class="dial" id="dial-reward"><div class="dial-name">報酬</div>
+            <div class="dial-bar"><div class="dial-fill" style="width:64%"></div></div>
+            <div class="dial-desc">努力・地位獲得</div></div>
+          <div class="dial" id="dial-learn"><div class="dial-name">学習</div>
+            <div class="dial-bar"><div class="dial-fill" style="width:52%"></div></div>
+            <div class="dial-desc">適応・改善・探索</div></div>
+          <div class="dial" id="dial-conform"><div class="dial-name">同調</div>
+            <div class="dial-bar"><div class="dial-fill" style="width:58%"></div></div>
+            <div class="dial-desc">連携・文化</div></div>
+        </div>
+        <div id="s2-tradeoff" class="tradeoff">恐怖 ⇄ 学習 は<span class="hl">トレードオフ</span></div>
+      </div></div>
+
+      <!-- S3 オオカミ 55.7-72.0 -->
+      <div id="scene3" class="scene"><div class="scene-content"><div class="type-grid">
+        <div class="type-left" id="s3-left">
+          <svg width="340" height="340" viewBox="0 0 280 280" aria-label="wolf">
+            <polygon points="72,74 54,6 122,52" fill="#8a97a5"/>
+            <polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+            <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+            <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+            <circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/>
+            <circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/>
+            <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+            <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+            <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+          </svg>
+          <div class="type-name" id="s3-name">オオカミ型</div>
+          <div class="type-axis" id="s3-axis">学習 × 承認</div>
+        </div>
+        <div class="type-right">
+          <div class="tcard strength" id="s3-c1"><div class="tcard-label">強み</div>
+            <div class="tcard-body">スピード・創造・変化対応</div></div>
+          <div class="tcard weakness" id="s3-c2"><div class="tcard-label">弱み</div>
+            <div class="tcard-body">属人化・拡大に弱い</div></div>
+          <div class="tcard habitat" id="s3-c3"><div class="tcard-label">生息域</div>
+            <div class="tcard-body">スタートアップ／R&amp;D／精鋭</div></div>
+        </div>
+      </div></div></div>
+
+      <!-- S4 アリ 72.0-87.6 -->
+      <div id="scene4" class="scene"><div class="scene-content"><div class="type-grid">
+        <div class="type-left" id="s4-left">
+          <svg width="300" height="340" viewBox="0 0 280 280" aria-label="ant">
+            <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+            <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+            <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+            <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+            <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+            <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+          </svg>
+          <div class="type-name" id="s4-name">アリ型</div>
+          <div class="type-axis" id="s4-axis">同調 × 理念</div>
+        </div>
+        <div class="type-right">
+          <div class="tcard strength" id="s4-c1"><div class="tcard-label">強み</div>
+            <div class="tcard-body">大規模・再現性・安定</div></div>
+          <div class="tcard weakness" id="s4-c2"><div class="tcard-label">弱み</div>
+            <div class="tcard-body">創造性低下・官僚化</div></div>
+          <div class="tcard habitat" id="s4-c3"><div class="tcard-label">生息域</div>
+            <div class="tcard-body">チェーン／工場／行政</div></div>
+        </div>
+      </div></div></div>
+
+      <!-- S5 チンパン 87.6-106.3 -->
+      <div id="scene5" class="scene"><div class="scene-content"><div class="type-grid">
+        <div class="type-left" id="s5-left">
+          <svg width="340" height="340" viewBox="0 0 280 280" aria-label="chimp">
+            <circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/>
+            <circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/>
+            <ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/>
+            <ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/>
+            <path d="M100,126 L136,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+            <path d="M180,126 L144,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/>
+            <circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/>
+            <ellipse cx="130" cy="188" rx="5" ry="7" fill="#3a2415"/><ellipse cx="150" cy="188" rx="5" ry="7" fill="#3a2415"/>
+            <path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="type-name" id="s5-name">チンパン型</div>
+          <div class="type-axis" id="s5-axis">地位 × 政治</div>
+        </div>
+        <div class="type-right">
+          <div class="tcard strength" id="s5-c1"><div class="tcard-label">強み</div>
+            <div class="tcard-body">権力の安定・大規模統治</div></div>
+          <div class="tcard weakness" id="s5-c2"><div class="tcard-label">弱み</div>
+            <div class="tcard-body">社内政治・情報隠蔽</div></div>
+          <div class="tcard habitat" id="s5-c3"><div class="tcard-label">生息域</div>
+            <div class="tcard-body">大企業本社／官僚機構</div></div>
+        </div>
+      </div></div></div>
+
+      <!-- S6 ボノボ 106.3-122.9 -->
+      <div id="scene6" class="scene"><div class="scene-content"><div class="type-grid">
+        <div class="type-left" id="s6-left">
+          <svg width="340" height="340" viewBox="0 0 280 280" aria-label="bonobo">
+            <circle cx="80" cy="80" r="34" fill="#2b2522"/><circle cx="200" cy="80" r="34" fill="#2b2522"/>
+            <ellipse cx="140" cy="150" rx="92" ry="92" fill="#3a322e"/>
+            <ellipse cx="140" cy="172" rx="60" ry="54" fill="#e7d8c5"/>
+            <circle cx="112" cy="140" r="24" fill="none" stroke="#2f6f4f" stroke-width="6"/>
+            <circle cx="168" cy="140" r="24" fill="none" stroke="#2f6f4f" stroke-width="6"/>
+            <line x1="136" y1="140" x2="144" y2="140" stroke="#2f6f4f" stroke-width="6"/>
+            <circle cx="112" cy="140" r="7" fill="#1d2321"/><circle cx="168" cy="140" r="7" fill="#1d2321"/>
+            <path d="M120,188 Q140,202 160,188" stroke="#1d2321" stroke-width="4" fill="none"/>
+          </svg>
+          <div class="type-name" id="s6-name">ボノボ型</div>
+          <div class="type-axis" id="s6-axis">共感 × 低恐怖</div>
+        </div>
+        <div class="type-right">
+          <div class="tcard strength" id="s6-c1"><div class="tcard-label">強み</div>
+            <div class="tcard-body">低離職・協調・安定</div></div>
+          <div class="tcard weakness" id="s6-c2"><div class="tcard-label">弱み</div>
+            <div class="tcard-body">決定が遅い・ぬるま湯</div></div>
+          <div class="tcard habitat" id="s6-c3"><div class="tcard-label">生息域</div>
+            <div class="tcard-body">福祉／教育／支援</div></div>
+        </div>
+      </div></div></div>
+
+      <!-- S7 ハイエナ 122.9-141.6 -->
+      <div id="scene7" class="scene"><div class="scene-content"><div class="type-grid">
+        <div class="type-left" id="s7-left">
+          <svg width="340" height="340" viewBox="0 0 280 280" aria-label="hyena">
+            <polygon points="70,70 58,12 118,55" fill="#b8a48c"/>
+            <polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+            <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+            <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+            <circle cx="108" cy="136" r="17" fill="#fff"/><circle cx="172" cy="136" r="17" fill="#fff"/>
+            <circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/>
+            <path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/>
+          </svg>
+          <div class="type-name" id="s7-name">ハイエナ型</div>
+          <div class="type-axis" id="s7-axis">金 × 未達への恐怖</div>
+        </div>
+        <div class="type-right">
+          <div class="tcard strength" id="s7-c1"><div class="tcard-label">強み</div>
+            <div class="tcard-body">営業の爆発力・数字への執着</div></div>
+          <div class="tcard weakness" id="s7-c2"><div class="tcard-label">弱み</div>
+            <div class="tcard-body">燃え尽き・離職・不正</div></div>
+          <div class="tcard habitat" id="s7-c3"><div class="tcard-label">生息域</div>
+            <div class="tcard-body">歩合営業／金融</div></div>
+        </div>
+      </div></div></div>
+
+      <!-- S8 純血種はいない 141.6-174.0 -->
+      <div id="scene8" class="scene"><div class="scene-content" style="gap:28px">
+        <div id="s8-head" class="head" style="font-size:66px">純血種は、<span class="hl">存在しない</span></div>
+        <div class="layers" id="s8-layers">
+          <div class="layer" id="s8-l1"><div class="layer-name">現場</div>
+            <div class="layer-animal">オオカミ — スピードと創造</div></div>
+          <div class="layer" id="s8-l2"><div class="layer-name">管理</div>
+            <div class="layer-animal">アリ — 再現性と安定</div></div>
+          <div class="layer" id="s8-l3"><div class="layer-name">経営</div>
+            <div class="layer-animal">チンパン — 政治を制御する</div></div>
+          <div class="layer" id="s8-l4"><div class="layer-name">文化</div>
+            <div class="layer-animal">ボノボ — 安全と定着を撒く</div></div>
+        </div>
+        <div id="s8-designer" class="designer">リーダー ＝ 生態系の設計者</div>
+      </div></div>
+
+      <!-- S9 結び 174.0-209 -->
+      <div id="scene9" class="scene"><div class="scene-content end-stack">
+        <div id="s9-head" class="head" style="font-size:60px">組織は放っておくと<span class="hl">硬直へ老化</span>する<br />解は、再野生化</div>
+        <div id="s9-chars" class="row5"><svg width="120" height="120" viewBox="0 0 280 280" aria-label="wolf"><polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/><circle cx="111" cy="139" r="9" fill="#c9aa3c"/><circle cx="169" cy="139" r="9" fill="#c9aa3c"/><circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/><ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/></svg><svg width="100" height="120" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="5" fill="#fff"/><circle cx="154" cy="76" r="5" fill="#fff"/></svg><svg width="120" height="120" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><circle cx="117" cy="153" r="9" fill="#1d2321"/><circle cx="163" cy="153" r="9" fill="#1d2321"/><path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg><svg width="120" height="120" viewBox="0 0 280 280" aria-label="bonobo"><circle cx="80" cy="80" r="34" fill="#2b2522"/><circle cx="200" cy="80" r="34" fill="#2b2522"/><ellipse cx="140" cy="150" rx="92" ry="92" fill="#3a322e"/><ellipse cx="140" cy="172" rx="60" ry="54" fill="#e7d8c5"/><circle cx="112" cy="140" r="22" fill="none" stroke="#2f6f4f" stroke-width="6"/><circle cx="168" cy="140" r="22" fill="none" stroke="#2f6f4f" stroke-width="6"/><circle cx="112" cy="140" r="7" fill="#1d2321"/><circle cx="168" cy="140" r="7" fill="#1d2321"/></svg><svg width="120" height="120" viewBox="0 0 280 280" aria-label="hyena"><polygon points="70,70 58,12 118,55" fill="#b8a48c"/><polygon points="210,70 222,12 162,55" fill="#b8a48c"/><ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/><ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/><circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/><ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/></svg></div>
+        <div id="s9-cta" class="cta">あなたの組織はいま、<span class="hl">どの動物</span>に寄っている？</div>
+        <div id="s9-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s9-note" class="note">※これは生物学ではなく組織を読む比喩（レンズ）。純血種は存在せず、効果を保証する理論でもありません。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="209" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="21.28" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="23.5" data-duration="31.39" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="56.1" data-duration="84.79" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="142.1" data-duration="31.22" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="174.5" data-duration="31.29" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-23) — ナレcue: 動物列挙4.77 / レンズ9.07 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-chars svg",{opacity:0,scale:0.5},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},0.5);
+      tl.to("#s1-chars svg",{opacity:1,scale:1,duration:0.45,stagger:0.12,ease:"back.out(1.7)"},4.8);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},9.2);
+
+      /* シーンクロスフェード共通 */
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 4ダイヤル (23.0-55.7) — ナレcue: 恐怖29.61/報酬32.33/学習35.24/同調37.84/トレードオフ40.38 */
+      xfade(2,23.0);
+      tl.set("#s2-head",{opacity:0,y:30},23.0);
+      tl.set("#s2-dials .dial",{opacity:0,y:40},23.0);
+      tl.set("#s2-tradeoff",{opacity:0,scale:0.8},23.0);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},23.6);
+      tl.to("#dial-fear",{opacity:1,y:0,duration:0.5,ease:"back.out(1.5)"},29.6);
+      tl.to("#dial-reward",{opacity:1,y:0,duration:0.5,ease:"back.out(1.5)"},32.3);
+      tl.to("#dial-learn",{opacity:1,y:0,duration:0.5,ease:"back.out(1.5)"},35.2);
+      tl.to("#dial-conform",{opacity:1,y:0,duration:0.5,ease:"back.out(1.5)"},37.8);
+      tl.to("#s2-tradeoff",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},40.5);
+
+      /* 型シーン共通 — cue=[主軸,強み,弱み,生息域] (SRT実測) */
+      function typeScene(s,t,cue){
+        xfade(s,t);
+        tl.set("#s"+s+"-left svg",{opacity:0,scale:0.6},t);
+        tl.set("#s"+s+"-name",{opacity:0,y:24},t);
+        tl.set("#s"+s+"-axis",{opacity:0,scale:0.75},t);
+        tl.set("#scene"+s+" .tcard",{opacity:0,x:60},t);
+        tl.to("#s"+s+"-left svg",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},t+0.3);
+        tl.to("#s"+s+"-name",{opacity:1,y:0,duration:0.45,ease:"power3.out"},t+0.55);
+        tl.to("#s"+s+"-axis",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},cue[0]);
+        tl.to("#s"+s+"-c1",{opacity:1,x:0,duration:0.5,ease:"power2.out"},cue[1]);
+        tl.to("#s"+s+"-c2",{opacity:1,x:0,duration:0.5,ease:"power2.out"},cue[2]);
+        tl.to("#s"+s+"-c3",{opacity:1,x:0,duration:0.5,ease:"expo.out"},cue[3]);
+      }
+      typeScene(3,55.7,[58.5,61.0,65.2,68.8]);    /* オオカミ */
+      typeScene(4,72.0,[74.3,76.7,80.7,84.3]);    /* アリ */
+      typeScene(5,87.6,[90.2,92.5,96.5,100.2]);   /* チンパン */
+      typeScene(6,106.3,[108.8,112.1,115.8,119.2]); /* ボノボ */
+      typeScene(7,122.9,[125.6,129.0,133.3,136.8]); /* ハイエナ */
+
+      /* S8 混成 (141.6-174.0) — ナレcue: 純血種144.16/現場は156.55/リーダー163.61 */
+      xfade(8,141.6);
+      tl.set("#s8-head",{opacity:0,y:30},141.6);
+      tl.set("#s8-layers .layer",{opacity:0,x:-50},141.6);
+      tl.set("#s8-designer",{opacity:0,scale:0.8},141.6);
+      tl.to("#s8-head",{opacity:1,y:0,duration:0.55,ease:"power3.out"},144.1);
+      tl.to("#s8-l1",{opacity:1,x:0,duration:0.45,ease:"power2.out"},156.6);
+      tl.to("#s8-l2",{opacity:1,x:0,duration:0.45,ease:"power2.out"},158.2);
+      tl.to("#s8-l3",{opacity:1,x:0,duration:0.45,ease:"power2.out"},159.8);
+      tl.to("#s8-l4",{opacity:1,x:0,duration:0.45,ease:"power2.out"},161.4);
+      tl.to("#s8-designer",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.8)"},164.0);
+
+      /* S9 結び (174.0-209) — ナレcue: 老化175.99/再野生化190.0/§0注195.84/CTA201.65 */
+      xfade(9,174.0);
+      tl.set("#s9-head",{opacity:0,y:30},174.0);
+      tl.set("#s9-chars svg",{opacity:0,scale:0.5},174.0);
+      tl.set("#s9-cta",{opacity:0,y:24},174.0);
+      tl.set("#s9-brand",{opacity:0},174.0);
+      tl.set("#s9-note",{opacity:0},174.0);
+      tl.to("#s9-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},175.9);
+      tl.to("#s9-chars svg",{opacity:1,scale:1,duration:0.4,stagger:0.1,ease:"back.out(1.7)"},190.0);
+      tl.to("#s9-note",{opacity:1,duration:0.5,ease:"power1.out"},195.9);
+      tl.to("#s9-cta",{opacity:1,y:0,duration:0.55,ease:"power3.out"},201.7);
+      tl.to("#s9-brand",{opacity:1,duration:0.5,ease:"power1.out"},203.5);
+
+      var GROUPS = [
+        {s:1.1,e:4.77,t:"あなたの組織は、どの動物の群れでしょうか。"},
+        {s:4.77,e:9.07,t:"オオカミ、アリ、チンパンジー、ボノボ、ハイエナ。"},
+        {s:9.07,e:15.98,t:"先にお断りしておくと、これは生物学ではなく、組織を読むための比喩、レンズです。"},
+        {s:15.98,e:22.23,t:"決めつけるためではなく、組織がいま、どの動物に寄っているかを見るための道具です。"},
+        {s:23.6,e:29.61,t:"すべてのマネジメント施策は、結局、4つのダイヤルのどれかを回しています。"},
+        {s:29.61,e:32.33,t:"緊張と順守の、恐怖。"},
+        {s:32.33,e:35.24,t:"努力と地位獲得の、報酬。"},
+        {s:35.24,e:37.84,t:"適応と改善の、学習。"},
+        {s:37.84,e:40.38,t:"連携と文化の、同調。"},
+        {s:40.38,e:45.36,t:"最重要なのは、恐怖と学習がトレードオフだという点です。"},
+        {s:45.36,e:51.03,t:"恐怖で締めるほど、誰も実験せず、誰も失敗を報告しなくなる。"},
+        {s:51.03,e:54.83,t:"硬直した組織の正体は、だいたいこれです。"},
+        {s:56.2,e:58.56,t:"一つ目、オオカミ型。"},
+        {s:58.56,e:61.08,t:"主軸は学習と承認。"},
+        {s:61.08,e:65.3,t:"スピードと創造に強く、変化への対応が速い。"},
+        {s:65.3,e:68.91,t:"弱みは属人化と、拡大に弱いこと。"},
+        {s:68.91,e:72.42,t:"スタートアップや研究開発に向いています。"},
+        {s:72.42,e:74.38,t:"二つ目、アリ型。"},
+        {s:74.38,e:76.81,t:"主軸は同調と理念。"},
+        {s:76.81,e:80.76,t:"大規模でも再現性が高く、安定して回る。"},
+        {s:80.76,e:84.41,t:"弱みは創造性の低下と、官僚化。"},
+        {s:84.41,e:87.86,t:"チェーンや工場、行政に向いています。"},
+        {s:87.86,e:90.28,t:"三つ目、チンパン型。"},
+        {s:90.28,e:92.54,t:"主軸は地位と政治。"},
+        {s:92.54,e:96.6,t:"権力が安定し、大きな組織を統治できる。"},
+        {s:96.6,e:100.21,t:"弱みは社内政治と、情報の隠蔽。"},
+        {s:100.21,e:106.61,t:"100人を超えると政治が生まれる、という直感は、霊長類研究と整合します。"},
+        {s:106.61,e:108.91,t:"四つ目、ボノボ型。"},
+        {s:108.91,e:112.19,t:"主軸は共感と、低い恐怖。"},
+        {s:112.19,e:115.92,t:"離職が少なく、協調的で安定する。"},
+        {s:115.92,e:119.31,t:"弱みは決定の遅さと、ぬるま湯化。"},
+        {s:119.31,e:123.13,t:"福祉や教育、支援の現場に向いています。"},
+        {s:123.13,e:125.71,t:"五つ目、ハイエナ型。"},
+        {s:125.71,e:129.13,t:"主軸はお金と、未達への恐怖。"},
+        {s:129.13,e:133.37,t:"営業の爆発力と、数字への執着が強み。"},
+        {s:133.37,e:136.85,t:"弱みは燃え尽きと離職、そして不正。"},
+        {s:136.85,e:140.85,t:"歩合制の営業や金融に現れやすい型です。"},
+        {s:142.2,e:144.16,t:"ここが核心です。"},
+        {s:144.16,e:147.55,t:"純血種の組織は、存在しません。"},
+        {s:147.55,e:153.75,t:"単一の動物で全部の層を揃えると、必ずどこかの層で最適を外します。"},
+        {s:153.75,e:156.55,t:"強い組織は、混ぜています。"},
+        {s:156.55,e:163.61,t:"現場はオオカミ、管理はアリ、経営はチンパンの政治を制御し、文化にはボノボを撒く。"},
+        {s:163.61,e:173.27,t:"リーダーの仕事は、どれか一匹になることではなく、それぞれの動物を正しい生息域に置く、生態系の設計者になることです。"},
+        {s:174.6,e:175.99,t:"最後に。"},
+        {s:175.99,e:181.1,t:"組織は放っておくと、硬直へ向かって一方向に老化します。"},
+        {s:181.1,e:185.57,t:"大企業の官僚化は、異常ではなく自然現象です。"},
+        {s:185.57,e:190.0,t:"末期の硬直を解く、ほぼ唯一の手は再野生化。"},
+        {s:190.0,e:195.84,t:"新規事業をオオカミの細胞として隔離し、独自ルールで走らせることです。"},
+        {s:195.84,e:201.65,t:"なお、これは効果を保証する理論ではなく、組織を読むためのレンズです。"},
+        {s:201.65,e:205.74,t:"あなたの組織はいま、どの動物に寄っていますか。"}
+      ];
+
+      /* 字幕 — edge-tts SRT実測cue・一度に1グループ・hard kill */
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
