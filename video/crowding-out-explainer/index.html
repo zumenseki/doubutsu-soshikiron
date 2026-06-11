@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 74px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1200px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 46px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 託児所 before/after */
+      .ba-row { display: flex; align-items: center; gap: 46px; justify-content: center; }
+      .ba-card { background: #fff; border: 2px solid #e3e0d8; border-radius: 18px; padding: 30px 38px;
+        width: 480px; display: flex; flex-direction: column; gap: 14px; }
+      .ba-card.after { border-color: #d9893b; }
+      .ba-when { font-weight: 800; font-size: 30px; color: #6b7370; letter-spacing: 0.08em; }
+      .ba-feel { font-weight: 900; font-size: 42px; color: #1d2321; line-height: 1.3; }
+      .ba-card.after .ba-feel { color: #d9893b; }
+      .ba-tag { font-weight: 700; font-size: 28px; color: #6b7370; }
+      .ba-arrow { font-weight: 900; font-size: 60px; color: #d9893b; line-height: 1; }
+
+      /* S3 献血 + 谷 */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 760px; height: 460px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveV { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; }
+      .baseline { stroke: #6b7370; stroke-width: 2; stroke-dasharray: 8 8; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .g-right { display: flex; flex-direction: column; gap: 18px; width: 540px; text-align: left; }
+      .g-tag { font-weight: 800; font-size: 36px; color: #d9893b; background: #f7ece1;
+        padding: 10px 30px; border-radius: 999px; align-self: flex-start; }
+      .g-body { font-weight: 700; font-size: 34px; color: #1d2321; line-height: 1.45; }
+      .g-cav { font-weight: 600; font-size: 26px; color: #6b7370; line-height: 1.4; }
+
+      /* S4 機構 式 + 伝播vs置換 */
+      .eq { font-weight: 900; font-size: 50px; color: #1d2321; background: #fff;
+        border: 2px solid #e3e0d8; border-radius: 16px; padding: 22px 48px; letter-spacing: 0.01em; }
+      .eq .ext { color: #d9893b; } .eq .intr { color: #2f6f4f; }
+      .eq-leg { display: flex; gap: 44px; font-weight: 700; font-size: 28px; color: #6b7370; }
+      .eq-leg .ext { color: #d9893b; } .eq-leg .intr { color: #2f6f4f; }
+      .pc-row { display: flex; gap: 40px; justify-content: center; }
+      .pc { border-radius: 18px; padding: 22px 34px; width: 560px; text-align: left; }
+      .pc.prop { background: #fff; border: 2px solid #e3e0d8; }
+      .pc.repl { background: #e6efe9; }
+      .pc-t { font-weight: 900; font-size: 34px; margin-bottom: 6px; }
+      .pc.prop .pc-t { color: #6b7370; } .pc.repl .pc-t { color: #2f6f4f; }
+      .pc-b { font-weight: 700; font-size: 30px; color: #1d2321; line-height: 1.4; }
+
+      /* S5 対比 */
+      .contrast { display: flex; gap: 44px; justify-content: center; align-items: stretch; }
+      .col { border-radius: 22px; padding: 32px 40px; width: 560px; display: flex; flex-direction: column; gap: 16px; }
+      .col.good { background: #e6efe9; }
+      .col.bad { background: #fff; border: 2px solid #e3e0d8; }
+      .col-head { font-weight: 900; font-size: 40px; }
+      .col.good .col-head { color: #2f6f4f; }
+      .col.bad .col-head { color: #d9893b; }
+      .col-item { font-weight: 700; font-size: 33px; color: #1d2321; line-height: 1.4; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1240px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="204">
+
+      <!-- S1 フック 1.0-31.8 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">動機の締め出し ── 第三のドメイン外の一致</div>
+        <div id="s1-head" class="head">お金が<span class="hl">善意を締め出す</span>とき</div>
+        <div id="s1-char"><svg width="230" height="230" viewBox="0 0 280 280" aria-label="hyena">
+          <polygon points="70,70 58,12 118,55" fill="#b8a48c"/><polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+          <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+          <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+          <circle cx="108" cy="136" r="17" fill="#fff"/><circle cx="172" cy="136" r="17" fill="#fff"/>
+          <circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/>
+          <path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">報酬を足したのに行動が<span class="hl">減る</span>。動物実験の機構が、檻の外へ届く</div>
+      </div></div>
+
+      <!-- S2 託児所 31.8-73.8 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:58px">罰金が<span class="hl">「価格」</span>に変わるとき</div>
+        <div id="s2-row" class="ba-row">
+          <div class="ba-card" id="s2-before">
+            <div class="ba-when">罰金の前</div>
+            <div class="ba-feel gn">申し訳ない</div>
+            <div class="ba-tag">＝ 罪悪感（内発の抑制）</div>
+          </div>
+          <div class="ba-arrow" id="s2-arrow">→</div>
+          <div class="ba-card after" id="s2-after">
+            <div class="ba-when">罰金の後</div>
+            <div class="ba-feel">お金で買える</div>
+            <div class="ba-tag">＝ 価格（外発に置換）</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">遅刻はむしろ<span class="hl">増えた</span>（撤回しても戻らない）</div>
+      </div></div>
+
+      <!-- S3 献血 + 谷 73.8-110.79 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:54px">謝礼が<span class="hl">善意を追い出す</span> ── 献血</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 760 460">
+            <line class="axis" x1="100" y1="40" x2="100" y2="400" />
+            <line class="axis" x1="100" y1="400" x2="700" y2="400" />
+            <line class="baseline" x1="100" y1="150" x2="700" y2="150" />
+            <text class="glabel" x="30" y="52" fill="#2f6f4f">動機</text>
+            <text class="glabel" x="582" y="442" fill="#d9893b">報酬 →</text>
+            <text class="glabel" x="556" y="140" fill="#6b7370" font-size="24">無報酬時</text>
+            <path id="s3-curve" class="curveV" d="M125,128 C265,148 305,358 425,358 C545,358 625,250 700,236" />
+          </svg>
+          <div class="g-right">
+            <div id="s3-tag" class="g-tag">内発の谷</div>
+            <div id="s3-body" class="g-body">「人の役に立ちたい」が、<span class="hl">「小遣い稼ぎ」</span>に上書きされ、供血が細る</div>
+            <div id="s3-cav" class="g-cav">※ティトマスの主張には論争あり。決定的な単一証拠ではない</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S4 機構 110.79-151.38 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">機構＝<span class="gn">内発の置換</span></div>
+        <div id="s4-eq" class="eq">R<sub>eff</sub> = D·(<span class="ext">w·x_ext</span>) + <span class="intr">I₀·(1 − f)</span></div>
+        <div id="s4-leg" class="eq-leg">
+          <div><span class="ext">x_ext</span>＝外発（有形・予期・統制的）</div>
+          <div><span class="intr">I₀</span>＝内発　<span class="ext">f</span>＝抑制（報酬が削る）</div>
+        </div>
+        <div id="s4-pc" class="pc-row">
+          <div class="pc prop" id="s4-prop">
+            <div class="pc-t">伝播（蜂起・取り付け）</div>
+            <div class="pc-b">勇気や恐怖が、人から人へ広がる</div>
+          </div>
+          <div class="pc repl" id="s4-repl">
+            <div class="pc-t">置換（締め出し）</div>
+            <div class="pc-b">一人の中で、外発が内発を押しのける</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 だから 151.38-204 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:26px">
+        <div id="s5-head" class="head" style="font-size:54px">問題は額ではなく、<span class="hl">形</span></div>
+        <div id="s5-contrast" class="contrast">
+          <div class="col good" id="s5-good">
+            <div class="col-head">内発を壊さない</div>
+            <div class="col-item">情報的・予期せず・有能感を伝える</div>
+            <div class="col-item gn" style="font-weight:900">承認 ／ 裁量 ／ 意味</div>
+          </div>
+          <div class="col bad" id="s5-bad">
+            <div class="col-head">内発を壊す</div>
+            <div class="col-item">有形・予期され・統制的</div>
+            <div class="col-item hl" style="font-weight:900">ノルマ連動の金銭 ／ 罰金</div>
+          </div>
+        </div>
+        <div id="s5-ask" class="ask">その値札は、いま働く動機を<span class="hl">置き換えないか？</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※式で機構を表したもので、特定制度の単一原因を断定する分析ではありません。出典：Gneezy &amp; Rustichini (2000)／Titmuss (1970, 論争あり)／Deci, Koestner &amp; Ryan (1999)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="204" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="28.3" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="31.8" data-duration="39.5" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="73.8" data-duration="34.49" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="110.79" data-duration="38.09" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="151.38" data-duration="49.27" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-31.8) — cue: 罰金8.09 / 機構が檻21.82 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},2.4);
+      tl.to("#s1-char",{scale:0.93,y:10,duration:0.9,ease:"power2.inOut",yoyo:true,repeat:1},14.0);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},21.8);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 託児所 (31.8-73.8) — cue: 罰金前44.41 / 罰金後48.55 / 置換53.74 / 増えた40.33→撤回59.79 */
+      xfade(2,31.8);
+      tl.set("#s2-head",{opacity:0,y:30},31.8);
+      tl.set("#s2-before",{opacity:0,x:-50},31.8);
+      tl.set("#s2-arrow",{opacity:0,scale:0.5},31.8);
+      tl.set("#s2-after",{opacity:0,x:50},31.8);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},31.8);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},32.2);
+      tl.to("#s2-before",{opacity:1,x:0,duration:0.5,ease:"power2.out"},44.4);
+      tl.to("#s2-arrow",{opacity:1,scale:1,duration:0.45,ease:"back.out(2)"},48.55);
+      tl.to("#s2-after",{opacity:1,x:0,duration:0.5,ease:"power2.out"},49.0);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},59.79);
+
+      /* S3 献血 (73.8-110.79) — cue: ティトマス76.96 / 上書き84.66 / 論争92.37 / 削る102.81 */
+      xfade(3,73.8);
+      tl.set("#s3-head",{opacity:0,y:30},73.8);
+      tl.set("#s3-tag",{opacity:0,scale:0.6},73.8);
+      tl.set("#s3-body",{opacity:0,y:30},73.8);
+      tl.set("#s3-cav",{opacity:0},73.8);
+      tl.set("#s3-curve",{strokeDasharray:1300,strokeDashoffset:1300},73.8);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},74.3);
+      tl.to("#s3-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},77.0);
+      tl.to("#s3-body",{opacity:1,y:0,duration:0.5,ease:"power3.out"},84.66);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:3.2,ease:"power1.inOut"},84.66);
+      tl.to("#s3-cav",{opacity:1,duration:0.5,ease:"power1.out"},92.37);
+
+      /* S4 機構 (110.79-151.38) — cue: 式114.7 / 内発削る125.14 / 伝播137.98 / 置換144.35 */
+      xfade(4,110.79);
+      tl.set("#s4-head",{opacity:0,y:30},110.79);
+      tl.set("#s4-eq",{opacity:0,scale:0.85},110.79);
+      tl.set("#s4-leg",{opacity:0},110.79);
+      tl.set("#s4-prop",{opacity:0,x:-40},110.79);
+      tl.set("#s4-repl",{opacity:0,x:40},110.79);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},111.2);
+      tl.to("#s4-eq",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},114.7);
+      tl.to("#s4-leg",{opacity:1,duration:0.5,ease:"power1.out"},125.14);
+      tl.to("#s4-prop",{opacity:1,x:0,duration:0.5,ease:"power2.out"},137.98);
+      tl.to("#s4-repl",{opacity:1,x:0,duration:0.5,ease:"power2.out"},144.35);
+
+      /* S5 だから (151.38-204) — cue: 形151.48 / 壊さない162.7 / 壊す154.83 / 値札187.68 / §0注187.68 */
+      xfade(5,151.38);
+      tl.set("#s5-head",{opacity:0,y:30},151.38);
+      tl.set("#s5-good",{opacity:0,x:-40},151.38);
+      tl.set("#s5-bad",{opacity:0,x:40},151.38);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},151.38);
+      tl.set("#s5-brand",{opacity:0},151.38);
+      tl.set("#s5-note",{opacity:0},151.38);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.55,ease:"power3.out"},151.7);
+      tl.to("#s5-bad",{opacity:1,x:0,duration:0.55,ease:"power2.out"},154.83);
+      tl.to("#s5-good",{opacity:1,x:0,duration:0.55,ease:"power2.out"},162.7);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},182.7);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},187.68);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},195.11);
+
+      var GROUPS = [
+        {s:1.1,e:4.56,t:"やる気が出ないなら、報酬を増やせばいい。"},
+        {s:4.56,e:8.09,t:"直感的ですが、しばしば裏目に出ます。"},
+        {s:8.09,e:11.14,t:"罰金を入れたら、遅刻が増えた。"},
+        {s:11.14,e:14.18,t:"謝礼を付けたら、献血が減った。"},
+        {s:14.18,e:17.77,t:"報酬を足したのに、行動がむしろ減る。"},
+        {s:17.77,e:21.82,t:"群衆の不合理でも、計算違いでもありません。"},
+        {s:21.82,e:29.25,t:"動物実験で確立した、内発の置換という機構が、人間の制度設計にまで届いた例です。"},
+        {s:31.9,e:37.37,t:"イスラエルの託児所で、お迎えに遅刻する親が、後を絶ちませんでした。"},
+        {s:37.37,e:40.33,t:"そこで、罰金を導入します。"},
+        {s:40.33,e:43.05,t:"結果は、遅刻が増えました。"},
+        {s:43.05,e:44.41,t:"なぜか。"},
+        {s:44.41,e:48.55,t:"罰金が入る前、遅刻は申し訳ないことでした。"},
+        {s:48.55,e:53.74,t:"罰金が入った途端、それは、お金で買えるサービスに変わります。"},
+        {s:53.74,e:59.79,t:"罪悪感という内発的な抑制が、価格という外発に、置き換わったのです。"},
+        {s:59.79,e:66.32,t:"しかも厄介なことに、後で罰金を撤回しても、遅刻は高止まりしたままでした。"},
+        {s:66.32,e:71.25,t:"一度、価格になった関係は、元の善意には戻りません。"},
+        {s:73.9,e:76.96,t:"同じ向きを指す例が、もう一つ。"},
+        {s:76.96,e:84.66,t:"ティトマスは、無償の献血制度のほうが、報酬を払う制度よりも、うまく機能しうると論じました。"},
+        {s:84.66,e:92.37,t:"お金を払うと、人の役に立ちたいという動機が、小遣い稼ぎに上書きされ、かえって供血が細る。"},
+        {s:92.37,e:97.61,t:"この主張には論争があり、決定的な単一の証拠ではありません。"},
+        {s:97.61,e:102.81,t:"それでも、罰金の託児所と、まったく同じ向きを指しています。"},
+        {s:102.81,e:108.24,t:"有形で、統制的な報酬は、内在的な動機を削るのです。"},
+        {s:110.89,e:114.7,t:"二つの現象は、一本の式から落ちます。"},
+        {s:114.7,e:120.39,t:"実効的な動機は、外発と内発の、単純な足し算ではありません。"},
+        {s:120.39,e:125.14,t:"内発は、その活動それ自体の、やりたいからやる価値。"},
+        {s:125.14,e:130.99,t:"報酬が有形で、予期され、統制的だと、この内発を削ります。"},
+        {s:130.99,e:137.98,t:"だから目立つ外発を足すと、内発が崩れ、足すほど実効動機が下がる領域が生まれます。"},
+        {s:137.98,e:142.49,t:"蜂起や取り付け騒ぎは、人から人へ広がる伝播でした。"},
+        {s:142.49,e:144.35,t:"これは違います。"},
+        {s:144.35,e:148.81,t:"一人の中で、外発が内発を押しのける、置換です。"},
+        {s:151.48,e:154.83,t:"問題は、額ではなく、形です。"},
+        {s:154.83,e:162.7,t:"有形で、予期され、統制的な報酬、ノルマ連動の金銭や罰金は、内発を削ります。"},
+        {s:162.7,e:170.09,t:"情報的で、予期せず、有能感を伝える報酬、承認や裁量や意味は、削りません。"},
+        {s:170.09,e:175.9,t:"そして一度据えた報酬を下げると、今度は損失として、強く効きます。"},
+        {s:175.9,e:178.91,t:"やめれば元通り、ではないのです。"},
+        {s:178.91,e:182.7,t:"善意で回っている仕事に、値札を貼る前に。"},
+        {s:182.7,e:187.68,t:"その値札は、いま働いている動機を、置き換えてしまわないか。"},
+        {s:187.68,e:195.11,t:"なお、これは式で機構を表したもので、特定制度の単一原因を断定する分析ではありません。"},
+        {s:195.11,e:197.69,t:"動物から、組織を読む。"},
+        {s:197.69,e:200.63,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
