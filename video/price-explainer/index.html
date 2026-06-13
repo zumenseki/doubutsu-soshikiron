@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 70px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+      .birds { display: flex; gap: 60px; justify-content: center; align-items: flex-end; }
+
+      /* S2 おとり効果 3択 */
+      .options { display: flex; gap: 36px; justify-content: center; align-items: stretch; }
+      .opt { width: 360px; border-radius: 20px; padding: 28px 30px; border: 2px solid #e3e0d8; background: #fff;
+        display: flex; flex-direction: column; gap: 10px; }
+      .opt.decoy { border-color: #d9893b; border-style: dashed; opacity: 0.92; }
+      .opt.pick { border-color: #2f6f4f; background: #e6efe9; }
+      .opt-name { font-weight: 900; font-size: 40px; color: #1d2321; }
+      .opt.pick .opt-name { color: #2f6f4f; } .opt.decoy .opt-name { color: #d9893b; }
+      .opt-desc { font-weight: 700; font-size: 28px; color: #6b7370; }
+
+      /* S3 対数知覚グラフ */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 680px; height: 400px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .draw { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; fill: #6b7370; }
+      .ww-right { display: flex; flex-direction: column; gap: 16px; width: 600px; text-align: left; }
+      .ww-card { border: 2px solid #e3e0d8; border-radius: 16px; background: #fff; padding: 18px 28px; }
+      .ww-card.lo { border-left: 10px solid #6b7370; } .ww-card.hi { border-left: 10px solid #d9893b; }
+      .ww-t { font-weight: 900; font-size: 34px; color: #1d2321; }
+      .ww-b { font-weight: 700; font-size: 28px; color: #6b7370; margin-top: 2px; }
+
+      /* S4 参照点 損失回避 */
+      .rp-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .rp-right { display: flex; flex-direction: column; gap: 16px; width: 760px; text-align: left; }
+      .rp-tag { font-weight: 800; font-size: 36px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 30px; border-radius: 999px; align-self: flex-start; }
+      .rp-body { font-weight: 800; font-size: 38px; color: #1d2321; line-height: 1.4; }
+      .rp-sub { font-weight: 700; font-size: 30px; color: #6b7370; line-height: 1.4; }
+
+      /* S5 価格設計4手 + 3予測 */
+      .moves { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 1180px; }
+      .move { display: flex; align-items: center; gap: 18px; border: 2px solid #e3e0d8;
+        border-radius: 14px; background: #fff; padding: 16px 24px; text-align: left; }
+      .move-i { width: 52px; height: 52px; border-radius: 10px; background: #f7ece1; color: #d9893b;
+        font-weight: 900; font-size: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .move-t { font-weight: 800; font-size: 31px; color: #1d2321; line-height: 1.25; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="257">
+
+      <!-- S1 フック 1.0-36.26 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">価格 ── 基準点からの差で感じる</div>
+        <div id="s1-head" class="head">「安くすれば売れる」の<span class="hl">何が浅いのか</span></div>
+        <div id="s1-birds" class="birds">
+          <svg id="s1-hb" width="220" height="220" viewBox="0 0 280 280" aria-label="hummingbird"><path d="M64,146 Q36,86 100,104 Q122,78 160,102 Q214,94 244,64 Q226,120 176,132 Q168,184 116,188 Q86,186 64,146Z" fill="#61a585"/><path d="M172,118 L250,112" stroke="#1d2321" stroke-width="8" stroke-linecap="round"/><ellipse cx="120" cy="156" rx="46" ry="38" fill="#2f6f4f"/><circle cx="146" cy="116" r="8" fill="#fff"/><circle cx="146" cy="116" r="4" fill="#1d2321"/><path d="M92,192 L78,224" stroke="#6b7370" stroke-width="7"/></svg>
+          <svg id="s1-cap" width="210" height="210" viewBox="0 0 280 280" aria-label="capuchin"><circle cx="62" cy="142" r="34" fill="#5b3b24"/><circle cx="218" cy="142" r="34" fill="#5b3b24"/><ellipse cx="140" cy="150" rx="86" ry="88" fill="#6c472b"/><path d="M72,106 Q140,42 208,106 L188,138 Q140,104 92,138 Z" fill="#efe0c6"/><ellipse cx="140" cy="170" rx="62" ry="62" fill="#c79662"/><circle cx="116" cy="156" r="9" fill="#1d2321"/><circle cx="164" cy="156" r="9" fill="#1d2321"/><path d="M112,204 Q140,222 168,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">価値は基準点からの差で測られ、知覚は歪み、<span class="hl">損は得より重い</span></div>
+      </div></div>
+
+      <!-- S2 おとり効果 36.26-87.53 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:52px">ハチドリも<span class="hl">"おとり"</span>に引っかかる</div>
+        <div id="s2-options" class="options">
+          <div class="opt" id="s2-a"><div class="opt-name">A</div><div class="opt-desc">標準</div></div>
+          <div class="opt pick" id="s2-b"><div class="opt-name">本命</div><div class="opt-desc">おとりに似て少し優れる→選ばれやすい</div></div>
+          <div class="opt decoy" id="s2-c"><div class="opt-name">おとり</div><div class="opt-desc">見劣りする第三の選択肢</div></div>
+        </div>
+        <div id="s2-concl" class="concl">非合理は弱さでなく、<span class="hl">価値比較の普遍構造</span>（松竹梅）</div>
+      </div></div>
+
+      <!-- S3 対数知覚 87.53-137.81 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">知覚は<span class="hl">対数</span>である ── ウェーバー＝フェヒナー</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 680 400">
+            <line class="axis" x1="90" y1="40" x2="90" y2="340" />
+            <line class="axis" x1="90" y1="340" x2="640" y2="340" />
+            <path id="s3-curve" class="draw" d="M110,310 C200,200 280,150 380,128 C480,108 560,98 630,92" />
+            <text class="glabel" x="22" y="50">体感</text>
+            <text class="glabel" x="540" y="378">刺激 →</text>
+          </svg>
+          <div class="ww-right">
+            <div class="ww-card lo" id="s3-lo">
+              <div class="ww-t">低額品 → <span style="color:#1d2321">○円引き</span></div>
+              <div class="ww-b">100円→90円＝「1割引き」と大きく感じる</div>
+            </div>
+            <div class="ww-card hi" id="s3-hi">
+              <div class="ww-t">高額品 → <span style="color:#d9893b">○％オフ</span></div>
+              <div class="ww-b">10万円→9万9990円は同じ10円でも無感</div>
+            </div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">割引は絶対額でなく<span class="hl">比率</span>で知覚される</div>
+      </div></div>
+
+      <!-- S4 参照点 損失回避 137.81-187.83 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">サルも<span class="hl">値上げを2倍嫌う</span></div>
+        <div id="s4-row" class="rp-row">
+          <div id="s4-cap"><svg width="280" height="280" viewBox="0 0 280 280" aria-label="capuchin"><circle cx="62" cy="142" r="34" fill="#5b3b24"/><circle cx="218" cy="142" r="34" fill="#5b3b24"/><ellipse cx="140" cy="150" rx="86" ry="88" fill="#6c472b"/><path d="M72,106 Q140,42 208,106 L188,138 Q140,104 92,138 Z" fill="#efe0c6"/><ellipse cx="140" cy="170" rx="62" ry="62" fill="#c79662"/><circle cx="116" cy="156" r="9" fill="#1d2321"/><circle cx="164" cy="156" r="9" fill="#1d2321"/><path d="M112,204 Q140,222 168,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg></div>
+          <div class="rp-right">
+            <div id="s4-tag" class="rp-tag">損失回避＋参照点（チェン&サントス）</div>
+            <div id="s4-body" class="rp-body">人は価格を絶対値でなく、<span class="hl">期待した基準からの差</span>で感じる。損は得の約2倍重い</div>
+            <div id="s4-sub" class="rp-sub">だから値上げは額面以上に痛い。逆に先に高い定価を見せると参照点が上がり、同じ額が「得」に転じる（アンカリング）</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 価格設計4手+3予測 187.83-257 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:48px">打ち手は<span class="hl">「安くする」一本</span>ではない</div>
+        <div id="s5-moves" class="moves">
+          <div class="move" id="s5-m1"><div class="move-i">1</div><div class="move-t">アンカーを先に置く（定価→本命）</div></div>
+          <div class="move" id="s5-m2"><div class="move-i">2</div><div class="move-t">松竹梅で「竹」へ寄せる（極端回避）</div></div>
+          <div class="move" id="s5-m3"><div class="move-i">3</div><div class="move-t">割引は低額＝円／高額＝％</div></div>
+          <div class="move" id="s5-m4"><div class="move-i">4</div><div class="move-t">値上げは「別物」にして参照点ごと動かす</div></div>
+        </div>
+        <div id="s5-ask" class="ask">値段は数字でなく、<span class="gn">比較の中で</span>感じる</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※機構の写像で「必ず売れる」効果保証ではありません。動物のおとり効果は解釈に議論あり。出典：Kahneman &amp; Tversky (1979)／Shafir et al. (2002)／Chen, Lakshminarayanan &amp; Santos (2006)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="257" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="32.76" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="36.26" data-duration="48.77" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="87.53" data-duration="47.78" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="137.81" data-duration="47.52" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="187.83" data-duration="66.46" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-36.26) — cue: 浅い7.65 / 損は得より重い25.12 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-birds svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-birds svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.14,ease:"back.out(1.6)"},2.8);
+      tl.to("#s1-birds svg",{y:-12,duration:0.9,yoyo:true,repeat:2,ease:"sine.inOut"},5.0);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},25.12);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 おとり効果 (36.26-87.53) — cue: おとり36.36 / 第三48.01 / ハチドリ56.68 / 松竹梅77.83 */
+      xfade(2,36.26);
+      tl.set("#s2-head",{opacity:0,y:30},36.26);
+      tl.set("#s2-a",{opacity:0,y:30},36.26);
+      tl.set("#s2-c",{opacity:0,y:30},36.26);
+      tl.set("#s2-b",{opacity:0,scale:0.85},36.26);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},36.26);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},36.7);
+      tl.to("#s2-a",{opacity:1,y:0,duration:0.45,ease:"power2.out"},39.0);
+      tl.to("#s2-c",{opacity:1,y:0,duration:0.45,ease:"back.out(1.6)"},48.01);
+      tl.to("#s2-b",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},53.27);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},77.83);
+
+      /* S3 対数知覚 (87.53-137.81) — cue: 対数91.55 / 100g101.18 / 価格109.72 / 比率120.55 / 円vs%128.68 */
+      xfade(3,87.53);
+      tl.set("#s3-head",{opacity:0,y:30},87.53);
+      tl.set("#s3-curve",{strokeDasharray:900,strokeDashoffset:900},87.53);
+      tl.set("#s3-lo",{opacity:0,x:40},87.53);
+      tl.set("#s3-hi",{opacity:0,x:40},87.53);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},87.53);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},88.0);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:3.2,ease:"power1.inOut"},95.86);
+      tl.to("#s3-lo",{opacity:1,x:0,duration:0.5,ease:"power2.out"},109.72);
+      tl.to("#s3-hi",{opacity:1,x:0,duration:0.5,ease:"power2.out"},128.68);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},131.8);
+
+      /* S4 参照点 (137.81-187.83) — cue: 損は得137.91 / オマキザル140.66 / 参照点155.97 / 2倍170.76 / アンカリング183.18 */
+      xfade(4,137.81);
+      tl.set("#s4-head",{opacity:0,y:30},137.81);
+      tl.set("#s4-cap",{opacity:0,scale:0.6},137.81);
+      tl.set("#s4-tag",{opacity:0,scale:0.6},137.81);
+      tl.set("#s4-body",{opacity:0,y:30},137.81);
+      tl.set("#s4-sub",{opacity:0,y:30},137.81);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},138.3);
+      tl.to("#s4-cap",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},140.66);
+      tl.to("#s4-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},146.39);
+      tl.to("#s4-body",{opacity:1,y:0,duration:0.5,ease:"power3.out"},155.97);
+      tl.to("#s4-sub",{opacity:1,y:0,duration:0.5,ease:"power2.out"},174.98);
+
+      /* S5 価格設計+3予測 (187.83-257) — cue: 打ち手187.93 / アンカ192.61 / 松竹梅196.84 / 円%200.99 / 値上げ205.21 / 比較の中234.95 / §0注238.99 */
+      xfade(5,187.83);
+      tl.set("#s5-head",{opacity:0,y:30},187.83);
+      tl.set("#s5-moves .move",{opacity:0,y:24},187.83);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},187.83);
+      tl.set("#s5-brand",{opacity:0},187.83);
+      tl.set("#s5-note",{opacity:0},187.83);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},188.3);
+      tl.to("#s5-m1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},192.61);
+      tl.to("#s5-m2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},196.84);
+      tl.to("#s5-m3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},200.99);
+      tl.to("#s5-m4",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},205.21);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},234.95);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},238.99);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},248.73);
+
+      var GROUPS = [
+        {s:1.1,e:3.92,t:"売れないなら、安くすればいい。"},
+        {s:3.92,e:7.65,t:"値付けの相談で、最初に出る答えです。"},
+        {s:7.65,e:10.21,t:"でも、これはかなり浅い。"},
+        {s:10.21,e:15.85,t:"価格は、財布の中身を直接動かす、絶対の数字ではありません。"},
+        {s:15.85,e:21.76,t:"動物の実験が示すのは、もっと相対的で、身体的な仕組みです。"},
+        {s:21.76,e:25.12,t:"価値は、基準点からの差で測られる。"},
+        {s:25.12,e:28.48,t:"知覚は歪み、損は得より重い。"},
+        {s:28.48,e:33.69,t:"今日は、動物の知覚と選択から、値付けの構造を読みます。"},
+        {s:36.36,e:38.78,t:"まず、おとり効果です。"},
+        {s:38.78,e:48.01,t:"合理的な選択なら、AとBを比べるとき、見劣りする第三の選択肢が増えても、AとBの優劣は変わらないはずです。"},
+        {s:48.01,e:53.27,t:"ところが人は、おとりに似て少し優れたほうを、選びやすくなる。"},
+        {s:53.27,e:56.68,t:"驚くのは、これが人だけではないこと。"},
+        {s:56.68,e:65.27,t:"シャフィールらは、ミツバチやハチドリでも、選択肢の構成を変えると、一貫性のない選択が起きると報告しました。"},
+        {s:65.27,e:70.75,t:"蜜の良し悪しという単純な比較ですら、周りに何が並ぶかで歪む。"},
+        {s:70.75,e:77.83,t:"非合理は、人の弱さというより、価値を比べる処理そのものに、備わったクセらしいのです。"},
+        {s:77.83,e:84.99,t:"松竹梅の三段構えや、本命を引き立てるおとりプランは、この文脈効果を使っています。"},
+        {s:87.63,e:91.55,t:"次に、知覚は対数だ、という話です。"},
+        {s:91.55,e:95.86,t:"感覚の古典法則に、ウェーバー、フェヒナーがあります。"},
+        {s:95.86,e:101.18,t:"違いを感じる量は、刺激の比で決まり、おおよそ対数で効く。"},
+        {s:101.18,e:107.75,t:"100グラムに10グラム足すと気づくのに、1000グラムに10グラム足しても、まず気づきません。"},
+        {s:107.75,e:109.72,t:"価格も同じです。"},
+        {s:109.72,e:120.55,t:"100円が90円なら、1割引きと大きく感じるのに、10万円が9万9990円では、同じ10円なのに、ほぼ無感です。"},
+        {s:120.55,e:125.28,t:"つまり割引は、絶対額でなく、比率で知覚される。"},
+        {s:125.28,e:128.68,t:"だから、低額品は、何円引き。"},
+        {s:128.68,e:131.8,t:"高額品は、何パーセントオフ。"},
+        {s:131.8,e:135.26,t:"こう見せたほうが、大きく感じられるのです。"},
+        {s:137.91,e:140.66,t:"そして、損は得より重い。"},
+        {s:140.66,e:146.39,t:"チェンとサントスらは、オマキザルにコインをお金として使う訓練をしました。"},
+        {s:146.39,e:155.97,t:"すると彼らは、人と同じく、同じ大きさでも、得より損を重く評価し、価格の見せ方しだいで、選択を変えたのです。"},
+        {s:155.97,e:158.7,t:"ここで効くのが、参照点。"},
+        {s:158.7,e:163.84,t:"人は価格を絶対値でなく、期待した基準からの差で感じます。"},
+        {s:163.84,e:167.22,t:"基準より高ければ損、安ければ得。"},
+        {s:167.22,e:170.76,t:"そして損は、得の、およそ2倍重い。"},
+        {s:170.76,e:174.98,t:"だから値上げは、額面以上の痛みとして効きます。"},
+        {s:174.98,e:183.18,t:"逆に、先に高い定価を見せてから割引を出すと、参照点がそこに置かれ、同じ額でも得に転じる。"},
+        {s:183.18,e:185.3,t:"これがアンカリングです。"},
+        {s:187.93,e:192.61,t:"機構が分かれば、打ち手は、安くする一本ではなくなります。"},
+        {s:192.61,e:196.84,t:"先に定価を見せて参照点を上げる、アンカリング。"},
+        {s:196.84,e:200.99,t:"松竹梅で狙いの竹へ寄せる、極端回避。"},
+        {s:200.99,e:205.21,t:"割引は、低額なら円、高額ならパーセント。"},
+        {s:205.21,e:209.59,t:"値上げは、別物にして古い基準との比較を避ける。"},
+        {s:209.59,e:213.24,t:"通俗論と分岐する予測は、三つです。"},
+        {s:213.24,e:216.68,t:"値下げより、参照点の操作が効く。"},
+        {s:216.68,e:223.93,t:"安易な値下げは基準そのものを下げ、将来の適正価格を引き下げて、自分の首を絞めます。"},
+        {s:223.93,e:227.65,t:"同じ割引でも、見せ方で価値は変わる。"},
+        {s:227.65,e:231.99,t:"そして、非合理な選択は、人の弱さではない。"},
+        {s:231.99,e:234.95,t:"ハチドリも文脈で選好を変える。"},
+        {s:234.95,e:238.99,t:"値段は数字でなく、比較の中で感じるのです。"},
+        {s:238.99,e:244.65,t:"なお、これは機構の写像で、必ず売れるという効果保証ではありません。"},
+        {s:244.65,e:248.73,t:"動物のおとり効果は、解釈に議論があります。"},
+        {s:248.73,e:251.31,t:"動物から、組織を読む。"},
+        {s:251.31,e:254.25,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
