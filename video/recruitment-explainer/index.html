@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+      .birds { display: flex; gap: 50px; justify-content: center; align-items: flex-end; }
+
+      /* S2 ハンディキャップ */
+      .hp-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .hp-right { display: flex; flex-direction: column; gap: 16px; width: 760px; text-align: left; }
+      .hp-tag { font-weight: 800; font-size: 36px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 30px; border-radius: 999px; align-self: flex-start; }
+      .hp-body { font-weight: 800; font-size: 40px; color: #1d2321; line-height: 1.4; }
+      .hp-sub { font-weight: 700; font-size: 30px; color: #6b7370; line-height: 1.4; }
+
+      /* S3 情報量グラフ + 対比メーター */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 700px; height: 420px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .draw { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; fill: #6b7370; }
+      .compare { display: flex; flex-direction: column; gap: 24px; width: 560px; }
+      .state-card { border: 2px solid #e3e0d8; border-radius: 16px; background: #fff; padding: 22px 30px; }
+      .state-card.hi { border-left: 10px solid #d9893b; } .state-card.lo { border-left: 10px solid #6b7370; }
+      .sc-top { display: flex; justify-content: space-between; align-items: baseline; }
+      .sc-title { font-weight: 900; font-size: 36px; color: #1d2321; }
+      .sc-num { font-weight: 900; font-size: 42px; }
+      .state-card.hi .sc-num { color: #d9893b; } .state-card.lo .sc-num { color: #6b7370; }
+      .meter { width: 100%; height: 22px; background: #e3e0d8; border-radius: 8px; overflow: hidden; margin-top: 12px; }
+      .meter-fill { height: 100%; transform-origin: left center; }
+      .meter-fill.hi { background: #d9893b; } .meter-fill.lo { background: #6b7370; }
+
+      /* S4 採用設計3手 */
+      .moves { display: flex; flex-direction: column; gap: 16px; width: 1140px; }
+      .move { display: flex; align-items: center; gap: 22px; border: 2px solid #e3e0d8;
+        border-radius: 16px; background: #fff; padding: 18px 30px; text-align: left; }
+      .move-i { width: 60px; height: 60px; border-radius: 12px; background: #e6efe9; color: #2f6f4f;
+        font-weight: 900; font-size: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .move-t { font-weight: 800; font-size: 36px; color: #1d2321; line-height: 1.3; }
+      .move-t small { display: block; font-size: 26px; font-weight: 600; color: #6b7370; margin-top: 2px; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 15px; width: 1240px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 28px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 36px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="233">
+
+      <!-- S1 フック 1.0-28.68 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">採用 ── 質をシグナルから読む問題</div>
+        <div id="s1-head" class="head">経歴は<span class="hl">「クジャクの尾」</span>である</div>
+        <div id="s1-birds" class="birds">
+          <svg id="s1-peacock" width="210" height="210" viewBox="0 0 280 280" aria-label="peacock"><path d="M140,130 C70,32 36,86 92,132 C52,140 64,210 124,176 C116,236 184,236 176,176 C236,210 248,140 208,132 C264,86 210,32 140,130Z" fill="#e6efe9" stroke="#2f6f4f" stroke-width="8"/><circle cx="92" cy="116" r="10" fill="#d9893b"/><circle cx="140" cy="86" r="10" fill="#d9893b"/><circle cx="208" cy="116" r="10" fill="#d9893b"/><ellipse cx="140" cy="164" rx="44" ry="64" fill="#2f6f4f"/><circle cx="122" cy="146" r="7" fill="#fff"/><circle cx="158" cy="146" r="7" fill="#fff"/><path d="M118,188 Q140,204 162,188" stroke="#1d2321" stroke-width="5" fill="none"/></svg>
+          <svg id="s1-gazelle" width="200" height="200" viewBox="0 0 280 280" aria-label="gazelle"><path d="M112,72 Q98,26 78,12" stroke="#5a3a22" stroke-width="8" fill="none"/><path d="M168,72 Q182,26 202,12" stroke="#5a3a22" stroke-width="8" fill="none"/><ellipse cx="140" cy="150" rx="78" ry="86" fill="#c99a62"/><ellipse cx="140" cy="180" rx="42" ry="46" fill="#f1ddbd"/><path d="M96,90 L56,52 L72,122" fill="#c99a62"/><path d="M184,90 L224,52 L208,122" fill="#c99a62"/><circle cx="116" cy="142" r="8" fill="#1d2321"/><circle cx="164" cy="142" r="8" fill="#1d2321"/><ellipse cx="140" cy="164" rx="13" ry="9" fill="#5a3a22"/><path d="M116,202 Q140,218 164,202" stroke="#5a3a22" stroke-width="5" fill="none"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">直感は<span class="hl">刷り込みと確証バイアス</span>に乗っ取られている</div>
+      </div></div>
+
+      <!-- S2 ハンディキャップ原理 28.68-71.02 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">なぜ尾は<span class="hl">無駄に長い</span>のか</div>
+        <div id="s2-row" class="hp-row">
+          <div id="s2-peacock"><svg width="300" height="300" viewBox="0 0 280 280" aria-label="peacock"><path d="M140,130 C70,32 36,86 92,132 C52,140 64,210 124,176 C116,236 184,236 176,176 C236,210 248,140 208,132 C264,86 210,32 140,130Z" fill="#e6efe9" stroke="#2f6f4f" stroke-width="8"/><circle cx="92" cy="116" r="10" fill="#d9893b"/><circle cx="140" cy="86" r="10" fill="#d9893b"/><circle cx="208" cy="116" r="10" fill="#d9893b"/><ellipse cx="140" cy="164" rx="44" ry="64" fill="#2f6f4f"/><circle cx="122" cy="146" r="7" fill="#fff"/><circle cx="158" cy="146" r="7" fill="#fff"/><path d="M118,188 Q140,204 162,188" stroke="#1d2321" stroke-width="5" fill="none"/></svg></div>
+          <div class="hp-right">
+            <div id="s2-tag" class="hp-tag">ハンディキャップ原理（ザハヴィ）</div>
+            <div id="s2-body" class="hp-body">コストが高く、<span class="hl">質の低い個体には維持できない</span>シグナルだけが、正直になる</div>
+            <div id="s2-sub" class="hp-sub">健康なオスにしか立派な尾は保てない＝偽れない品質証明。ガゼルのストッティングも同じ（払うから嘘がつけない）</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S3 安いトークは情報ゼロ 71.02-113.72 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:50px">安いトークは<span class="hl">情報ゼロ</span> ── 何にコストを払ったか</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 700 420">
+            <line class="axis" x1="90" y1="50" x2="90" y2="360" />
+            <line class="axis" x1="90" y1="360" x2="660" y2="360" />
+            <path id="s3-curve" class="draw" d="M110,330 C260,326 360,312 450,280 C540,230 600,130 640,90" />
+            <text class="glabel" x="30" y="60">情報量</text>
+            <text class="glabel" x="540" y="400">コスト →</text>
+          </svg>
+          <div class="compare">
+            <div class="state-card lo" id="s3-lo">
+              <div class="sc-top"><div class="sc-title">自己申告（コミュ力）</div><div class="sc-num">低</div></div>
+              <div class="meter"><div id="s3-lofill" class="meter-fill lo" style="width:14%"></div></div>
+            </div>
+            <div class="state-card hi" id="s3-hi">
+              <div class="sc-top"><div class="sc-title">継続実績・身銭</div><div class="sc-num">高</div></div>
+              <div class="meter"><div id="s3-hifill" class="meter-fill hi" style="width:88%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">安いシグナルは質と<span class="hl">非随伴</span>＝聞いても情報が増えない</div>
+      </div></div>
+
+      <!-- S4 最初の30秒の呪い→採用設計 113.72-164.02 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:50px">最初の30秒の呪いを、<span class="hl">設計で外す</span></div>
+        <div id="s4-curse" class="hp-sub" style="font-size:32px; color:#6b7370; max-width:1140px;">刷り込み（最初の第一印象が過剰な重み）＋確証バイアス（それを裏づける情報ばかり集める）</div>
+        <div id="s4-moves" class="moves">
+          <div class="move" id="s4-m1"><div class="move-i">1</div><div class="move-t">コストの高いシグナルを見る<small>自己PRより、難関実績・継続・身銭を切った行動</small></div></div>
+          <div class="move" id="s4-m2"><div class="move-i">2</div><div class="move-t">構造化する<small>評価軸を事前に固定し、全候補に同じ問いを立てる</small></div></div>
+          <div class="move" id="s4-m3"><div class="move-i">3</div><div class="move-t">独立に採点 → 議論<small>先に話すと同調カスケードで多様性が消える</small></div></div>
+        </div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 164.02-233 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:48px">何を言ったかより、<span class="hl">何にコストを払ったか</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 「自己PR・コミュ力で見抜ける」は誤り（安い＝非随伴）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 構造化面接が直感に勝つ（軸を先に固定するほど随伴性↑）</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> パネルは「独立採点 → 議論」の順序が正しい</div>
+        </div>
+        <div id="s5-ask" class="ask">群れの判断は、<span class="gn">独立を保つほど</span>個の精度を超える</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※機構を表したもので「この通りやれば見抜ける」効果保証ではありません。ハンディキャップ原理は論争あり。出典：Zahavi (1975)／Grafen (1990)／Schmidt &amp; Hunter (1998)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="233" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="25.18" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="28.68" data-duration="39.84" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="71.02" data-duration="40.2" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="113.72" data-duration="47.81" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="164.02" data-duration="66.31" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-28.68) — cue: シグナルを読む14.62 / クジャクの尾22.69 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-birds svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-birds svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.14,ease:"back.out(1.6)"},2.8);
+      tl.to("#s1-birds svg",{y:-12,duration:0.9,yoyo:true,repeat:2,ease:"sine.inOut"},5.0);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},14.62);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 ハンディキャップ (28.68-71.02) — cue: 不利28.78 / ザハヴィ37.53 / 正直40.87 / ガゼル55.85 */
+      xfade(2,28.68);
+      tl.set("#s2-head",{opacity:0,y:30},28.68);
+      tl.set("#s2-peacock",{opacity:0,scale:0.6},28.68);
+      tl.set("#s2-tag",{opacity:0,scale:0.6},28.68);
+      tl.set("#s2-body",{opacity:0,y:30},28.68);
+      tl.set("#s2-sub",{opacity:0,y:30},28.68);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},29.1);
+      tl.to("#s2-peacock",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},29.8);
+      tl.to("#s2-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},37.53);
+      tl.to("#s2-body",{opacity:1,y:0,duration:0.5,ease:"power3.out"},40.87);
+      tl.to("#s2-sub",{opacity:1,y:0,duration:0.5,ease:"power2.out"},55.85);
+
+      /* S3 情報量グラフ (71.02-113.72) — cue: 自己申告73.26 / 非随伴83.81 / 継続実績93.18 / 何にコスト105.37 */
+      xfade(3,71.02);
+      tl.set("#s3-head",{opacity:0,y:30},71.02);
+      tl.set("#s3-curve",{strokeDasharray:1000,strokeDashoffset:1000},71.02);
+      tl.set("#s3-lo",{opacity:0,x:40},71.02);
+      tl.set("#s3-hi",{opacity:0,x:40},71.02);
+      tl.set("#s3-lofill",{scaleX:0},71.02);
+      tl.set("#s3-hifill",{scaleX:0},71.02);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},71.02);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},71.5);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:3.2,ease:"power1.inOut"},73.26);
+      tl.to("#s3-lo",{opacity:1,x:0,duration:0.5,ease:"power2.out"},77.43);
+      tl.to("#s3-lofill",{scaleX:1,duration:0.8,ease:"power2.out"},78.0);
+      tl.to("#s3-hi",{opacity:1,x:0,duration:0.5,ease:"power2.out"},93.18);
+      tl.to("#s3-hifill",{scaleX:1,duration:0.9,ease:"power2.out"},93.8);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},105.37);
+
+      /* S4 採用設計 (113.72-164.02) — cue: 呪い113.82 / 設計変える141.19 / 1コスト146.04 / 2構造化150.8 / 3独立155.7 */
+      xfade(4,113.72);
+      tl.set("#s4-head",{opacity:0,y:30},113.72);
+      tl.set("#s4-curse",{opacity:0,y:24},113.72);
+      tl.set("#s4-moves .move",{opacity:0,x:-40},113.72);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},114.2);
+      tl.to("#s4-curse",{opacity:1,y:0,duration:0.5,ease:"power2.out"},118.84);
+      tl.to("#s4-m1",{opacity:1,x:0,duration:0.45,ease:"power3.out"},146.04);
+      tl.to("#s4-m2",{opacity:1,x:0,duration:0.45,ease:"power3.out"},150.8);
+      tl.to("#s4-m3",{opacity:1,x:0,duration:0.45,ease:"power3.out"},155.7);
+
+      /* S5 まとめ (164.02-233) — cue: 第一169.17 / 第二182.34 / 第三195.99 / 独立超える205.69 / §0注214.45 */
+      xfade(5,164.02);
+      tl.set("#s5-head",{opacity:0,y:30},164.02);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},164.02);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},164.02);
+      tl.set("#s5-brand",{opacity:0},164.02);
+      tl.set("#s5-note",{opacity:0},164.02);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},164.5);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},169.17);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},182.34);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},195.99);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},205.69);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},214.45);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},224.76);
+
+      var GROUPS = [
+        {s:1.1,e:9.93,t:"面接で、人を見抜けると思うとき、その直感は、しばしば刷り込みと確証バイアスに、静かに乗っ取られています。"},
+        {s:9.93,e:14.62,t:"採用とは、相手の質を、シグナルから読む問題です。"},
+        {s:14.62,e:22.69,t:"そして動物行動学は、どのシグナルが信頼でき、どれがただのノイズかを、峻別する原理を持っています。"},
+        {s:22.69,e:26.11,t:"経歴とは、いわばクジャクの尾なのです。"},
+        {s:28.78,e:32.34,t:"クジャクの巨大な尾は、生存には不利です。"},
+        {s:32.34,e:35.58,t:"重く、目立ち、捕食されやすい。"},
+        {s:35.58,e:37.53,t:"なのに進化した。"},
+        {s:37.53,e:40.87,t:"ザハヴィのハンディキャップ原理が説明します。"},
+        {s:40.87,e:47.78,t:"コストが高く、質の低い個体には維持できないシグナルだけが、正直なシグナルになる。"},
+        {s:47.78,e:51.48,t:"健康なオスにしか、立派な尾は保てない。"},
+        {s:51.48,e:55.85,t:"だから尾は、偽れない品質証明として機能します。"},
+        {s:55.85,e:60.23,t:"ガゼルも、捕食者を見つけると、わざと高く跳ねる。"},
+        {s:60.23,e:64.9,t:"これだけ余裕がある、追っても無駄だ、と正直に伝える。"},
+        {s:64.9,e:68.47,t:"コストを払うからこそ、嘘がつけないのです。"},
+        {s:71.12,e:73.26,t:"採用に写しましょう。"},
+        {s:73.26,e:77.43,t:"コミュニケーション能力が高い、成長意欲があります。"},
+        {s:77.43,e:83.81,t:"こうした自己申告は、誰でも言える、コストほぼゼロ、質とほぼ無関係です。"},
+        {s:83.81,e:89.76,t:"本理論の言葉なら、シグナルが質をどれだけ予測するか、随伴性が低い。"},
+        {s:89.76,e:93.18,t:"聞いても、情報がほとんど増えません。"},
+        {s:93.18,e:105.37,t:"一方、難関を突破した実績、長期にわたり積んだ作品、身銭や時間を切った行動は、質の低い人には払えないコストを伴う、正直なシグナルです。"},
+        {s:105.37,e:111.18,t:"見るべきは、何を言うかではなく、何にコストを払ってきたか、なのです。"},
+        {s:113.82,e:118.84,t:"ところが面接官の脳は、別の動物的なクセに乗っ取られます。"},
+        {s:118.84,e:129.29,t:"ローレンツのガンのヒナが、最初に見た動くものを親と刷り込むように、面接でも、最初の数十秒の第一印象が、過剰な重みを持つ。"},
+        {s:129.29,e:134.51,t:"そして人は、その第一印象を確証する情報ばかり集める。"},
+        {s:134.51,e:136.58,t:"確証バイアスです。"},
+        {s:136.58,e:141.19,t:"良いと感じれば長所を、合わないと感じれば粗を探す。"},
+        {s:141.19,e:143.53,t:"だから設計を変えます。"},
+        {s:143.53,e:146.04,t:"コストの高いシグナルを見る。"},
+        {s:146.04,e:150.8,t:"評価軸を事前に固定し、全候補に同じ問いを立てる。"},
+        {s:150.8,e:155.7,t:"そしてパネルでは、各自が独立に採点してから議論する。"},
+        {s:155.7,e:161.47,t:"最初に発言した人に皆が引きずられる、同調カスケードを止めるためです。"},
+        {s:164.12,e:165.63,t:"まとめます。"},
+        {s:165.63,e:169.17,t:"通俗論と分岐する、三つの予測です。"},
+        {s:169.17,e:173.94,t:"第一に、自己PRやコミュ力で見抜ける、は誤り。"},
+        {s:173.94,e:178.42,t:"安いシグナルは質と無関係で、情報がほぼ無い。"},
+        {s:178.42,e:182.34,t:"コストの高い実績だけが、質を予測します。"},
+        {s:182.34,e:186.43,t:"第二に、構造化面接が、直感に勝つ。"},
+        {s:186.43,e:191.58,t:"第一印象と確証バイアスで、自由面接の精度は低い。"},
+        {s:191.58,e:195.99,t:"評価軸を先に固定するほど、随伴性が上がります。"},
+        {s:195.99,e:201.56,t:"第三に、パネルは、独立採点してから議論する順序が正しい。"},
+        {s:201.56,e:205.69,t:"先に意見を言うと、同調で多様性が消える。"},
+        {s:205.69,e:210.76,t:"独立性を保つほど、群れの判断は、個の精度を超えます。"},
+        {s:210.76,e:214.45,t:"何を言ったかより、何にコストを払ったか。"},
+        {s:214.45,e:221.12,t:"なお、これは機構を表したもので、この通りやれば見抜けるという効果保証ではありません。"},
+        {s:221.12,e:224.76,t:"ハンディキャップ原理には今も議論があります。"},
+        {s:224.76,e:227.34,t:"動物から、組織を読む。"},
+        {s:227.34,e:230.28,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
