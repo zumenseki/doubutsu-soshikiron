@@ -43,3 +43,18 @@ docs/デモ*.md
 docs/kit_*.md
 docs/kits/
 docs/提出*.md
+
+# --- note 自動入稿ツール (ローカル専用・公開 repo に載せない) ---
+note-publisher/
+*vulpix-note-publisher.zip
+.mcp.json
+/tmp-note/
+.claude/skills/note-publish/
+
+# --- note 原稿・生成物 (公開repoゆえ追跡しない・2026-06-07) ---
+# 🔴 特に note-drafts/<slug>-paid.md = 有料本文。公開repoにpushすると有料エリアが丸見え=流出。
+note-drafts/
+note-export/
+note-images/
+# 🔴 scripts/_note_json/ = note-drafts の派生JSON(本文全文＝有料テキスト含む)。同様に流出防止で追跡しない。
+scripts/_note_json/
