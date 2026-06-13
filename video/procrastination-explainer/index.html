@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+      .formula { font-variant-numeric: tabular-nums; font-size: 56px; font-weight: 700;
+        color: #1d2321; background: #e6efe9; border-radius: 18px; padding: 16px 40px; }
+
+      /* S2 2択 */
+      .choices { display: flex; gap: 50px; justify-content: center; align-items: stretch; }
+      .choice { width: 460px; border-radius: 20px; padding: 28px 34px; border: 2px solid #e3e0d8; background: #fff;
+        display: flex; flex-direction: column; gap: 10px; }
+      .choice.now { border-color: #d9893b; }
+      .choice.later { border-color: #2f6f4f; }
+      .ch-when { font-weight: 900; font-size: 38px; }
+      .choice.now .ch-when { color: #d9893b; } .choice.later .ch-when { color: #2f6f4f; }
+      .ch-what { font-weight: 700; font-size: 32px; color: #1d2321; }
+      .ch-pick { font-weight: 700; font-size: 27px; color: #6b7370; margin-top: 4px; }
+
+      /* S3 選好逆転グラフ */
+      .graph-row { display: flex; align-items: center; gap: 50px; justify-content: center; }
+      .graph { width: 740px; height: 460px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveA { fill: none; stroke: #2f6f4f; stroke-width: 9; stroke-linecap: round; }
+      .curveB { fill: none; stroke: #d9893b; stroke-width: 9; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .pr-right { display: flex; flex-direction: column; gap: 16px; width: 540px; text-align: left; }
+      .pr-item { display: flex; align-items: flex-start; gap: 16px; font-weight: 800; font-size: 34px; color: #1d2321; line-height: 1.35; }
+      .pr-x { color: #d9893b; font-weight: 900; font-size: 38px; line-height: 1; }
+      .pr-o { color: #2f6f4f; font-weight: 900; font-size: 38px; line-height: 1; }
+
+      /* S4 コミットメント */
+      .commit-row { display: flex; align-items: center; gap: 50px; justify-content: center; }
+      .cm-body { font-weight: 800; font-size: 40px; color: #1d2321; line-height: 1.4; max-width: 760px; text-align: left; }
+      .cm-list { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+      .cm-chip { font-weight: 800; font-size: 30px; color: #2f6f4f; background: #e6efe9;
+        border-radius: 999px; padding: 12px 28px; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1220px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 34px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 16px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="266">
+
+      <!-- S1 フック 1.0-32.11 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">先延ばし ── 双曲割引と選好の逆転</div>
+        <div id="s1-head" class="head">「明日やる」が<span class="hl">なぜ嘘になる</span>のか</div>
+        <div id="s1-char"><svg width="240" height="240" viewBox="0 0 280 280" aria-label="hyena">
+          <polygon points="70,70 58,12 118,55" fill="#b8a48c"/><polygon points="210,70 222,12 162,55" fill="#b8a48c"/>
+          <ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/>
+          <ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/>
+          <circle cx="108" cy="136" r="17" fill="#fff"/><circle cx="172" cy="136" r="17" fill="#fff"/>
+          <circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/>
+          <path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">意志が弱いからではない。報酬の価値の<span class="hl">割り引かれ方</span>の問題</div>
+      </div></div>
+
+      <!-- S2 遅延割引 32.11-81.19 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">ハトは<span class="hl">待てない</span> ── 遅延割引</div>
+        <div id="s2-choices" class="choices">
+          <div class="choice now" id="s2-now">
+            <div class="ch-when">いますぐ</div>
+            <div class="ch-what">小さな餌</div>
+            <div class="ch-pick">→ しばしば、こちらを選ぶ</div>
+          </div>
+          <div class="choice later" id="s2-later">
+            <div class="ch-when">少し待って</div>
+            <div class="ch-what">大きな餌</div>
+            <div class="ch-pick">価値は遅延で割り引かれる</div>
+          </div>
+        </div>
+        <div id="s2-formula" class="formula">V = A / (1 + k·D)</div>
+        <div id="s2-concl" class="concl"><span class="hl">双曲型</span>：今と1分後の差は大、30日後と31日後の差は無</div>
+      </div></div>
+
+      <!-- S3 選好の逆転 81.19-137.19 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">意志でなく、<span class="hl">曲線の形</span>の帰結</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 740 460">
+            <line class="axis" x1="90" y1="40" x2="90" y2="400" />
+            <line class="axis" x1="90" y1="400" x2="700" y2="400" />
+            <text class="glabel" x="30" y="50" fill="#6b7370">価値</text>
+            <text class="glabel" x="600" y="440" fill="#6b7370">時間 →</text>
+            <path id="s3-cA" class="curveA" d="M110,80 C300,110 400,360 690,392" />
+            <path id="s3-cB" class="curveB" d="M110,200 C340,230 450,372 690,388" />
+            <circle id="s3-cross" cx="437" cy="330" r="14" fill="#d9893b" style="transform-box:fill-box; transform-origin:center;" />
+          </svg>
+          <div class="pr-right">
+            <div class="pr-item" id="s3-d1"><span class="pr-o">遠</span> 遠い時点では「待って大報酬」を選ぶ</div>
+            <div class="pr-item" id="s3-d2"><span class="pr-x">近</span> 目前に迫ると曲線が交差し、選好が逆転</div>
+            <div class="pr-item" id="s3-d3"><span class="pr-x">✕</span> 精神論は的外れ。形は気合いで変わらない</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S4 コミットメント装置 137.19-188.89 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:50px">鳩でも自制できる ── <span class="gn">コミットメント装置</span></div>
+        <div id="s4-row" class="commit-row">
+          <div id="s4-char"><svg width="240" height="240" viewBox="0 0 280 280" aria-label="dove">
+            <ellipse cx="140" cy="186" rx="86" ry="74" fill="#eceef1"/>
+            <ellipse cx="78" cy="184" rx="44" ry="28" fill="#dde1e6" transform="rotate(-18 78 184)"/>
+            <circle cx="150" cy="98" r="54" fill="#f6f7f9"/>
+            <polygon points="198,96 256,84 198,116" fill="#d9893b"/>
+            <circle cx="140" cy="90" r="10" fill="#fff"/><circle cx="142" cy="92" r="5.5" fill="#1d2321"/>
+          </svg></div>
+          <div class="cm-body" id="s4-body">誘惑が迫ってから踏ん張るのでなく、<span class="hl">迫る前に選択肢を消す</span>。オデュッセウスが帆柱に自らを縛らせたのと同じ構造</div>
+        </div>
+        <div id="s4-list" class="cm-list">
+          <div class="cm-chip" id="s4-c1">給与天引きの貯蓄</div>
+          <div class="cm-chip" id="s4-c2">スマホを別室に置く</div>
+          <div class="cm-chip" id="s4-c3">締切を外部に宣言</div>
+        </div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 188.89-266 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s5-head" class="head" style="font-size:48px">締切＝遠い報酬を<span class="hl">手前に引く装置</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 締切は遅延割引のハック → 細かく刻んだ締切が効く</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 「将来のご褒美」は割り引かれる → 今すぐの快と紐づける</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 自制は意志力でなく、事前コミットメントで決まる</div>
+        </div>
+        <div id="s5-ask" class="ask">先延ばしは性格でなく、<span class="hl">曲線の形</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※式で機構を表したもので効果保証ではありません。マシュマロ実験は追試で効果が縮小（挿絵に留める）。出典：Ainslie (1975)／Mazur (1987)／Rachlin &amp; Green (1972)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="266" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="28.61" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="32.11" data-duration="46.58" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="81.19" data-duration="53.5" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="137.19" data-duration="49.2" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="188.89" data-duration="74.42" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-32.11) — cue: 身も蓋もない14.14 / 帰結22.62 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-char",{y:-12,duration:0.9,yoyo:true,repeat:2,ease:"sine.inOut"},6.0);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},14.14);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 遅延割引 (32.11-81.19) — cue: 2択35.91 / 遅延割引49.06 / 式55.02 / 双曲61.68 */
+      xfade(2,32.11);
+      tl.set("#s2-head",{opacity:0,y:30},32.11);
+      tl.set("#s2-now",{opacity:0,x:-40},32.11);
+      tl.set("#s2-later",{opacity:0,x:40},32.11);
+      tl.set("#s2-formula",{opacity:0,scale:0.85},32.11);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},32.11);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},32.6);
+      tl.to("#s2-now",{opacity:1,x:0,duration:0.5,ease:"power2.out"},35.91);
+      tl.to("#s2-later",{opacity:1,x:0,duration:0.5,ease:"power2.out"},37.0);
+      tl.to("#s2-formula",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},55.02);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},61.68);
+
+      /* S3 選好の逆転 (81.19-137.19) — cue: 選好逆転86.37 / 遠い88.64 / 交差93.88 / 形114.39 / 精神論124.2 */
+      xfade(3,81.19);
+      tl.set("#s3-head",{opacity:0,y:30},81.19);
+      tl.set("#s3-cA",{strokeDasharray:1100,strokeDashoffset:1100},81.19);
+      tl.set("#s3-cB",{strokeDasharray:1100,strokeDashoffset:1100},81.19);
+      tl.set("#s3-cross",{opacity:0,scale:0},81.19);
+      tl.set("#s3-row .pr-item",{opacity:0,x:40},81.19);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},81.7);
+      tl.to("#s3-cA",{strokeDashoffset:0,duration:2.0,ease:"power1.inOut"},88.64);
+      tl.to("#s3-cB",{strokeDashoffset:0,duration:2.0,ease:"power1.inOut"},89.4);
+      tl.to("#s3-cross",{opacity:1,scale:1,duration:0.5,ease:"back.out(2.5)"},93.88);
+      tl.to("#s3-d1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},88.64);
+      tl.to("#s3-d2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},93.88);
+      tl.to("#s3-d3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},124.2);
+
+      /* S4 コミットメント (137.19-188.89) — cue: 答え139.35 / 自制成功144.03 / 消す157.45 / 装置160.71 / 人間版173.78 */
+      xfade(4,137.19);
+      tl.set("#s4-head",{opacity:0,y:30},137.19);
+      tl.set("#s4-char",{opacity:0,scale:0.6},137.19);
+      tl.set("#s4-body",{opacity:0,x:40},137.19);
+      tl.set("#s4-list .cm-chip",{opacity:0,y:24},137.19);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},137.7);
+      tl.to("#s4-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},139.35);
+      tl.to("#s4-char",{y:-12,duration:0.85,yoyo:true,repeat:3,ease:"sine.inOut"},145.0);
+      tl.to("#s4-body",{opacity:1,x:0,duration:0.5,ease:"power3.out"},157.45);
+      tl.to("#s4-c1",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},173.78);
+      tl.to("#s4-c2",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},176.0);
+      tl.to("#s4-c3",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},178.2);
+
+      /* S5 まとめ (188.89-266) — cue: 締切装置210.79 / 予測①219.34 ②229.04 ③238.32 / 性格でなく形? / §0注247.07 */
+      xfade(5,188.89);
+      tl.set("#s5-head",{opacity:0,y:30},188.89);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},188.89);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},188.89);
+      tl.set("#s5-brand",{opacity:0},188.89);
+      tl.set("#s5-note",{opacity:0},188.89);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},210.79);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},219.34);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},229.04);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},238.32);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},243.45);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},247.07);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},257.75);
+
+      var GROUPS = [
+        {s:1.1,e:3.34,t:"明日から本気を出す。"},
+        {s:3.34,e:5.66,t:"来週こそ片づける。"},
+        {s:5.66,e:10.25,t:"その決意は、いざ明日になると、溶けてなくなります。"},
+        {s:10.25,e:14.14,t:"意志が弱いからだ、と私たちは思いがちです。"},
+        {s:14.14,e:19.5,t:"でも、動物行動学は、もっと身も蓋もない説明を出します。"},
+        {s:19.5,e:22.62,t:"先延ばしは、性格ではありません。"},
+        {s:22.62,e:29.56,t:"報酬の価値が、時間でどう割り引かれるか、という、ハトにもある計算の、帰結なのです。"},
+        {s:32.21,e:35.91,t:"ハトやネズミに、二つの選択肢を与えます。"},
+        {s:35.91,e:40.11,t:"いますぐ小さな餌か、少し待って大きな餌か。"},
+        {s:40.11,e:44.58,t:"動物は、しばしば、目先の小さい方を選びます。"},
+        {s:44.58,e:49.06,t:"報酬の価値は、手に入るまでの遅延で、割り引かれる。"},
+        {s:49.06,e:51.93,t:"これを、遅延割引と言います。"},
+        {s:51.93,e:55.02,t:"問題は、その割り引かれ方です。"},
+        {s:55.02,e:61.68,t:"マズーらが定式化したように、価値は、Aを1足すkかけるDで割った値で減る。"},
+        {s:61.68,e:69.23,t:"これは双曲型で、遅延がゼロ付近では価値が急落し、遠い未来では、ほぼ平坦になります。"},
+        {s:69.23,e:76.79,t:"いまと1分後の差は大きく感じるのに、30日後と31日後の差は、ほとんど感じない。"},
+        {s:76.79,e:78.66,t:"あの感覚です。"},
+        {s:81.29,e:86.37,t:"この双曲型の割引には、奇妙だが重要な帰結があります。"},
+        {s:86.37,e:88.64,t:"選好の逆転です。"},
+        {s:88.64,e:93.88,t:"遠い時点で比べると、人も動物も、待って大報酬を選ぶ。"},
+        {s:93.88,e:102.89,t:"ところが、時間が進んで、小報酬が目前に迫ると、二つの双曲曲線が交差し、選好がひっくり返る。"},
+        {s:102.89,e:107.94,t:"今夜は早く寝ると決めていたのに、夜になると夜ふかしを選ぶ。"},
+        {s:107.94,e:112.39,t:"月曜からダイエットと誓って、目の前のケーキに負ける。"},
+        {s:112.39,e:114.39,t:"ここが肝心です。"},
+        {s:114.39,e:124.2,t:"これは意志の弱さという、人格の欠陥ではなく、双曲割引という、曲線の形から、数学的に導かれる現象です。"},
+        {s:124.2,e:131.2,t:"だから、やる気を出せ、気合いだ、という精神論は、原理的に的を外しています。"},
+        {s:131.2,e:134.64,t:"曲線の形は、気合いでは変わりません。"},
+        {s:137.29,e:139.35,t:"では、どうするか。"},
+        {s:139.35,e:144.03,t:"ラックリンとグリーンの、古典的な実験が答えを示します。"},
+        {s:144.03,e:154.29,t:"鳩に、報酬が目前に迫る前に、大報酬コースへ自分を縛る、という選択肢を与えると、鳩は、自制に成功したのです。"},
+        {s:154.29,e:157.45,t:"誘惑が迫ってから踏ん張るのではない。"},
+        {s:157.45,e:160.71,t:"迫る前に、選択肢を消しておく。"},
+        {s:160.71,e:163.41,t:"これがコミットメント装置です。"},
+        {s:163.41,e:170.93,t:"オデュッセウスが、セイレーンの歌に抗うため、自らを帆柱に縛らせた話と、同じ構造です。"},
+        {s:170.93,e:173.78,t:"意志ではなく、設計で勝つ。"},
+        {s:173.78,e:181.06,t:"人間版なら、給与天引きの貯蓄、スマホを別の部屋に置く、締切を外部に宣言する。"},
+        {s:181.06,e:186.36,t:"いずれも、未来の誘惑が来る前に、選べなくしておく仕掛けです。"},
+        {s:188.99,e:191.05,t:"組織でも同じです。"},
+        {s:191.05,e:196.32,t:"長期ビジョンが現場で空回りするのは、しばしば遅延割引のせい。"},
+        {s:196.32,e:201.5,t:"遠い報酬は割り引かれて、いまの行動を動かす力を失います。"},
+        {s:201.5,e:205.2,t:"打ち手は、精神論でなく、構造です。"},
+        {s:205.2,e:210.79,t:"大きな目標をマイルストンに割って、報酬を時間軸の手前へ引き寄せる。"},
+        {s:210.79,e:215.8,t:"締切とは、遠い報酬を手前に引き寄せる、装置なのです。"},
+        {s:215.8,e:219.34,t:"通俗論と分岐する予測は、三つ。"},
+        {s:219.34,e:223.23,t:"第一に、締切は遅延割引のハック。"},
+        {s:223.23,e:229.04,t:"だから、一つの大きな締切より、細かく刻んだ締切のほうが効く。"},
+        {s:229.04,e:233.46,t:"第二に、将来の自分へのご褒美は、効きにくい。"},
+        {s:233.46,e:238.32,t:"むしろ、いますぐの快と紐づけるほうが、行動を引き出す。"},
+        {s:238.32,e:243.45,t:"第三に、自制は意志力でなく、事前コミットメントで決まる。"},
+        {s:243.45,e:247.07,t:"鳩でさえ、装置があれば自制できました。"},
+        {s:247.07,e:252.39,t:"なお、これは式で機構を表したもので、効果保証ではありません。"},
+        {s:252.39,e:257.75,t:"動物の遅延割引を主役に、人はその応用として読んでください。"},
+        {s:257.75,e:260.33,t:"動物から、組織を読む。"},
+        {s:260.33,e:263.28,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
