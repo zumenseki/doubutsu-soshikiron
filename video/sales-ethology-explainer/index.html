@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 70px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1280px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+      .formula { font-variant-numeric: tabular-nums; font-size: 60px; font-weight: 700;
+        color: #1d2321; background: #e6efe9; border-radius: 18px; padding: 18px 48px; }
+
+      /* S1/S5 4ダイヤル */
+      .dial-row { display: flex; gap: 26px; justify-content: center; }
+      .dial { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 256px;
+        padding: 26px 16px; border-radius: 18px; background: #fff; border: 3px solid #e3e0d8; }
+      .dial .d-name { font-weight: 900; font-size: 40px; }
+      .dial .d-sub { font-weight: 700; font-size: 23px; color: #6b7370; line-height: 1.3; }
+      .dial.reward { border-color: #2f6f4f; } .dial.reward .d-name { color: #2f6f4f; }
+      .dial.learn { border-color: #3f7d8c; } .dial.learn .d-name { color: #3f7d8c; }
+      .dial.fear { border-color: #d9893b; } .dial.fear .d-name { color: #d9893b; }
+      .dial.conform { border-color: #7a9a4a; } .dial.conform .d-name { color: #7a9a4a; }
+      .dial-mini { display: flex; gap: 16px; justify-content: center; }
+      .dchip { font-weight: 900; font-size: 30px; padding: 12px 30px; border-radius: 999px;
+        background: #fff; border: 2px solid #e3e0d8; }
+      .dchip.reward { color: #2f6f4f; border-color: #2f6f4f; }
+      .dchip.learn { color: #3f7d8c; border-color: #3f7d8c; }
+      .dchip.fear { color: #d9893b; border-color: #d9893b; }
+      .dchip.conform { color: #7a9a4a; border-color: #7a9a4a; }
+
+      /* S2 報酬 消去抵抗グラフ */
+      .reward-row { display: flex; gap: 54px; align-items: center; justify-content: center; }
+      .graph { width: 700px; height: 420px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curve-var { fill: none; stroke: #2f6f4f; stroke-width: 9; stroke-linecap: round; }
+      .curve-fix { fill: none; stroke: #d9893b; stroke-width: 9; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 27px; font-weight: 700; }
+      .rw-side { display: flex; flex-direction: column; gap: 18px; width: 600px; text-align: left; }
+      .rw-item { background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 18px 26px; }
+      .rw-item.dop { border-left: 10px solid #3f7d8c; }
+      .rw-item.recip { border-left: 10px solid #2f6f4f; }
+      .ri-t { font-weight: 900; font-size: 32px; color: #1d2321; }
+      .ri-b { font-weight: 700; font-size: 25px; color: #6b7370; line-height: 1.35; margin-top: 4px; }
+
+      /* S3 学習 随伴対比 */
+      .contrast-row { display: flex; gap: 40px; justify-content: center; }
+      .con-item { width: 580px; border-radius: 18px; padding: 26px 32px; text-align: left;
+        display: flex; flex-direction: column; gap: 10px; }
+      .con-item.non { background: #fff; border: 2px solid #d9893b; }
+      .con-item.con { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .ci-tag { font-weight: 900; font-size: 36px; }
+      .con-item.non .ci-tag { color: #d9893b; } .con-item.con .ci-tag { color: #2f6f4f; }
+      .ci-b { font-weight: 700; font-size: 29px; color: #1d2321; line-height: 1.4; }
+
+      /* S4 恐怖+同調 2カラム */
+      .fork-row { display: flex; gap: 46px; justify-content: center; align-items: stretch; }
+      .fbranch { width: 600px; border-radius: 20px; padding: 24px 30px; display: flex;
+        flex-direction: column; gap: 14px; align-items: center; background: #fff; }
+      .fbranch.fear { border: 2px solid #d9893b; }
+      .fbranch.conform { border: 2px solid #7a9a4a; }
+      .fb-tag { font-weight: 900; font-size: 38px; }
+      .fbranch.fear .fb-tag { color: #d9893b; } .fbranch.conform .fb-tag { color: #7a9a4a; }
+      .fb-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+      .fb-chip { font-weight: 800; font-size: 24px; padding: 8px 20px; border-radius: 999px;
+        background: #f4f1ea; color: #1d2321; }
+      .fb-desc { font-weight: 700; font-size: 25px; color: #6b7370; line-height: 1.35; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1240px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 34px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 16px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1280px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="281">
+
+      <!-- S1 フック 1.0-43.70 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">営業の動物行動学 ── 4つのダイヤル</div>
+        <div id="s1-head" class="head">売れる理由は、<span class="hl">ネズミとサル</span>が先に知っていた</div>
+        <div id="s1-dials" class="dial-row">
+          <div class="dial reward" id="s1-d1"><div class="d-name">報酬</div><div class="d-sub">どう与えるか</div></div>
+          <div class="dial learn" id="s1-d2"><div class="d-name">学習</div><div class="d-sub">約束の当たり方</div></div>
+          <div class="dial fear" id="s1-d3"><div class="d-name">恐怖</div><div class="d-sub">失う怖さ</div></div>
+          <div class="dial conform" id="s1-d4"><div class="d-name">同調</div><div class="d-sub">みんなの動き</div></div>
+        </div>
+        <div id="s1-sub" class="sub">テクニックの寄せ集めに見えて、底は<span class="hl">同じ4つ</span>。営業は動物行動学の応用編</div>
+      </div></div>
+
+      <!-- S2 報酬ダイヤル 43.70-99.50 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px"><span class="gn">報酬</span> ── 「何を」より「<span class="hl">どう</span>」与えるか</div>
+        <div id="s2-row" class="reward-row">
+          <svg id="s2-graph" class="graph" viewBox="0 0 700 420">
+            <line class="axis" x1="96" y1="30" x2="96" y2="370" />
+            <line class="axis" x1="96" y1="370" x2="670" y2="370" />
+            <text class="glabel" x="20" y="48" fill="#6b7370">反応の持続</text>
+            <text class="glabel" x="430" y="408" fill="#6b7370">強化をやめた後 →</text>
+            <path id="s2-cvar" class="curve-var" d="M112,96 C280,118 460,150 660,182" />
+            <path id="s2-cfix" class="curve-fix" d="M112,96 C190,156 250,320 660,360" />
+            <text class="glabel" x="394" y="150" fill="#2f6f4f">変動比率（消えにくい）</text>
+            <text class="glabel" x="250" y="330" fill="#d9893b">固定（すぐ消える）</text>
+          </svg>
+          <div class="rw-side">
+            <div class="rw-item dop" id="s2-dop">
+              <div class="ri-t">ドーパミンは「予告」へ移る</div>
+              <div class="ri-b">サルの脳は、報酬そのものより、それを<b>予告するサイン</b>に発火（シュルツ）</div>
+            </div>
+            <div class="rw-item recip" id="s2-recip">
+              <div class="ri-t">先に与えると、返したくなる</div>
+              <div class="ri-b">返報性はチンパンジー・吸血コウモリにもある古い回路。<b>試供品</b>が効く理由</div>
+            </div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">毎回同じ値引きより、<span class="hl">たまに当たる</span>サプライズ</div>
+      </div></div>
+
+      <!-- S3 学習ダイヤル 99.50-148.04 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px"><span class="gn">学習</span> ── 信頼は「<span class="hl">回数</span>」でなく「随伴」</div>
+        <div id="s3-formula" class="formula">ΔV = η · g · (u − V)</div>
+        <div id="s3-contrast" class="contrast-row">
+          <div class="con-item non" id="s3-non">
+            <div class="ci-tag">✕ 何度も会う（非随伴）</div>
+            <div class="ci-b">十回の雑談では、信頼 V はほとんど動かない</div>
+          </div>
+          <div class="con-item con" id="s3-con">
+            <div class="ci-tag">○ 約束を必ず守る（随伴）</div>
+            <div class="ci-b">一度の「明日送ります」を守るほうが V を押し上げる</div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">時々、<span class="hl">期待をわずかに超える</span>と記憶に残る</div>
+      </div></div>
+
+      <!-- S4 恐怖+同調 148.04-212.43 -->
+      <div id="scene4" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s4-head" class="head" style="font-size:50px">三つ目と四つ目 ── <span class="hl">恐怖</span>と<span style="color:#7a9a4a">同調</span></div>
+        <div id="s4-fork" class="fork-row">
+          <div class="fbranch fear" id="s4-fear">
+            <div class="fb-tag">恐怖 ── 希少性</div>
+            <div class="fb-chips" id="s4-fchips">
+              <div class="fb-chip">残り3個</div><div class="fb-chip">今だけ</div>
+              <div class="fb-chip">損失回避（オマキザル）</div>
+            </div>
+            <svg id="s4-uplot" viewBox="0 0 500 300" style="width:460px;height:276px;">
+              <line class="axis" x1="64" y1="24" x2="64" y2="262" />
+              <line class="axis" x1="64" y1="262" x2="472" y2="262" />
+              <text class="glabel" x="14" y="40" fill="#6b7370" font-size="24">成績</text>
+              <text class="glabel" x="316" y="292" fill="#6b7370" font-size="24">緊張・圧 →</text>
+              <path id="s4-uA" d="M86,248 C150,232 200,96 258,74" fill="none" stroke="#2f6f4f" stroke-width="9" stroke-linecap="round" />
+              <path id="s4-uB" d="M258,74 C316,96 404,232 454,254" fill="none" stroke="#d9893b" stroke-width="9" stroke-linecap="round" />
+              <circle id="s4-uTop" cx="258" cy="74" r="11" fill="#2f6f4f" style="transform-box:fill-box; transform-origin:center;" />
+              <text class="glabel" x="196" y="54" fill="#2f6f4f" font-size="23">最適点</text>
+              <text class="glabel" x="360" y="200" fill="#d9893b" font-size="22">煽りすぎ</text>
+            </svg>
+            <div class="fb-desc">最適点を超えた圧は成績を崩す（ヤーキーズ-ドッドソンの逆ユー字）</div>
+          </div>
+          <div class="fbranch conform" id="s4-conform">
+            <div class="fb-tag">同調 ── 社会的証明</div>
+            <svg id="s4-guppy" viewBox="0 0 500 300" style="width:460px;height:276px;">
+              <!-- 人気オス 中央上 オレンジ -->
+              <g id="s4-gm">
+                <ellipse cx="250" cy="80" rx="48" ry="26" fill="#d9893b" />
+                <polygon points="298,80 338,58 338,102" fill="#d9893b" />
+                <circle cx="226" cy="74" r="6" fill="#fff" /><circle cx="226" cy="74" r="3" fill="#1d2321" />
+                <text class="glabel" x="206" y="34" fill="#d9893b" font-size="22">人気のオス</text>
+              </g>
+              <!-- メスA 左 既に選んだ 緑 -->
+              <g id="s4-gA">
+                <ellipse cx="118" cy="222" rx="40" ry="22" fill="#2f6f4f" />
+                <polygon points="78,222 44,204 44,240" fill="#2f6f4f" />
+                <circle cx="140" cy="216" r="5" fill="#fff" /><circle cx="140" cy="216" r="2.5" fill="#1d2321" />
+              </g>
+              <!-- メスB 右 真似る 緑 -->
+              <g id="s4-gB">
+                <ellipse cx="382" cy="222" rx="40" ry="22" fill="#5f8f3f" />
+                <polygon points="422,222 456,204 456,240" fill="#5f8f3f" />
+                <circle cx="360" cy="216" r="5" fill="#fff" /><circle cx="360" cy="216" r="2.5" fill="#1d2321" />
+              </g>
+              <path id="s4-arrowB" d="M352,196 Q300,128 268,102" fill="none" stroke="#7a9a4a" stroke-width="5" stroke-dasharray="9 9" stroke-linecap="round" />
+              <text id="s4-glab" class="glabel" x="282" y="168" fill="#7a9a4a" font-size="22">真似る（コピー）</text>
+            </svg>
+            <div class="fb-chips" id="s4-cchips">
+              <div class="fb-chip">ベストセラー</div><div class="fb-chip">★4.8</div><div class="fb-chip">導入1万社</div>
+            </div>
+            <div class="fb-desc">隣が選ぶと、人は吟味を省いて真似る（グッピーの配偶者選択コピー）</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 212.43-281 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:46px">4つは<span class="hl">独立に・非線形に</span>効く</div>
+        <div id="s5-dials" class="dial-mini">
+          <div class="dchip reward">報酬</div><div class="dchip learn">学習</div>
+          <div class="dchip fear">恐怖</div><div class="dchip conform">同調</div>
+        </div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 煽るほど売れる、は誤り → 最適点を超えた圧は成約率を下げる</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 信頼は「会った回数」でなく「約束の当たり方」で決まる</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 値引きの常態化より、たまの特典（連発は持続を短くする）</div>
+        </div>
+        <div id="s5-ask" class="ask">売れる理由は、<span class="hl">ネズミとサル</span>が先に知っていた</div>
+        <div id="s5-note" class="note">※式で機構を表したもので「この通りやれば売れる」という効果保証ではありません。損失回避・変動比率はヒトでも実証が厚いですが、グッピー＝社会的証明は売り場を読む比喩です。出典：Skinner／Rescorla &amp; Wagner (1972)／Schultz (1997)／Chen, Lakshminarayanan &amp; Santos (2006)／Dugatkin (1992)／Yerkes &amp; Dodson (1908)。</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="281" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="40.2" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="43.70" data-duration="53.3" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="99.50" data-duration="46.03" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="148.04" data-duration="61.9" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="212.43" data-duration="65.76" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-43.70) — cue: 4要素15.23 / 4ダイヤル20.4 / 動物28.18 / 応用編36.37 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-dials .dial",{opacity:0,y:30},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.6);
+      tl.to("#s1-d1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},15.23);
+      tl.to("#s1-d2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},16.6);
+      tl.to("#s1-d3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},18.0);
+      tl.to("#s1-d4",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},19.4);
+      tl.to("#s1-dials",{scale:1.04,duration:0.5,yoyo:true,repeat:1,ease:"sine.inOut",transformOrigin:"center"},20.4);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},36.37);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 報酬 (43.70-99.50) — cue: グラフ50.59 / サプライズ64.0 / ドーパミン70.35 / 返報性84.07 / concl92.82 */
+      xfade(2,43.70);
+      tl.set("#s2-head",{opacity:0,y:30},43.70);
+      tl.set("#s2-cvar",{strokeDasharray:760,strokeDashoffset:760},43.70);
+      tl.set("#s2-cfix",{strokeDasharray:760,strokeDashoffset:760},43.70);
+      tl.set("#s2-dop",{opacity:0,x:40},43.70);
+      tl.set("#s2-recip",{opacity:0,x:40},43.70);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},43.70);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},44.2);
+      tl.to("#s2-cvar",{strokeDashoffset:0,duration:2.4,ease:"power1.inOut"},50.59);
+      tl.to("#s2-cfix",{strokeDashoffset:0,duration:2.4,ease:"power1.inOut"},51.4);
+      tl.to("#s2-dop",{opacity:1,x:0,duration:0.5,ease:"power2.out"},70.35);
+      tl.to("#s2-recip",{opacity:1,x:0,duration:0.5,ease:"power2.out"},84.07);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},92.82);
+
+      /* S3 学習 (99.50-148.04) — cue: 式112.17 / 非随伴126.91 / 随伴131.55 / concl142.55 */
+      xfade(3,99.50);
+      tl.set("#s3-head",{opacity:0,y:30},99.50);
+      tl.set("#s3-formula",{opacity:0,scale:0.85},99.50);
+      tl.set("#s3-non",{opacity:0,x:-40},99.50);
+      tl.set("#s3-con",{opacity:0,x:40},99.50);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},99.50);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},100.0);
+      tl.to("#s3-formula",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.6)"},112.17);
+      tl.to("#s3-non",{opacity:1,x:0,duration:0.5,ease:"power2.out"},126.91);
+      tl.to("#s3-con",{opacity:1,x:0,duration:0.5,ease:"power2.out"},131.55);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},142.55);
+
+      /* S4 恐怖+同調 (148.04-212.43) — cue: 恐怖枠150.93 / 損失回避chips156.14 / 逆U描画173.94 / desc183.08 / 同調枠189.24 / グッピー192.12 / 矢印197.45 / chips201.41 */
+      xfade(4,148.04);
+      tl.set("#s4-head",{opacity:0,y:30},148.04);
+      tl.set("#s4-fear",{opacity:0,x:-40},148.04);
+      tl.set("#s4-fchips .fb-chip",{opacity:0,y:18},148.04);
+      tl.set("#s4-uA",{strokeDasharray:380,strokeDashoffset:380},148.04);
+      tl.set("#s4-uB",{strokeDasharray:380,strokeDashoffset:380},148.04);
+      tl.set("#s4-uTop",{opacity:0,scale:0},148.04);
+      tl.set("#s4-fear .fb-desc",{opacity:0},148.04);
+      tl.set("#s4-conform",{opacity:0,x:40},148.04);
+      tl.set("#s4-gm",{opacity:0,scale:0.7,transformOrigin:"center"},148.04);
+      tl.set("#s4-gA",{opacity:0,scale:0.7,transformOrigin:"center"},148.04);
+      tl.set("#s4-gB",{opacity:0,scale:0.7,transformOrigin:"center"},148.04);
+      tl.set("#s4-arrowB",{strokeDasharray:160,strokeDashoffset:160},148.04);
+      tl.set("#s4-glab",{opacity:0},148.04);
+      tl.set("#s4-cchips .fb-chip",{opacity:0,y:18},148.04);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},148.6);
+      tl.to("#s4-fear",{opacity:1,x:0,duration:0.55,ease:"power2.out"},150.93);
+      tl.to("#s4-fchips .fb-chip",{opacity:1,y:0,duration:0.4,stagger:0.25,ease:"back.out(1.6)"},156.14);
+      tl.to("#s4-uA",{strokeDashoffset:0,duration:1.6,ease:"power1.inOut"},173.94);
+      tl.to("#s4-uB",{strokeDashoffset:0,duration:1.8,ease:"power1.inOut"},175.6);
+      tl.to("#s4-uTop",{opacity:1,scale:1,duration:0.45,ease:"back.out(2.5)"},177.6);
+      tl.to("#s4-fear .fb-desc",{opacity:1,duration:0.5,ease:"power1.out"},183.08);
+      tl.to("#s4-conform",{opacity:1,x:0,duration:0.55,ease:"power2.out"},189.24);
+      tl.to("#s4-gm",{opacity:1,scale:1,duration:0.45,ease:"back.out(1.6)"},192.12);
+      tl.to("#s4-gA",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.6)"},193.4);
+      tl.to("#s4-gB",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.6)"},194.6);
+      tl.to("#s4-arrowB",{strokeDashoffset:0,duration:1.0,ease:"power1.inOut"},197.45);
+      tl.to("#s4-glab",{opacity:1,duration:0.4,ease:"power1.out"},198.4);
+      tl.to("#s4-cchips .fb-chip",{opacity:1,y:0,duration:0.4,stagger:0.25,ease:"back.out(1.6)"},201.41);
+
+      /* S5 まとめ (212.43-281) — cue: 4ダイヤル217.34 / 予測①233.06 ②240.9 ③246.45 / §0注261.01 / ask273.7 */
+      xfade(5,212.43);
+      tl.set("#s5-head",{opacity:0,y:30},212.43);
+      tl.set("#s5-dials .dchip",{opacity:0,y:20},212.43);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},212.43);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},212.43);
+      tl.set("#s5-note",{opacity:0},212.43);
+      tl.set("#s5-brand",{opacity:0},212.43);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},212.9);
+      tl.to("#s5-dials .dchip",{opacity:1,y:0,duration:0.4,stagger:0.18,ease:"back.out(1.6)"},217.34);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},233.06);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},240.9);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},246.45);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},261.01);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},273.7);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},276.6);
+
+      var GROUPS = [
+        {s:1.1,e:5.56,t:"営業のノウハウ本は、テクニックの寄せ集めに見えます。"},
+        {s:5.56,e:11.28,t:"試供品を配れ、限定数を言え、レビューを見せろ、約束は守れ。"},
+        {s:11.28,e:15.23,t:"でも底を見ると、別々の話ではありません。"},
+        {s:15.23,e:20.4,t:"与え方、約束の当たり方、失う怖さ、みんなの動き。"},
+        {s:20.4,e:28.18,t:"報酬、学習、恐怖、同調という、同じ四つのダイヤルを、角度を変えて回しているだけです。"},
+        {s:28.18,e:36.37,t:"そしてその効き方は、人で発見される何十年も前に、ネズミ、ハト、サル、グッピーで取られていました。"},
+        {s:36.37,e:41.16,t:"営業は、動物行動学の応用編として読めるのです。"},
+        {s:43.8,e:46.72,t:"一つ目は、報酬のダイヤル。"},
+        {s:46.72,e:50.59,t:"大事なのは、何をより、どう与えるかです。"},
+        {s:50.59,e:60.39,t:"ハトのスキナー箱では、毎回餌を出すより、何回かに一度ランダムで出すほうが、レバーを押す行動は桁違いに消えにくくなります。"},
+        {s:60.39,e:64.0,t:"ガチャが人をつかんで離さない理由が、これ。"},
+        {s:64.0,e:70.35,t:"営業でも、毎回同じ値引きより、たまに当たるサプライズ特典のほうが効きます。"},
+        {s:70.35,e:79.13,t:"さらにシュルツの実験では、サルのドーパミン細胞は、報酬そのものより、それを予告するサインに強く発火しました。"},
+        {s:79.13,e:81.97,t:"期待が、脳を動かすのです。"},
+        {s:81.97,e:84.07,t:"そして返報性。"},
+        {s:84.07,e:89.13,t:"チンパンジーは、分けてくれた相手を憶え、毛づくろいで返す。"},
+        {s:89.13,e:92.82,t:"先に与えられると、お返しの義務が生じる。"},
+        {s:92.82,e:96.97,t:"試供品が効くのは、この古い回路を踏むからです。"},
+        {s:99.6,e:102.42,t:"二つ目は、学習のダイヤル。"},
+        {s:102.42,e:105.09,t:"ここがこの理論の核心です。"},
+        {s:105.09,e:112.17,t:"レスコーラとワグナーが示したのは、学習は、刺激の回数では進まない、ということでした。"},
+        {s:112.17,e:119.97,t:"進むのは、その刺激が結果をどれだけ予測するか、そして、予想とのズレ、予測誤差によってです。"},
+        {s:119.97,e:122.48,t:"営業の信頼も、同じ。"},
+        {s:122.48,e:126.91,t:"だから、何度も会うこと自体は、信頼を作りません。"},
+        {s:126.91,e:131.55,t:"効くのは、口にした約束が、高い確率で当たること。"},
+        {s:131.55,e:139.02,t:"一度の、明日までに送ります、を必ず守るほうが、十回の雑談より、信頼を押し上げます。"},
+        {s:139.02,e:142.55,t:"そして時々、期待をわずかに超える。"},
+        {s:142.55,e:145.5,t:"それが記憶に強く残るのです。"},
+        {s:148.14,e:150.93,t:"三つ目は、恐怖のダイヤル。"},
+        {s:150.93,e:156.14,t:"チェンとサントスは、オマキザルにコインを、お金として使わせました。"},
+        {s:156.14,e:162.74,t:"すると彼らも人と同じく、同じ額でも、得より損を、約二倍重く見た。"},
+        {s:162.74,e:166.79,t:"損失回避は、進化的に、とても古い。"},
+        {s:166.79,e:171.48,t:"残り三個、今だけ、が効くのは、ここを突くからです。"},
+        {s:171.48,e:173.94,t:"ただし恐怖は、両刃。"},
+        {s:173.94,e:183.08,t:"ヤーキーズとドッドソンが示した通り、緊張と成績は逆ユー字を描き、最適点を超えた圧は、成績を崩します。"},
+        {s:183.08,e:189.24,t:"煽りすぎた営業から客が逃げるのは、恐怖を、効く範囲の外まで回したから。"},
+        {s:189.24,e:192.12,t:"四つ目は、同調のダイヤル。"},
+        {s:192.12,e:197.45,t:"グッピーのメスは、別のメスが選んだオスへ、選好を乗り換えます。"},
+        {s:197.45,e:201.41,t:"ほかの個体の選択を、近道に使うのです。"},
+        {s:201.41,e:206.53,t:"ベストセラー、導入一万社、星、四点八のレビュー。"},
+        {s:206.53,e:209.89,t:"すべて、このコピーを起こす装置です。"},
+        {s:212.53,e:217.34,t:"四つのダイヤルは、独立に、しかも非線形に効きます。"},
+        {s:217.34,e:225.84,t:"通俗の営業論は、これらを、やる気のダイヤル一本に束ね、もっと押せ、もっと煽れ、と量で語りがち。"},
+        {s:225.84,e:228.09,t:"でも、そうではない。"},
+        {s:228.09,e:233.05,t:"だからこの理論は、三つの予測で、通俗論と分かれます。"},
+        {s:233.06,e:236.5,t:"一つ、煽るほど売れる、は誤り。"},
+        {s:236.5,e:240.9,t:"最適点を超えた圧は、逆に成約率を下げる。"},
+        {s:240.9,e:246.45,t:"二つ、信頼は、会った回数でなく、約束の当たり方で決まる。"},
+        {s:246.45,e:252.95,t:"三つ、連発した値引きは予測され、再購入の持続を、むしろ短くする。"},
+        {s:252.95,e:254.21,t:"注意。"},
+        {s:254.21,e:261.01,t:"これは式で機構を表したものであって、この通りやれば売れるという、効果保証ではありません。"},
+        {s:261.01,e:269.04,t:"損失回避や変動比率は人でも実証が厚いですが、グッピーの社会的証明は、売り場を読む比喩です。"},
+        {s:269.04,e:273.7,t:"動物実験を主役に、営業はその応用として読む。"},
+        {s:273.7,e:278.17,t:"売れる理由は、ネズミとサルが、先に知っていたのです。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
