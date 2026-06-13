@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 74px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 2均衡 */
+      .equilibria { display: flex; gap: 50px; justify-content: center; }
+      .eq { width: 600px; border-radius: 22px; padding: 34px 40px; }
+      .eq.good { background: #e6efe9; border: 3px solid #2f6f4f; }
+      .eq.bad { background: #f7ece1; border: 3px solid #d9893b; }
+      .eq-t { font-weight: 900; font-size: 52px; }
+      .eq.good .eq-t { color: #2f6f4f; } .eq.bad .eq-t { color: #d9893b; }
+      .eq-b { font-weight: 700; font-size: 32px; color: #1d2321; margin-top: 12px; line-height: 1.4; }
+
+      /* S3 恐怖伝播ドミノ */
+      .crowd-row { display: flex; gap: 26px; align-items: flex-end; justify-content: center; }
+      .panic-unit { position: relative; }
+      .bang { position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+        font-weight: 900; font-size: 50px; color: #d9893b; }
+      .deg-list { display: flex; flex-direction: column; gap: 14px; }
+      .deg-item { font-weight: 800; font-size: 36px; color: #1d2321; line-height: 1.35; }
+
+      /* S4 符号違い */
+      .vs { display: flex; gap: 50px; justify-content: center; align-items: stretch; }
+      .vs-col { width: 620px; border-radius: 22px; padding: 32px 38px; text-align: left; }
+      .vs-col.fear { background: #f7ece1; border: 2px solid #d9893b; }
+      .vs-col.brave { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .vs-tag { font-weight: 900; font-size: 44px; }
+      .vs-col.fear .vs-tag { color: #d9893b; } .vs-col.brave .vs-tag { color: #2f6f4f; }
+      .vs-when { font-weight: 800; font-size: 36px; color: #1d2321; margin: 6px 0; }
+      .vs-why { font-weight: 600; font-size: 30px; color: #6b7370; line-height: 1.35; }
+
+      /* S5 火消し */
+      .shield-row { display: flex; gap: 40px; align-items: center; justify-content: center; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="205">
+
+      <!-- S1 フック 1.0-32.68 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">取り付け騒ぎ ── 恐怖伝播の金融版</div>
+        <div id="s1-head" class="head">銀行はなぜ<span class="hl">一夜で倒れる</span>のか</div>
+        <div id="s1-char"><svg width="280" height="280" viewBox="0 0 240 240" aria-label="bank">
+          <polygon points="120,28 24,84 216,84" fill="#2f6f4f"/>
+          <rect x="32" y="84" width="176" height="13" fill="#3a7a5a"/>
+          <rect x="50" y="97" width="18" height="90" fill="#cfd8d2"/><rect x="91" y="97" width="18" height="90" fill="#cfd8d2"/>
+          <rect x="131" y="97" width="18" height="90" fill="#cfd8d2"/><rect x="172" y="97" width="18" height="90" fill="#cfd8d2"/>
+          <rect x="28" y="187" width="184" height="17" fill="#2f6f4f"/>
+          <text x="120" y="72" text-anchor="middle" font-size="34" font-weight="900" fill="#fff">¥</text>
+        </svg></div>
+        <div id="s1-sub" class="sub">健全でも、皆が引き出すと皆が思えば倒れる ── <span class="hl">SVB＝数時間</span></div>
+      </div></div>
+
+      <!-- S2 2均衡 自己成就 32.68-69.55 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">健全でも倒れる ── <span class="hl">二つの均衡</span></div>
+        <div id="s2-eq" class="equilibria">
+          <div class="eq good" id="s2-good">
+            <div class="eq-t">健全</div>
+            <div class="eq-b">皆が「必要な人だけ引き出す」と信じる</div>
+          </div>
+          <div class="eq bad" id="s2-bad">
+            <div class="eq-t">崩壊</div>
+            <div class="eq-b">皆が「皆が引き出す」と信じる</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">ファンダでなく<span class="hl">予想</span>で決まる ＝ 自己成就</div>
+      </div></div>
+
+      <!-- S3 恐怖伝播ドミノ 69.55-112.8 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:54px">恐怖が<span class="hl">伝播</span>する</div>
+        <div id="s3-crowd" class="crowd-row">
+          <div class="panic-unit" id="s3-u1"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit" id="s3-u2"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit" id="s3-u3"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit" id="s3-u4"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit" id="s3-u5"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit" id="s3-u6"><div class="bang">!</div><svg width="128" height="150" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        </div>
+        <div class="deg-list">
+          <div class="deg-item" id="s3-d1">他者が逃げる → 自分も逃げる → <span class="hl">閾値超えで相転移</span></div>
+          <div class="deg-item" id="s3-d2">引き出し＝統制可能な回避。早い者勝ち＋<span class="hl">損失回避</span>で窓口へ</div>
+        </div>
+      </div></div>
+
+      <!-- S4 蜂起の鏡像 112.8-156.37 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">蜂起の<span class="hl">鏡像</span> ── 符号違い</div>
+        <div id="s4-vs" class="vs">
+          <div class="vs-col fear" id="s4-fear">
+            <div class="vs-tag">取り付け</div>
+            <div class="vs-when">一瞬で起きる（突発）</div>
+            <div class="vs-why">恐怖は無条件に伝わる<br />「自分にできるか」を考えなくていい</div>
+          </div>
+          <div class="vs-col brave" id="s4-brave">
+            <div class="vs-tag">蜂起</div>
+            <div class="vs-when">めったに起きない（稀）</div>
+            <div class="vs-why">勇気は「自分にも勝てる」と思えて初めて<br />＝帰属の壁</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl">恐怖の伝染は<span class="hl">安く</span>、勇気の伝染は<span class="gn">高い</span></div>
+      </div></div>
+
+      <!-- S5 火消し 156.37-205 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:28px">
+        <div id="s5-head" class="head" style="font-size:54px">火を消す ＝ <span class="gn">予想を変える</span></div>
+        <div id="s5-shield" class="shield-row">
+          <svg width="150" height="166" viewBox="0 0 180 200" aria-label="shield">
+            <path d="M90,12 L165,40 V100 Q165,160 90,190 Q15,160 15,100 V40 Z" fill="#e6efe9" stroke="#2f6f4f" stroke-width="6"/>
+            <path d="M52,98 L80,128 L132,66" fill="none" stroke="#2f6f4f" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="text-align:left">
+            <div class="concl" style="font-size:38px; margin-bottom:14px;">「引き出さなくても安全」を外から保証</div>
+            <div class="sub" style="font-size:34px; text-align:left; max-width:none;">＝預金保険・最後の貸し手（伝染をオフにする外生介入）</div>
+          </div>
+        </div>
+        <div id="s5-ask" class="ask">組織も同じ ── 安全という<span class="hl">共通の予想</span>を据える</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※協調失敗の均衡として読むレンズであり、個別破綻の単一原因の断定ではありません。出典：Diamond &amp; Dybvig (1983)／Morris &amp; Shin (1998)／SVB 2023。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="205" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="29.18" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="32.68" data-duration="34.37" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="69.55" data-duration="40.75" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="112.8" data-duration="41.06" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="156.37" data-duration="45.43" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-32.68) — cue: 皆が引き出す13.53 / 恐怖の伝播23.18 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},13.53);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 2均衡 (32.68-69.55) — cue: 二つの均衡39.41 / 健全45.1 / 崩壊50.61 / 予想で決まる59.7 */
+      xfade(2,32.68);
+      tl.set("#s2-head",{opacity:0,y:30},32.68);
+      tl.set("#s2-good",{opacity:0,x:-50},32.68);
+      tl.set("#s2-bad",{opacity:0,x:50},32.68);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},32.68);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},33.1);
+      tl.to("#s2-good",{opacity:1,x:0,duration:0.5,ease:"power2.out"},45.1);
+      tl.to("#s2-bad",{opacity:1,x:0,duration:0.5,ease:"power2.out"},50.61);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},59.7);
+
+      /* S3 恐怖伝播ドミノ (69.55-112.8) — cue: 伝播69.65 / 他者74.2 / 閾値77.52 / 統制可能89.09 / 損失回避100.75 */
+      xfade(3,69.55);
+      tl.set("#s3-head",{opacity:0,y:30},69.55);
+      tl.set("#s3-crowd .panic-unit",{opacity:0,scale:0.7},69.55);
+      tl.set("#s3-crowd .bang",{opacity:0,scale:0.3},69.55);
+      tl.set("#s3-d1",{opacity:0,y:30},69.55);
+      tl.set("#s3-d2",{opacity:0,y:30},69.55);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},70.0);
+      tl.to("#s3-crowd .panic-unit",{opacity:1,scale:1,duration:0.4,stagger:0.1,ease:"back.out(1.5)"},74.2);
+      tl.to("#s3-u1 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},77.52);
+      tl.to("#s3-u2 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},78.2);
+      tl.to("#s3-u3 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},78.9);
+      tl.to("#s3-u4 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},79.6);
+      tl.to("#s3-u5 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},80.3);
+      tl.to("#s3-u6 .bang",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},81.0);
+      tl.to("#s3-d1",{opacity:1,y:0,duration:0.5,ease:"power2.out"},82.64);
+      tl.to("#s3-d2",{opacity:1,y:0,duration:0.5,ease:"power2.out"},94.24);
+
+      /* S4 符号違い (112.8-156.37) — cue: 正反対112.9 / 取り付け一瞬122.27 / 蜂起の勇気134.45 / 安く高く149.37 */
+      xfade(4,112.8);
+      tl.set("#s4-head",{opacity:0,y:30},112.8);
+      tl.set("#s4-fear",{opacity:0,x:-40},112.8);
+      tl.set("#s4-brave",{opacity:0,x:40},112.8);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},112.8);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},113.2);
+      tl.to("#s4-fear",{opacity:1,x:0,duration:0.5,ease:"power2.out"},122.27);
+      tl.to("#s4-brave",{opacity:1,x:0,duration:0.5,ease:"power2.out"},134.45);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},149.37);
+
+      /* S5 火消し (156.37-205) — cue: 火を消す156.47 / 預金保険162.43 / 組織も177.35 / §0注187.82 */
+      xfade(5,156.37);
+      tl.set("#s5-head",{opacity:0,y:30},156.37);
+      tl.set("#s5-shield",{opacity:0,scale:0.85},156.37);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},156.37);
+      tl.set("#s5-brand",{opacity:0},156.37);
+      tl.set("#s5-note",{opacity:0},156.37);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},156.8);
+      tl.to("#s5-shield",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},162.43);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},177.35);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},187.82);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},196.23);
+
+      var GROUPS = [
+        {s:1.1,e:7.68,t:"2023年3月、シリコンバレー銀行は、実質、数時間で消えました。"},
+        {s:7.68,e:13.53,t:"スマホとSNSで、危ない、が広がり、預金者がいっせいに引き出した。"},
+        {s:13.53,e:20.17,t:"健全かどうかより先に、皆が引き出すと皆が思ったことが、銀行を倒したのです。"},
+        {s:20.17,e:23.18,t:"これは群衆の愚かさではありません。"},
+        {s:23.18,e:30.12,t:"動物実験で確立した、恐怖の伝播という機構が、そのまま金融で動いた例です。"},
+        {s:32.78,e:39.41,t:"銀行は、すぐ引き出せる預金と、すぐには換金できない長期資産を抱えています。"},
+        {s:39.41,e:45.1,t:"ダイアモンドとディビッグが示したのは、ここに、二つの均衡があることです。"},
+        {s:45.1,e:50.61,t:"皆が、必要な人だけ引き出すと信じれば、銀行は健全に回る。"},
+        {s:50.61,e:59.7,t:"けれど、皆が引き出すと信じれば、我先に引き出すのが各自にとって合理的になり、銀行は資産を投げ売りして倒れる。"},
+        {s:59.7,e:64.64,t:"どちらが起きるかは、ファンダメンタルズではなく、予想で決まります。"},
+        {s:64.64,e:67.01,t:"これが、自己成就です。"},
+        {s:69.65,e:74.2,t:"これは、動物の恐怖伝播と同じ構造をしています。"},
+        {s:74.2,e:77.52,t:"他者が逃げるのを見ると、自分も逃げる。"},
+        {s:77.52,e:82.64,t:"閾値を超えると、母集団が相転移的に、いっせいに崩れる。"},
+        {s:82.64,e:89.09,t:"経済学は、ネズミの檻を一度も見ずに、同じカスケードへ独立に着地しました。"},
+        {s:89.09,e:94.24,t:"取り付けが速いのは、引き出しが、統制可能な回避だからです。"},
+        {s:94.24,e:98.99,t:"先に並べば、自分の預金は守れる、早い者勝ち。"},
+        {s:98.99,e:100.75,t:"失えばゼロ。"},
+        {s:100.75,e:106.32,t:"据わっていた資産を失う恐れは、同じ額の利益より重く感じます。"},
+        {s:106.32,e:110.24,t:"だから人は、迷わず窓口へ走るのです。"},
+        {s:112.9,e:117.74,t:"面白いのは、集団蜂起と、正反対に見えることです。"},
+        {s:117.74,e:122.27,t:"蜂起では、人々は長く耐え、めったに立ち上がらない。"},
+        {s:122.27,e:124.95,t:"取り付けは、一瞬で起きる。"},
+        {s:124.95,e:126.31,t:"なぜか。"},
+        {s:126.31,e:130.91,t:"恐怖は、他人がやるのを見れば、無条件に伝わります。"},
+        {s:130.91,e:134.45,t:"自分にもできるかを、考える必要がない。"},
+        {s:134.45,e:139.87,t:"一方、蜂起の勇気は、自分にも勝てると思えて初めて伝わる。"},
+        {s:139.87,e:141.79,t:"帰属の壁です。"},
+        {s:141.79,e:149.37,t:"同じ多エージェント機構の、符号違いが、取り付けは突発的、蜂起は稀、という対照を生む。"},
+        {s:149.37,e:153.81,t:"恐怖の伝染は安く、勇気の伝染は高いのです。"},
+        {s:156.47,e:158.85,t:"では、火はどう消すか。"},
+        {s:158.85,e:162.43,t:"自己成就なら、予想を変えれば止まります。"},
+        {s:162.43,e:171.85,t:"預金保険と、中央銀行の最後の貸し手は、引き出さなくても安全を、外から保証し、恐怖の連鎖を断つ装置です。"},
+        {s:171.85,e:177.35,t:"機構の言葉でいえば、伝染をオフにする、外生的な介入です。"},
+        {s:177.35,e:179.46,t:"組織でも同じです。"},
+        {s:179.46,e:182.27,t:"崩れるときは一瞬で崩れる。"},
+        {s:182.27,e:187.82,t:"けれど、安全だという共通の予想を据えれば、連鎖は始まりません。"},
+        {s:187.82,e:196.23,t:"なお、これは協調失敗の均衡として読むレンズであって、個別の破綻の単一原因を断定するものではありません。"},
+        {s:196.23,e:198.81,t:"動物から、組織を読む。"},
+        {s:198.81,e:201.74,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

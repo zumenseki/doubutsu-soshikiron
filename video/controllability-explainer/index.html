@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.14em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 セリグマンの実験 — 2群対比 */
+      .exp { display: flex; align-items: stretch; gap: 44px; justify-content: center; }
+      .exp-col { background: #fff; border: 2px solid #e3e0d8; border-radius: 22px;
+        padding: 30px 40px; width: 560px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+      .exp-col.able { border-color: #2f6f4f; }
+      .exp-col.unable { border-color: #d9893b; }
+      .ec-head { font-weight: 900; font-size: 38px; color: #1d2321; }
+      .bolts { display: flex; gap: 16px; }
+      .ec-cap { font-size: 22px; color: #6b7370; font-weight: 700; margin-top: -4px; }
+      .ec-cond { font-weight: 900; font-size: 32px; line-height: 1.35; }
+      .ec-arrow { font-weight: 900; font-size: 38px; color: #c9b9a4; line-height: 1; }
+      .ec-out { font-weight: 900; font-size: 40px; padding: 12px 32px; border-radius: 14px; }
+      .ec-out.good { background: #e6efe9; color: #2f6f4f; }
+      .ec-out.bad { background: #f6e3d3; color: #d9893b; }
+
+      /* S3 組織への翻訳 — フォーク */
+      .fork { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+      .fork-top { font-weight: 900; font-size: 38px; color: #1d2321; background: #fff;
+        border: 2px solid #c9b9a4; border-radius: 16px; padding: 18px 44px; }
+      .fork-row { display: flex; gap: 56px; justify-content: center; }
+      .fbranch { width: 560px; border-radius: 20px; padding: 26px 34px; display: flex;
+        flex-direction: column; gap: 12px; }
+      .fbranch.good { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .fbranch.bad { background: #fff; border: 2px solid #d9893b; }
+      .fb-tag { font-weight: 900; font-size: 34px; }
+      .fbranch.good .fb-tag { color: #2f6f4f; }
+      .fbranch.bad .fb-tag { color: #d9893b; }
+      .fb-desc { font-weight: 700; font-size: 28px; color: #1d2321; line-height: 1.4; }
+      .fb-out { font-weight: 900; font-size: 34px; margin-top: 4px; }
+      .fbranch.good .fb-out { color: #2f6f4f; }
+      .fbranch.bad .fb-out { color: #d9893b; }
+
+      /* S4 不連続グラフ + 3点 */
+      .graph-row { display: flex; align-items: center; gap: 50px; justify-content: center; }
+      .graph { width: 760px; height: 470px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .smooth { fill: none; stroke: #c9b9a4; stroke-width: 4; stroke-dasharray: 7 9; }
+      .stepLow { fill: none; stroke: #d9893b; stroke-width: 11; stroke-linecap: round; }
+      .stepCliff { fill: none; stroke: #d9893b; stroke-width: 11; stroke-linecap: round; }
+      .stepHigh { fill: none; stroke: #2f6f4f; stroke-width: 11; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .deg-list { display: flex; flex-direction: column; gap: 20px; text-align: left; width: 500px; }
+      .deg-item { display: flex; align-items: flex-start; gap: 18px; font-weight: 800; font-size: 34px; color: #1d2321; line-height: 1.3; }
+      .deg-x { color: #d9893b; font-weight: 900; font-size: 38px; line-height: 1; }
+      .deg-o { color: #2f6f4f; font-weight: 900; font-size: 38px; line-height: 1; }
+
+      /* S5 恐怖の正当域 — 4条件 */
+      .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 1020px; }
+      .cond-item { display: flex; align-items: center; gap: 18px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 14px; padding: 16px 26px; text-align: left; }
+      .cond-c { color: #2f6f4f; font-weight: 900; font-size: 34px; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 26px; color: #6b7370; max-width: 1280px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="174">
+
+      <!-- S1 フック 1.0-24.48 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">統制可能性 ── 恐怖の正しい使い方</div>
+        <div id="s1-head" class="head">効くのは<span class="hl">「厳しさ」</span>ではない</div>
+        <div id="s1-char"><svg width="230" height="230" viewBox="0 0 280 280" aria-label="wolf">
+          <polygon points="72,74 54,6 122,52" fill="#8a97a5"/>
+          <polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+          <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+          <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+          <circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/>
+          <circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/>
+          <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+          <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">決め手は、その罰を<span class="gn">避けられるか</span>＝コントロールできるか</div>
+      </div></div>
+
+      <!-- S2 セリグマンの実験 24.48-62.93 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">同じ電気ショック。違いは、<span class="hl">たった一点</span></div>
+        <div id="s2-exp" class="exp">
+          <div class="exp-col able" id="s2-cA">
+            <div class="ec-head">統制可能群</div>
+            <div class="bolts">
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+            </div>
+            <div class="ec-cap">同強度・同回数</div>
+            <div class="ec-cond gn">自分で止められる</div>
+            <div class="ec-arrow">↓</div>
+            <div class="ec-out good" id="s2-oA">回避を学習</div>
+          </div>
+          <div class="exp-col unable" id="s2-cB">
+            <div class="ec-head">統制不能群（ヨークト）</div>
+            <div class="bolts">
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+              <svg width="34" height="46" viewBox="0 0 24 32"><polygon points="15,1 4,17 11,17 9,31 21,12 13,12" fill="#d9893b"/></svg>
+            </div>
+            <div class="ec-cap">同強度・同回数</div>
+            <div class="ec-cond hl">何をしても止まらない</div>
+            <div class="ec-arrow">↓</div>
+            <div class="ec-out bad" id="s2-oB">学習性無力感</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S3 組織への翻訳 62.93-99.05 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:56px">同じ叱責でも、<span class="hl">結末は分かれる</span></div>
+        <div id="s3-fork" class="fork">
+          <div class="fork-top" id="s3-top">同じ強さの叱責</div>
+          <div class="fork-row">
+            <div class="fbranch good" id="s3-good">
+              <div class="fb-tag">統制可能</div>
+              <div class="fb-desc">次にどうすれば避けられるか分かる</div>
+              <div class="fb-out">→ 適応・改善する</div>
+            </div>
+            <div class="fbranch bad" id="s3-bad">
+              <div class="fb-tag">統制不能</div>
+              <div class="fb-desc">理不尽・恣意的。評価が読めない</div>
+              <div class="fb-out">→ 無力感に落ちる</div>
+            </div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">差は厳しさの量でなく、<span class="hl">予測・統制できるか</span></div>
+      </div></div>
+
+      <!-- S4 不連続 + 自己封止 99.05-135.1 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">なめらかでなく、<span class="hl">不連続に分岐</span>する</div>
+        <div id="s4-row" class="graph-row">
+          <svg id="s4-graph" class="graph" viewBox="0 0 760 480">
+            <line class="axis" x1="100" y1="40" x2="100" y2="420" />
+            <line class="axis" x1="100" y1="420" x2="720" y2="420" />
+            <text class="glabel" x="22" y="52" fill="#6b7370">行動率</text>
+            <text class="glabel" x="548" y="462" fill="#6b7370">統制可能性 →</text>
+            <path id="s4-smooth" class="smooth" d="M120,392 L700,96" />
+            <path id="s4-low" class="stepLow" d="M120,372 L398,372" />
+            <path id="s4-cliff" class="stepCliff" d="M398,372 L398,116" />
+            <path id="s4-high" class="stepHigh" d="M398,116 L700,116" />
+            <text class="glabel" x="150" y="345" fill="#d9893b" font-size="26" font-weight="800">崩落</text>
+            <text class="glabel" x="556" y="100" fill="#2f6f4f" font-size="26" font-weight="800">適応</text>
+          </svg>
+          <div class="deg-list" id="s4-degs">
+            <div class="deg-item" id="s4-d1"><span class="deg-x">✕</span> 一度撤退すると、二度と試さない</div>
+            <div class="deg-item" id="s4-d2"><span class="deg-x">✕</span> だから自然には回復しない</div>
+            <div class="deg-item" id="s4-d3"><span class="deg-o">✓</span> 外から「勝てる経験」を注入して脱出</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 恐怖の正当域 135.1-174 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:26px">
+        <div id="s5-head" class="head" style="font-size:54px">恐怖の<span class="hl">正当な使用域</span>は、狭い</div>
+        <div id="s5-grid" class="cond-grid">
+          <div class="cond-item" id="s5-c1"><span class="cond-c">①</span> 抑制したい行動であること</div>
+          <div class="cond-item" id="s5-c2"><span class="cond-c">②</span> 単純で、習熟済みの課題</div>
+          <div class="cond-item" id="s5-c3"><span class="cond-c">③</span> 統制可能で、避けられる</div>
+          <div class="cond-item" id="s5-c4"><span class="cond-c">④</span> 急性であり、慢性でない</div>
+        </div>
+        <div id="s5-ask" class="ask">知識労働の大半は、この全部の<span class="hl">"外側"</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※これは式で機構を表したもので、組織データで係数を当てたモデルではありません。出典：Seligman &amp; Maier (1967)／Maier &amp; Seligman (1976)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="174" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="20.98" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="24.48" data-duration="35.95" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="62.93" data-duration="33.62" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="99.05" data-duration="33.55" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="135.1" data-duration="35.57" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-24.48) — cue: 避けられるか11.67 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-char",{scale:0.93,y:10,duration:0.9,ease:"power2.inOut",yoyo:true,repeat:1},7.4);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},11.7);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 実験 (24.48-62.93) — cue: 同じショック28.61 / 止められる39.23 / 止まらない42.98 / 回避48.95 / 無力感51.93 */
+      xfade(2,24.48);
+      tl.set("#s2-head",{opacity:0,y:30},24.48);
+      tl.set("#s2-cA",{opacity:0,x:-50},24.48);
+      tl.set("#s2-cB",{opacity:0,x:50},24.48);
+      tl.set("#s2-oA",{opacity:0,scale:0.7},24.48);
+      tl.set("#s2-oB",{opacity:0,scale:0.7},24.48);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},24.9);
+      tl.to("#s2-cA",{opacity:1,x:0,duration:0.55,ease:"power2.out"},28.6);
+      tl.to("#s2-cB",{opacity:1,x:0,duration:0.55,ease:"power2.out"},29.0);
+      tl.to("#s2-oA",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},48.95);
+      tl.to("#s2-oB",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},51.93);
+
+      /* S3 翻訳 (62.93-99.05) — cue: 統制可能66.08 / 統制不能75.75 / 差は89.49 */
+      xfade(3,62.93);
+      tl.set("#s3-head",{opacity:0,y:30},62.93);
+      tl.set("#s3-top",{opacity:0,scale:0.85},62.93);
+      tl.set("#s3-good",{opacity:0,x:-40},62.93);
+      tl.set("#s3-bad",{opacity:0,x:40},62.93);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},62.93);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},63.4);
+      tl.to("#s3-top",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.7)"},64.5);
+      tl.to("#s3-good",{opacity:1,x:0,duration:0.5,ease:"power2.out"},66.1);
+      tl.to("#s3-bad",{opacity:1,x:0,duration:0.5,ease:"power2.out"},75.75);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},89.5);
+
+      /* S4 不連続 (99.05-135.1) — cue: なめらか線103.83 / 不連続106.53 / 二度と115.82 / 回復しない121.83 / 注入126.4 */
+      xfade(4,99.05);
+      tl.set("#s4-head",{opacity:0,y:30},99.05);
+      tl.set("#s4-smooth",{strokeDasharray:700,strokeDashoffset:700},99.05);
+      tl.set("#s4-low",{strokeDasharray:300,strokeDashoffset:300},99.05);
+      tl.set("#s4-cliff",{strokeDasharray:270,strokeDashoffset:270},99.05);
+      tl.set("#s4-high",{strokeDasharray:320,strokeDashoffset:320},99.05);
+      tl.set("#s4-degs .deg-item",{opacity:0,x:40},99.05);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},99.5);
+      tl.to("#s4-smooth",{strokeDashoffset:0,duration:1.8,ease:"power1.inOut"},103.83);
+      tl.to("#s4-low",{strokeDashoffset:0,duration:1.1,ease:"power1.out"},106.53);
+      tl.to("#s4-cliff",{strokeDashoffset:0,duration:0.7,ease:"power2.in"},107.7);
+      tl.to("#s4-high",{strokeDashoffset:0,duration:1.1,ease:"power1.out"},108.5);
+      tl.to("#s4-d1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},115.82);
+      tl.to("#s4-d2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},121.83);
+      tl.to("#s4-d3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},126.4);
+
+      /* S5 正当域 (135.1-174) — cue: 条件139.04/141.7/145.27/148.13 / 外側154.55 / §0注158.49 / brand165.1 */
+      xfade(5,135.1);
+      tl.set("#s5-head",{opacity:0,y:30},135.1);
+      tl.set("#s5-grid .cond-item",{opacity:0,y:24},135.1);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},135.1);
+      tl.set("#s5-brand",{opacity:0},135.1);
+      tl.set("#s5-note",{opacity:0},135.1);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},135.4);
+      tl.to("#s5-c1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},139.04);
+      tl.to("#s5-c2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},141.7);
+      tl.to("#s5-c3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},145.27);
+      tl.to("#s5-c4",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},148.13);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},154.55);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},158.49);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},165.1);
+
+      var GROUPS = [
+        {s:1.1,e:3.92,t:"厳しくすれば、組織は締まる。"},
+        {s:3.92,e:7.19,t:"これは、半分しか正しくありません。"},
+        {s:7.19,e:11.67,t:"締まるかどうかを決めるのは、罰の強さではないのです。"},
+        {s:11.67,e:15.34,t:"決めるのは、その罰が、避けられるかどうか。"},
+        {s:15.34,e:18.21,t:"コントロールできるかどうか、です。"},
+        {s:18.21,e:21.92,t:"同じ厳しさでも、結果はまるで変わります。"},
+        {s:24.58,e:28.61,t:"動物行動学に、古典的な実験があります。"},
+        {s:28.61,e:36.76,t:"セリグマンとマイヤーは、二つのグループの犬に、まったく同じ強さ、同じ回数の電気ショックを与えました。"},
+        {s:36.76,e:39.23,t:"違いは、たった一点。"},
+        {s:39.23,e:42.98,t:"一方は、自分の行動でショックを止められる。"},
+        {s:42.98,e:46.17,t:"もう一方は、何をしても止まらない。"},
+        {s:46.17,e:48.95,t:"結果は、はっきり分かれました。"},
+        {s:48.95,e:51.93,t:"止められた犬は、回避を学ぶ。"},
+        {s:51.93,e:60.39,t:"止められなかった犬は、学習性無力感に落ちて、後で逃げられる状況になっても、もう試そうとしませんでした。"},
+        {s:63.03,e:66.08,t:"同じことが、組織でも起こります。"},
+        {s:66.08,e:72.7,t:"同じ強さの叱責でも、次にどうすれば避けられるかが分かるなら、それは統制可能。"},
+        {s:72.7,e:75.75,t:"人は適応し、改善します。"},
+        {s:75.75,e:82.31,t:"けれど、何をしても評価が読めない、理不尽で恣意的な叱責は、統制不能。"},
+        {s:82.31,e:85.12,t:"これは、無力感を生みます。"},
+        {s:85.12,e:89.49,t:"厳しい上司が機能する職場と、崩壊する職場。"},
+        {s:89.49,e:96.51,t:"その違いは、厳しさの量ではなく、結果を予測し、コントロールできるかどうかにあります。"},
+        {s:99.15,e:103.83,t:"ここから、通俗的な経営論とは分かれる予測が出ます。"},
+        {s:103.83,e:106.53,t:"統制できるか、できないか。"},
+        {s:106.53,e:112.69,t:"この二つは、なめらかな連続ではなく、質的に不連続な分岐になるはずです。"},
+        {s:112.69,e:115.82,t:"しかも、無力感は厄介です。"},
+        {s:115.82,e:121.83,t:"一度、どうせ無駄だと撤退すると、その状況を、二度と経験しなくなる。"},
+        {s:121.83,e:126.4,t:"だから認識が更新されず、自然には回復しません。"},
+        {s:126.4,e:132.56,t:"抜け出すには、外から、確実に勝てる経験を、注入するしかないのです。"},
+        {s:135.2,e:139.04,t:"だから、恐怖の使いどころは、とても狭い。"},
+        {s:139.04,e:141.7,t:"抑制したい行動であること。"},
+        {s:141.7,e:145.27,t:"単純で、習熟済みの課題であること。"},
+        {s:145.27,e:148.13,t:"統制可能で、避けられること。"},
+        {s:148.13,e:150.97,t:"急性で、慢性でないこと。"},
+        {s:150.97,e:154.55,t:"この全部が重なる、狭い領域だけです。"},
+        {s:154.55,e:158.49,t:"知識労働の大半は、その外側にあります。"},
+        {s:158.49,e:165.1,t:"なお、これは式で機構を表したもので、組織データで係数を当てたモデルではありません。"},
+        {s:165.1,e:167.68,t:"動物から、組織を読む。"},
+        {s:167.68,e:170.62,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

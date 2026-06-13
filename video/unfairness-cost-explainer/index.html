@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.14em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 ブドウ/キュウリ 2匹 */
+      .monkeys { display: flex; align-items: flex-end; gap: 90px; justify-content: center; }
+      .mk { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+      .mk-reward { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 36px; }
+      .mk-state { font-weight: 800; font-size: 32px; padding: 8px 26px; border-radius: 999px; white-space: nowrap; }
+      .mk-state.happy { background: #e6efe9; color: #2f6f4f; }
+      .mk-state.angry { background: #f6e3d3; color: #d9893b; }
+      .reward-pill { background: #fff; border: 2px solid #e3e0d8; border-radius: 14px; padding: 8px 22px; }
+
+      /* S3 士気グラフ */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 720px; height: 460px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .lineDown { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; }
+      .baseline { stroke: #6b7370; stroke-width: 2; stroke-dasharray: 8 8; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .scale-row { display: flex; flex-direction: column; gap: 20px; width: 540px; text-align: left; }
+      .scale-item { display: flex; flex-direction: column; gap: 4px; background: #fff;
+        border: 2px solid #e3e0d8; border-radius: 16px; padding: 18px 28px; }
+      .scale-item.bad { border-left: 10px solid #d9893b; }
+      .scale-item.good { border-left: 10px solid #2f6f4f; }
+      .si-t { font-weight: 900; font-size: 34px; color: #1d2321; }
+      .si-b { font-weight: 700; font-size: 27px; color: #6b7370; line-height: 1.35; }
+
+      /* S4 説明可能性 2分岐 */
+      .fork-row { display: flex; gap: 50px; justify-content: center; }
+      .fbranch { width: 580px; border-radius: 20px; padding: 28px 36px; display: flex;
+        flex-direction: column; gap: 12px; text-align: left; }
+      .fbranch.good { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .fbranch.bad { background: #fff; border: 2px solid #d9893b; }
+      .fb-tag { font-weight: 900; font-size: 36px; }
+      .fbranch.good .fb-tag { color: #2f6f4f; }
+      .fbranch.bad .fb-tag { color: #d9893b; }
+      .fb-desc { font-weight: 700; font-size: 30px; color: #1d2321; line-height: 1.4; }
+      .fb-out { font-weight: 900; font-size: 32px; margin-top: 2px; }
+      .fbranch.good .fb-out { color: #2f6f4f; }
+      .fbranch.bad .fb-out { color: #d9893b; }
+
+      /* S5 まとめ3点 */
+      .sum-list { display: flex; flex-direction: column; gap: 18px; width: 1080px; }
+      .sum-item { display: flex; align-items: center; gap: 22px; font-weight: 800; font-size: 36px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 18px 32px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 40px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 26px; color: #6b7370; max-width: 1240px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="211">
+
+      <!-- S1 フック 1.0-33.84 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">公平性 ── 同じ総額でも組織は壊れる</div>
+        <div id="s1-head" class="head">満足を決めるのは額でなく<br /><span class="hl">「隣がいくら」</span></div>
+        <div id="s1-char"><svg width="220" height="220" viewBox="0 0 280 280" aria-label="capuchin">
+          <ellipse cx="140" cy="150" rx="92" ry="86" fill="#6b4a2f"/>
+          <path d="M70,120 Q140,40 210,120 Q200,150 140,150 Q80,150 70,120 Z" fill="#d8c4a8"/>
+          <ellipse cx="140" cy="172" rx="62" ry="64" fill="#caa878"/>
+          <circle cx="60" cy="150" r="30" fill="#6b4a2f"/><circle cx="220" cy="150" r="30" fill="#6b4a2f"/>
+          <circle cx="60" cy="150" r="15" fill="#caa878"/><circle cx="220" cy="150" r="15" fill="#caa878"/>
+          <ellipse cx="116" cy="156" rx="14" ry="16" fill="#fff"/><ellipse cx="164" cy="156" rx="14" ry="16" fill="#fff"/>
+          <circle cx="117" cy="159" r="7.5" fill="#1d2321"/><circle cx="163" cy="159" r="7.5" fill="#1d2321"/>
+          <path d="M104,140 L130,148" stroke="#3a2415" stroke-width="5" stroke-linecap="round"/>
+          <path d="M176,140 L150,148" stroke="#3a2415" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="186" rx="14" ry="10" fill="#3a2415"/>
+          <path d="M120,206 Q140,216 160,206" stroke="#3a2415" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">人は<span class="gn">参照点</span>からの差で報酬を感じる。参照点は社会的に決まる</div>
+      </div></div>
+
+      <!-- S2 ブドウとキュウリ 33.84-71.16 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">ブドウとキュウリ ── <span class="hl">オマキザルの怒り</span></div>
+        <div id="s2-monkeys" class="monkeys">
+          <div class="mk" id="s2-mkA">
+            <svg width="180" height="180" viewBox="0 0 280 280" aria-label="capuchin">
+              <ellipse cx="140" cy="150" rx="92" ry="86" fill="#6b4a2f"/>
+              <path d="M70,120 Q140,40 210,120 Q200,150 140,150 Q80,150 70,120 Z" fill="#d8c4a8"/>
+              <ellipse cx="140" cy="172" rx="62" ry="64" fill="#caa878"/>
+              <circle cx="60" cy="150" r="30" fill="#6b4a2f"/><circle cx="220" cy="150" r="30" fill="#6b4a2f"/>
+              <circle cx="60" cy="150" r="15" fill="#caa878"/><circle cx="220" cy="150" r="15" fill="#caa878"/>
+              <ellipse cx="116" cy="156" rx="14" ry="16" fill="#fff"/><ellipse cx="164" cy="156" rx="14" ry="16" fill="#fff"/>
+              <circle cx="117" cy="158" r="7.5" fill="#1d2321"/><circle cx="163" cy="158" r="7.5" fill="#1d2321"/>
+              <ellipse cx="140" cy="186" rx="12" ry="8" fill="#3a2415"/>
+              <path d="M120,204 Q140,214 160,204" stroke="#3a2415" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="mk-reward"><span class="reward-pill" style="color:#5a8a3a">🥒 キュウリ</span></div>
+            <div style="position:relative; height:54px;">
+              <div class="mk-state happy" id="s2-stA-happy" style="position:absolute; left:50%; transform:translateX(-50%);">満足</div>
+              <div class="mk-state angry" id="s2-stA-angry" style="position:absolute; left:50%; transform:translateX(-50%); opacity:0;">拒否！</div>
+            </div>
+          </div>
+          <div class="mk" id="s2-mkB">
+            <svg width="180" height="180" viewBox="0 0 280 280" aria-label="capuchin">
+              <ellipse cx="140" cy="150" rx="92" ry="86" fill="#6b4a2f"/>
+              <path d="M70,120 Q140,40 210,120 Q200,150 140,150 Q80,150 70,120 Z" fill="#d8c4a8"/>
+              <ellipse cx="140" cy="172" rx="62" ry="64" fill="#caa878"/>
+              <circle cx="60" cy="150" r="30" fill="#6b4a2f"/><circle cx="220" cy="150" r="30" fill="#6b4a2f"/>
+              <circle cx="60" cy="150" r="15" fill="#caa878"/><circle cx="220" cy="150" r="15" fill="#caa878"/>
+              <ellipse cx="116" cy="156" rx="14" ry="16" fill="#fff"/><ellipse cx="164" cy="156" rx="14" ry="16" fill="#fff"/>
+              <circle cx="117" cy="158" r="7.5" fill="#1d2321"/><circle cx="163" cy="158" r="7.5" fill="#1d2321"/>
+              <ellipse cx="140" cy="186" rx="12" ry="8" fill="#3a2415"/>
+              <path d="M120,210 Q140,202 160,210" stroke="#3a2415" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="mk-reward"><span class="reward-pill" style="color:#8a3aa0">🍇 ブドウ</span></div>
+            <div class="mk-state happy" id="s2-stB">好物</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">自分の報酬は不変。変わったのは<span class="hl">比較の基準</span>だけ</div>
+      </div></div>
+
+      <!-- S3 総額一定でも純損 71.16-117.15 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">総額が同じでも、<span class="hl">純損になる</span></div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 720 460">
+            <line class="axis" x1="100" y1="40" x2="100" y2="400" />
+            <line class="axis" x1="100" y1="400" x2="680" y2="400" />
+            <line class="baseline" x1="100" y1="120" x2="680" y2="120" />
+            <text class="glabel" x="22" y="52" fill="#2f6f4f">平均士気</text>
+            <text class="glabel" x="470" y="442" fill="#d9893b">不平等 →</text>
+            <text class="glabel" x="540" y="110" fill="#6b7370" font-size="24">均等時</text>
+            <path id="s3-line" class="lineDown" d="M120,128 C260,150 360,250 680,360" />
+          </svg>
+          <div class="scale-row">
+            <div class="scale-item bad" id="s3-bad">
+              <div class="si-t">冷遇された側の不満 ↑↑</div>
+              <div class="si-b">損は得より重い（κ &gt; 1）</div>
+            </div>
+            <div class="scale-item good" id="s3-good">
+              <div class="si-t">厚遇された側の満足 ↑</div>
+              <div class="si-b">増分は、不満の増分に届かない</div>
+            </div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">絶対報酬を<span class="hl">一切変えなくても</span>士気は下がる</div>
+      </div></div>
+
+      <!-- S4 説明可能性 117.15-159.1 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">効くのは差の大きさより、<span class="hl">説明できるか</span></div>
+        <div id="s4-fork" class="fork-row">
+          <div class="fbranch good" id="s4-good">
+            <div class="fb-tag">説明できる差</div>
+            <div class="fb-desc">実績に紐づいた、納得できる随伴</div>
+            <div class="fb-out">→ 人は受け入れる</div>
+          </div>
+          <div class="fbranch bad" id="s4-bad">
+            <div class="fb-tag">説明できない差</div>
+            <div class="fb-desc">恣意的で、なぜ自分が外れたか読めない</div>
+            <div class="fb-out">→ 統制不能な罰と同じ顔</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl">地位と分配の政治 ＝ 100人超で自然発生する<span class="hl">チンパン型</span></div>
+      </div></div>
+
+      <!-- S5 まとめ 159.1-211 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:26px">
+        <div id="s5-head" class="head" style="font-size:54px">不公平の<span class="hl">非対称なコスト</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 満足は絶対額でなく、社会的な参照点からの差</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 損は得より重い → 総額が同じでも不公平は壊す</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 効くのは差の大きさより、説明できるかどうか</div>
+        </div>
+        <div id="s5-ask" class="ask">その差は実績に紐づくか、<span class="hl">恣意的か？</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※これは機構を表す式であって、特定組織のデータ分析ではありません。出典：Brosnan &amp; de Waal (2003, Nature)／Kahneman &amp; Tversky。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="211" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="30.34" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="33.84" data-duration="34.82" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="71.16" data-duration="43.49" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="117.15" data-duration="39.46" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="159.1" data-duration="48.94" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-33.84) — cue: 隣がいくら13.34 / 参照点8.95 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-char",{rotation:-6,duration:0.5,ease:"power1.inOut",yoyo:true,repeat:3},16.5);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},8.95);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 ブドウ/キュウリ (33.84-71.16) — cue: 2匹37.72 / キュウリ41.44 / ブドウ43.67 / 投げ返し46.61 / 比較基準57.79 */
+      xfade(2,33.84);
+      tl.set("#s2-head",{opacity:0,y:30},33.84);
+      tl.set("#s2-mkA",{opacity:0,x:-50},33.84);
+      tl.set("#s2-mkB",{opacity:0,x:50},33.84);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},33.84);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},34.3);
+      tl.to("#s2-mkA",{opacity:1,x:0,duration:0.5,ease:"power2.out"},37.72);
+      tl.to("#s2-mkB",{opacity:1,x:0,duration:0.5,ease:"power2.out"},43.67);
+      /* 46.61 隣がブドウ→キュウリ猿が満足→怒りに変化 (2ラベルのopacityクロスフェード) */
+      tl.to("#s2-stA-happy",{opacity:0,duration:0.2,ease:"power2.in"},46.61);
+      tl.to("#s2-stA-angry",{opacity:1,duration:0.3,ease:"back.out(1.8)"},46.85);
+      tl.to("#s2-mkA",{x:-14,duration:0.08,repeat:7,yoyo:true,ease:"none"},47.0);
+      tl.set("#s2-mkA",{x:0},47.7);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},57.79);
+
+      /* S3 純損 (71.16-117.15) — cue: 損失回避74.48 / 厚遇<冷遇87.48 / 士気下がる95.25 / 一切変えず105.1 */
+      xfade(3,71.16);
+      tl.set("#s3-head",{opacity:0,y:30},71.16);
+      tl.set("#s3-line",{strokeDasharray:760,strokeDashoffset:760},71.16);
+      tl.set("#s3-bad",{opacity:0,x:40},71.16);
+      tl.set("#s3-good",{opacity:0,x:40},71.16);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},71.16);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},71.6);
+      tl.to("#s3-bad",{opacity:1,x:0,duration:0.5,ease:"power2.out"},87.48);
+      tl.to("#s3-good",{opacity:1,x:0,duration:0.5,ease:"power2.out"},91.0);
+      tl.to("#s3-line",{strokeDashoffset:0,duration:3.4,ease:"power1.in"},95.25);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},105.1);
+
+      /* S4 説明可能性 (117.15-159.1) — cue: 説明可能性117.25 / 説明できる差136.07 / 説明できない差141.46 / チンパン型151.27 */
+      xfade(4,117.15);
+      tl.set("#s4-head",{opacity:0,y:30},117.15);
+      tl.set("#s4-good",{opacity:0,x:-40},117.15);
+      tl.set("#s4-bad",{opacity:0,x:40},117.15);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},117.15);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},117.6);
+      tl.to("#s4-good",{opacity:1,x:0,duration:0.5,ease:"power2.out"},136.07);
+      tl.to("#s4-bad",{opacity:1,x:0,duration:0.5,ease:"power2.out"},141.46);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},151.27);
+
+      /* S5 まとめ (159.1-211) — cue: まとめ①160.71 ②166.92 ③172.83 / 問い182.64 / §0注196.2 */
+      xfade(5,159.1);
+      tl.set("#s5-head",{opacity:0,y:30},159.1);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:24},159.1);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},159.1);
+      tl.set("#s5-brand",{opacity:0},159.1);
+      tl.set("#s5-note",{opacity:0},159.1);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},159.5);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},160.71);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},166.92);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},172.83);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},182.64);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},196.2);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},202.46);
+
+      var GROUPS = [
+        {s:1.1,e:4.95,t:"給料の満足は、絶対額では決まりません。"},
+        {s:4.95,e:8.95,t:"人は、参照点からの差で報酬を感じます。"},
+        {s:8.95,e:13.34,t:"そして、その参照点は、社会的に決まります。"},
+        {s:13.34,e:16.48,t:"隣の誰かが、いくらもらったか。"},
+        {s:16.48,e:22.36,t:"同じ年収でも、同僚が自分より上だと知った途端、満足は崩れます。"},
+        {s:22.36,e:25.98,t:"額そのものは、一円も変わっていないのに。"},
+        {s:25.98,e:31.27,t:"この厄介な性質を、一匹のサルが、見事に教えてくれます。"},
+        {s:33.94,e:37.72,t:"ブロスナンとドゥ、ヴァールの、有名な実験です。"},
+        {s:37.72,e:41.44,t:"二匹のオマキザルに、同じ作業をさせます。"},
+        {s:41.44,e:43.67,t:"一方には、キュウリ。"},
+        {s:43.67,e:46.61,t:"もう一方には、好物のブドウ。"},
+        {s:46.61,e:54.33,t:"キュウリで満足していたサルは、隣がブドウをもらった瞬間、キュウリを投げ返して、作業を拒否しました。"},
+        {s:54.33,e:57.79,t:"自分の報酬は、何も変わっていません。"},
+        {s:57.79,e:60.96,t:"変わったのは、比較の基準だけです。"},
+        {s:60.96,e:64.81,t:"公平さの感覚は、人間だけのものではない。"},
+        {s:64.81,e:68.62,t:"それは、進化の深いところに根を持っています。"},
+        {s:71.26,e:74.48,t:"ここに、損失回避が重なります。"},
+        {s:74.48,e:77.44,t:"損は、得より重く感じる。"},
+        {s:77.44,e:81.41,t:"この二つを合わせると、非自明な帰結が出ます。"},
+        {s:81.41,e:87.48,t:"総報酬を、一定に保ったまま、一部を厚遇し、一部を冷遇する。"},
+        {s:87.48,e:95.25,t:"すると、厚遇された側の満足の増分より、冷遇された側の不満の増分のほうが、大きくなる。"},
+        {s:95.25,e:99.06,t:"差し引きで、組織全体の士気は下がります。"},
+        {s:99.06,e:105.1,t:"シミュレーションでも、不平等を上げるほど、平均の士気は単調に下がりました。"},
+        {s:105.1,e:109.14,t:"絶対報酬を、一切変えていないのに、です。"},
+        {s:109.14,e:114.59,t:"再分配としての不平等は、総額が同じでも、純損になりうる。"},
+        {s:117.25,e:122.09,t:"そして、効くのは差の大きさより、差の説明可能性です。"},
+        {s:122.09,e:125.78,t:"目立つ一部にだけ、特別賞与を出す。"},
+        {s:125.78,e:128.17,t:"本人たちは喜びます。"},
+        {s:128.17,e:136.07,t:"けれど残りの大多数は、自分の給与が変わらなくても、なぜ自分は外れたのかを、反芻し始めます。"},
+        {s:136.07,e:141.46,t:"納得できる随伴、実績に紐づいた差なら、人は受け入れます。"},
+        {s:141.46,e:147.94,t:"けれど、恣意的で説明できない差は、統制不能な罰と、同じ顔をしています。"},
+        {s:147.94,e:151.27,t:"地位と分配が、政治の火種になる。"},
+        {s:151.27,e:156.56,t:"これは百人を超えると自然に発生する、チンパン型の力学です。"},
+        {s:159.2,e:160.71,t:"まとめます。"},
+        {s:160.71,e:166.92,t:"報酬の満足は、絶対額でなく、社会的な参照点からの差で決まる。"},
+        {s:166.92,e:172.83,t:"損は得より重いから、総額が同じでも、不公平は組織を壊しうる。"},
+        {s:172.83,e:178.01,t:"そして効くのは、差の大きさより、その差が説明できるかどうか。"},
+        {s:178.01,e:182.64,t:"だから、賞与に差をつける前に、問うべきことがあります。"},
+        {s:182.64,e:186.61,t:"その差は、実績に紐づいて説明できるか。"},
+        {s:186.61,e:189.2,t:"それとも、恣意的な差か。"},
+        {s:189.2,e:196.2,t:"サルがキュウリを投げ返したあの瞬間が、組織のあちこちで、静かに起きているのかもしれません。"},
+        {s:196.2,e:202.46,t:"なお、これは機構を表す式であって、特定組織のデータ分析ではありません。"},
+        {s:202.46,e:205.04,t:"動物から、組織を読む。"},
+        {s:205.04,e:207.99,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

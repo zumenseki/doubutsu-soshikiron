@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.14em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 J字曲線 */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 760px; height: 470px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveJ { fill: none; stroke: #2f6f4f; stroke-width: 10; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .j-right { display: flex; flex-direction: column; gap: 18px; width: 540px; text-align: left; }
+      .j-tag { font-weight: 800; font-size: 36px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 30px; border-radius: 999px; align-self: flex-start; }
+      .j-body { font-weight: 700; font-size: 34px; color: #1d2321; line-height: 1.45; }
+      .j-cav { font-weight: 600; font-size: 28px; color: #6b7370; line-height: 1.4; }
+
+      /* S3 学習性無力感 */
+      .hl-row { display: flex; align-items: center; gap: 60px; justify-content: center; }
+      .hl-right { display: flex; flex-direction: column; gap: 18px; width: 700px; text-align: left; }
+      .hl-item { display: flex; align-items: flex-start; gap: 18px; font-weight: 800; font-size: 36px; color: #1d2321; line-height: 1.35; }
+      .hl-x { color: #d9893b; font-weight: 900; font-size: 40px; line-height: 1; }
+      .hl-o { color: #2f6f4f; font-weight: 900; font-size: 40px; line-height: 1; }
+
+      /* S4 勇気カスケード */
+      .crowd-row { display: flex; gap: 28px; align-items: flex-end; justify-content: center; }
+      .unit { position: relative; }
+      .fist { position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
+        font-weight: 900; font-size: 52px; color: #2f6f4f; }
+      .vs2 { display: flex; gap: 44px; justify-content: center; }
+      .vs2-col { width: 600px; border-radius: 20px; padding: 22px 34px; text-align: left; }
+      .vs2-col.fear { background: #f7ece1; border: 2px solid #d9893b; }
+      .vs2-col.brave { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .vs2-t { font-weight: 900; font-size: 36px; margin-bottom: 4px; }
+      .vs2-col.fear .vs2-t { color: #d9893b; } .vs2-col.brave .vs2-t { color: #2f6f4f; }
+      .vs2-b { font-weight: 700; font-size: 30px; color: #1d2321; line-height: 1.4; }
+
+      /* S5 まとめ */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1180px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 35px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 16px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="225">
+
+      <!-- S1 フック 1.0-36.36 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">蜂起 ── 取り付け騒ぎの鏡像</div>
+        <div id="s1-head" class="head">なぜ人は耐え、<span class="hl">ある日いっせいに立つ</span>のか</div>
+        <div id="s1-crowd" class="crowd-row">
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">人は最悪の底では<span class="gn">耐え</span>、状況が改善した後の反転で<span class="hl">突然動く</span></div>
+      </div></div>
+
+      <!-- S2 J字曲線 36.36-77.28 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">底でなく、<span class="hl">"下がった時"</span>に立つ</div>
+        <div id="s2-row" class="graph-row">
+          <svg id="s2-graph" class="graph" viewBox="0 0 760 470">
+            <line class="axis" x1="100" y1="40" x2="100" y2="400" />
+            <line class="axis" x1="100" y1="400" x2="710" y2="400" />
+            <text class="glabel" x="34" y="52" fill="#2f6f4f">水準</text>
+            <text class="glabel" x="600" y="442" fill="#6b7370">時間 →</text>
+            <path id="s2-curve" class="curveJ" d="M120,310 C240,270 330,150 420,128 C490,160 520,310 690,330" />
+            <circle id="s2-spark" cx="500" cy="290" r="15" fill="#d9893b" style="transform-box:fill-box; transform-origin:center;" />
+          </svg>
+          <div class="j-right">
+            <div id="s2-tag" class="j-tag">J字曲線（デイヴィス）</div>
+            <div id="s2-body" class="j-body">据わっていた水準が割れた瞬間＝<span class="hl">相対的な損失</span>。オマキザルがキュウリを投げ返すのと同じ</div>
+            <div id="s2-cav" class="j-cav">※動くのは最貧層でなく「下がった層」</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S3 学習性無力感 77.28-119.45 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">なぜ、こんなに<span class="hl">長く耐える</span>のか</div>
+        <div id="s3-row" class="hl-row">
+          <div id="s3-char"><svg width="300" height="300" viewBox="0 0 280 280" aria-label="dog-helpless">
+            <ellipse cx="60" cy="128" rx="26" ry="52" fill="#a08a6e" transform="rotate(12 60 128)"/>
+            <ellipse cx="220" cy="128" rx="26" ry="52" fill="#a08a6e" transform="rotate(-12 220 128)"/>
+            <ellipse cx="140" cy="152" rx="84" ry="80" fill="#b59a78"/>
+            <ellipse cx="140" cy="188" rx="50" ry="42" fill="#d8c4a4"/>
+            <path d="M100,144 Q116,153 132,144" stroke="#1d2321" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M148,144 Q164,153 180,144" stroke="#1d2321" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="140" cy="176" rx="14" ry="10" fill="#1d2321"/>
+            <path d="M116,210 Q140,198 164,210" stroke="#5a4a32" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg></div>
+          <div class="hl-right">
+            <div class="hl-item" id="s3-i1"><span class="hl-x">✕</span> 逃げられても、もう動かない（無力感の固着）</div>
+            <div class="hl-item" id="s3-i2"><span class="hl-x">✕</span> 行動が止まる → 信念が更新されず自然回復しない</div>
+            <div class="hl-item" id="s3-i3"><span class="hl-o">✓</span> 外から「動けば勝てる」が注入されて崩れる</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S4 勇気カスケード + 符号違い 119.45-166.04 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">沈黙が<span class="gn">一夜で割れる</span> ── 東欧1989</div>
+        <div id="s4-crowd" class="crowd-row">
+          <div class="unit" id="s4-u1"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit" id="s4-u2"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit" id="s4-u3"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit" id="s4-u4"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit" id="s4-u5"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="unit" id="s4-u6"><div class="fist">↑</div><svg width="118" height="140" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        </div>
+        <div id="s4-vs" class="vs2">
+          <div class="vs2-col fear" id="s4-fear">
+            <div class="vs2-t">恐怖（取り付け）</div>
+            <div class="vs2-b">無条件に伝わる → 突発・安定して抑圧</div>
+          </div>
+          <div class="vs2-col brave" id="s4-brave">
+            <div class="vs2-t">勇気（蜂起）</div>
+            <div class="vs2-b">「自分にもできる」と帰属して初めて → 稀</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 まとめ 166.04-225 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s5-head" class="head" style="font-size:52px">動かすのは苦しみでなく、<span class="hl">"勝てる証拠"</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 引き金は窮乏のピークでなく「統制可能と気づいた瞬間」</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 恐怖は無条件・勇気は自己効力感を掛けて初めて伝わる</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 別経路の3理論が一点に収束（consilience）＝機構は檻の外へ届く</div>
+        </div>
+        <div id="s5-ask" class="ask">耐えていた人を動かすのは、深い苦しみでなく<span class="hl">勝てる証拠</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※機構を歴史の集団行動に当てるレンズで、各事象の単一原因の断定ではありません。出典：Seligman &amp; Maier (1967)／Davies (1962)／Kuran (1991)／Granovetter (1978)。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="225" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="32.86" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="36.36" data-duration="38.42" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="77.28" data-duration="39.67" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="119.45" data-duration="44.09" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="166.04" data-duration="55.51" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-36.36) — cue: 耐える8.79 / 突然動く13.18 / 鏡像30.09 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-crowd svg",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-crowd svg",{opacity:1,scale:1,duration:0.45,stagger:0.12,ease:"power2.out"},2.8);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},13.18);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 J字曲線 (36.36-77.28) — cue: 一揆36.46 / 参照点53.94 / J字68.1 / 下がった層70.42 */
+      xfade(2,36.36);
+      tl.set("#s2-head",{opacity:0,y:30},36.36);
+      tl.set("#s2-curve",{strokeDasharray:1300,strokeDashoffset:1300},36.36);
+      tl.set("#s2-spark",{opacity:0,scale:0},36.36);
+      tl.set("#s2-tag",{opacity:0,scale:0.6},36.36);
+      tl.set("#s2-body",{opacity:0,y:30},36.36);
+      tl.set("#s2-cav",{opacity:0},36.36);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},36.8);
+      tl.to("#s2-tag",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},37.5);
+      tl.to("#s2-curve",{strokeDashoffset:0,duration:3.0,ease:"power1.inOut"},43.73);
+      tl.to("#s2-spark",{opacity:1,scale:1,duration:0.5,ease:"back.out(2.5)"},53.94);
+      tl.to("#s2-body",{opacity:1,y:0,duration:0.5,ease:"power3.out"},53.94);
+      tl.to("#s2-cav",{opacity:1,duration:0.5,ease:"power1.out"},70.42);
+
+      /* S3 学習性無力感 (77.28-119.45) — cue: なぜ耐える77.38 / 固着88.83 / 回復しない95.18 / 注入111.5 */
+      xfade(3,77.28);
+      tl.set("#s3-head",{opacity:0,y:30},77.28);
+      tl.set("#s3-char",{opacity:0,scale:0.6},77.28);
+      tl.set("#s3-row .hl-item",{opacity:0,x:40},77.28);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},77.7);
+      tl.to("#s3-char",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.4)"},78.4);
+      tl.to("#s3-char",{y:14,duration:1.1,ease:"power2.inOut"},83.0);
+      tl.to("#s3-i1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},88.83);
+      tl.to("#s3-i2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},95.18);
+      tl.to("#s3-i3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},111.5);
+
+      /* S4 勇気カスケード (119.45-166.04) — cue: 隠す119.55 / 連鎖崩れる124.56 / 違い140.97 / 自己効力153.19 */
+      xfade(4,119.45);
+      tl.set("#s4-head",{opacity:0,y:30},119.45);
+      tl.set("#s4-crowd .unit",{opacity:0,scale:0.7},119.45);
+      tl.set("#s4-crowd .fist",{opacity:0,scale:0.3,y:12},119.45);
+      tl.set("#s4-fear",{opacity:0,x:-40},119.45);
+      tl.set("#s4-brave",{opacity:0,x:40},119.45);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},119.9);
+      tl.to("#s4-crowd .unit",{opacity:1,scale:1,duration:0.4,stagger:0.08,ease:"power2.out"},124.56);
+      tl.to("#s4-u1 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},126.5);
+      tl.to("#s4-u2 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},127.1);
+      tl.to("#s4-u3 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},127.7);
+      tl.to("#s4-u4 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},128.3);
+      tl.to("#s4-u5 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},128.9);
+      tl.to("#s4-u6 .fist",{opacity:1,scale:1,y:0,duration:0.3,ease:"back.out(2.5)"},129.5);
+      tl.to("#s4-fear",{opacity:1,x:0,duration:0.5,ease:"power2.out"},145.32);
+      tl.to("#s4-brave",{opacity:1,x:0,duration:0.5,ease:"power2.out"},148.23);
+
+      /* S5 まとめ (166.04-225) — cue: まとめ①195.57 ②148相当→ここでは順次 / 問い201.15 / §0注207.5 */
+      xfade(5,166.04);
+      tl.set("#s5-head",{opacity:0,y:30},166.04);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:24},166.04);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},166.04);
+      tl.set("#s5-brand",{opacity:0},166.04);
+      tl.set("#s5-note",{opacity:0},166.04);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},166.5);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},178.11);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},184.89);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},189.57);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},201.15);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},207.5);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},215.98);
+
+      var GROUPS = [
+        {s:1.1,e:4.9,t:"搾取が最もひどい時に、人は立ち上がる。"},
+        {s:4.9,e:8.79,t:"そう思われがちですが、歴史はそう動きません。"},
+        {s:8.79,e:13.18,t:"人は最悪の底では、しばしば、じっと耐えます。"},
+        {s:13.18,e:21.01,t:"そして状況が少し良くなった後の反転や、隣村の成功をきっかけに、ある日、いっせいに動く。"},
+        {s:21.01,e:30.09,t:"この、耐える、そして突然動く、という形は、動物実験で確立した機構から、驚くほど素直に出てきます。"},
+        {s:30.09,e:33.81,t:"前回の取り付け騒ぎの、ちょうど鏡像です。"},
+        {s:36.46,e:43.73,t:"百姓一揆の引き金は、絶対的な貧しさそのものより、据わっていた水準が割れた時に多い。"},
+        {s:43.73,e:47.43,t:"年貢の増徴、新税、専売制です。"},
+        {s:47.43,e:53.94,t:"オマキザルが、隣がブドウをもらった瞬間にキュウリを投げ返したのと、同じ構造です。"},
+        {s:53.94,e:59.78,t:"参照点が動き、相対的な損失になった瞬間に、拒否が起きる。"},
+        {s:59.78,e:68.1,t:"革命研究のデイヴィスも、革命は窮乏の底でなく、改善が続いた後の急な反転で起きやすいと言います。"},
+        {s:68.1,e:70.42,t:"これがJ字曲線です。"},
+        {s:70.42,e:74.75,t:"動くのは最貧層ではなく、下がった層なのです。"},
+        {s:77.38,e:81.2,t:"では、なぜ人は、こんなに長く耐えるのか。"},
+        {s:81.2,e:88.83,t:"逃げられない電撃を与えられ続けたイヌは、後で逃げられる状況に置かれても、もう逃げようとしません。"},
+        {s:88.83,e:95.18,t:"何をしても無駄だ、という統制不能の信念が固着し、行動そのものが止まる。"},
+        {s:95.18,e:101.18,t:"行動が止まれば、信念は更新されず、状態は自然には回復しません。"},
+        {s:101.18,e:104.56,t:"お上には逆らえない、会社には勝てない。"},
+        {s:104.56,e:111.5,t:"長い忍従を支えているのは、客観的な搾取の量よりも、この固着した無力感です。"},
+        {s:111.5,e:116.89,t:"崩すには、外から、動けば勝てる、が注入される必要があります。"},
+        {s:119.55,e:124.56,t:"人は本心の不満を隠し、表向きは従順を装います。"},
+        {s:124.56,e:133.44,t:"けれど、だれかが先に動いて勝つのを見ると、隠していた不満が次々に閾値を超え、沈黙が連鎖的に崩れる。"},
+        {s:133.44,e:140.97,t:"1989年の東欧の崩壊が、誰にも予測できなかったのは、この突発性ゆえです。"},
+        {s:140.97,e:145.32,t:"ここに、取り付け騒ぎとの決定的な違いがあります。"},
+        {s:145.32,e:148.23,t:"恐怖は、無条件に伝わる。"},
+        {s:148.23,e:153.19,t:"けれど勇気は、自分にもできる、と思えて初めて伝わる。"},
+        {s:153.19,e:157.5,t:"観察による伝播に、自己効力感を掛けるのです。"},
+        {s:157.5,e:163.5,t:"だから抑圧は安定し、蜂起は稀で、起きるときは突発的になります。"},
+        {s:166.14,e:169.62,t:"面白いのは、経路がばらばらなことです。"},
+        {s:169.62,e:178.11,t:"学習性無力感はイヌの檻から、損失回避はサルとプロスペクト理論から、選好カスケードは政治学から。"},
+        {s:178.11,e:184.89,t:"互いを参照せずに生まれた理論が、集団蜂起という一点で、同じ機構に着地する。"},
+        {s:184.89,e:189.57,t:"独立した証拠系統が一つの結論へ収束すること。"},
+        {s:189.57,e:195.57,t:"これは、その機構が、檻の中だけの話ではないという、強い徴候です。"},
+        {s:195.57,e:201.15,t:"引き金は、窮乏のピークではなく、統制可能だと気づいた瞬間。"},
+        {s:201.15,e:207.5,t:"耐えていた人々を動かすのは、より深い苦しみではなく、勝てるという証拠なのです。"},
+        {s:207.5,e:215.98,t:"なお、これは機構を歴史の集団行動に当てるレンズであって、各事象の単一原因を断定するものではありません。"},
+        {s:215.98,e:218.56,t:"動物から、組織を読む。"},
+        {s:218.56,e:221.5,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

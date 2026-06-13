@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 順位×ストレスバー */
+      .rank { display: flex; flex-direction: column; gap: 26px; }
+      .rank-row { display: flex; gap: 30px; align-items: center; justify-content: center; }
+      .rank-label { font-weight: 900; font-size: 44px; width: 130px; text-align: right; }
+      .stress { width: 620px; height: 50px; background: #e3e0d8; border-radius: 25px; overflow: hidden; }
+      .stress-fill { height: 100%; border-radius: 25px; transform-origin: left center; }
+      .stress-cap { font-weight: 800; font-size: 34px; width: 230px; text-align: left; }
+      .warn { font-weight: 700; font-size: 32px; color: #d9893b; background: #f7ece1; border-radius: 14px; padding: 14px 30px; }
+
+      /* S3 裁量×健康グラフ */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 720px; height: 420px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveUp { fill: none; stroke: #2f6f4f; stroke-width: 10; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .d-right { display: flex; flex-direction: column; gap: 18px; width: 560px; text-align: left; }
+      .d-item { display: flex; align-items: flex-start; gap: 18px; font-weight: 800; font-size: 35px; color: #1d2321; line-height: 1.35; }
+      .d-x { color: #d9893b; font-weight: 900; font-size: 38px; line-height: 1; }
+      .d-o { color: #2f6f4f; font-weight: 900; font-size: 38px; line-height: 1; }
+
+      /* S4 文化変化 */
+      .culture { display: flex; gap: 50px; align-items: center; justify-content: center; }
+      .c-card { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+      .c-tag { font-weight: 800; font-size: 34px; padding: 8px 26px; border-radius: 999px; }
+      .c-tag.bad { color: #d9893b; background: #f7ece1; } .c-tag.good { color: #2f6f4f; background: #e6efe9; }
+      .c-arrow { font-weight: 900; font-size: 64px; color: #2f6f4f; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1200px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 34px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 16px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="219">
+
+      <!-- S1 フック 1.0-27.24 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">地位とストレス ── ヒエラルキーの隠れたコスト</div>
+        <div id="s1-head" class="head">順位が、<span class="hl">その体を蝕む</span></div>
+        <div id="s1-char"><svg width="240" height="240" viewBox="0 0 280 280" aria-label="chimp">
+          <circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/>
+          <circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/>
+          <ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/>
+          <ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/>
+          <path d="M100,126 L136,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <path d="M180,126 L144,138" stroke="#3a2415" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/>
+          <circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/>
+          <ellipse cx="130" cy="188" rx="5" ry="7" fill="#3a2415"/><ellipse cx="150" cy="188" rx="5" ry="7" fill="#3a2415"/>
+          <path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">順位は、文字どおり体を変える ── <span class="hl">ホルモンを、そして寿命を</span></div>
+      </div></div>
+
+      <!-- S2 ヒヒ×コルチゾール 27.24-66.82 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:50px">下位ほど<span class="hl">ストレスホルモン</span>が高い ── サポルスキー</div>
+        <div id="s2-rank" class="rank">
+          <div class="rank-row" id="s2-up">
+            <div class="rank-label gn">上位</div>
+            <div class="stress"><div class="stress-fill" style="width:28%; background:#2f6f4f"></div></div>
+            <div class="stress-cap gn">コルチゾール 低</div>
+          </div>
+          <div class="rank-row" id="s2-down">
+            <div class="rank-label hl">下位</div>
+            <div class="stress"><div id="s2-bar" class="stress-fill" style="width:90%; background:#d9893b"></div></div>
+            <div class="stress-cap hl">コルチゾール 高</div>
+          </div>
+        </div>
+        <div id="s2-warn" class="warn">⚠ ただし順位が不安定な時期は、頂点を争う上位のストレスも跳ね上がる</div>
+      </div></div>
+
+      <!-- S3 量でなく裁量 66.82-112.32 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:50px">効くのは「量」でなく<span class="hl">「裁量」</span> ── ホワイトホール研究</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 720 420">
+            <line class="axis" x1="100" y1="40" x2="100" y2="360" />
+            <line class="axis" x1="100" y1="360" x2="680" y2="360" />
+            <text class="glabel" x="34" y="52" fill="#2f6f4f">健康</text>
+            <text class="glabel" x="560" y="400" fill="#6b7370">裁量 →</text>
+            <path id="s3-curve" class="curveUp" d="M120,330 C280,318 440,180 670,96" />
+          </svg>
+          <div class="d-right">
+            <div class="d-item" id="s3-d1"><span class="d-x">✕</span> 主因は仕事の「量」ではない</div>
+            <div class="d-item" id="s3-d2"><span class="d-o">✓</span> 主因は「自分で決められなさ」＝裁量の低さ</div>
+            <div class="d-item" id="s3-d3"><span class="d-o">→</span> 統制できない慢性的な圧が体を蝕む（恐怖と同じ）</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S4 文化は変えられる 112.32-151.26 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">攻撃性は遺伝でなく、<span class="gn">文化</span></div>
+        <div id="s4-culture" class="culture">
+          <div class="c-card" id="s4-bad">
+            <svg width="220" height="220" viewBox="0 0 280 280" aria-label="chimp-aggressive"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><path d="M98,124 L138,140" stroke="#3a2415" stroke-width="7" stroke-linecap="round"/><path d="M182,124 L142,140" stroke="#3a2415" stroke-width="7" stroke-linecap="round"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M118,210 Q140,196 162,210" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="92" cy="172" r="11" fill="#d98080" opacity="0.6"/><circle cx="188" cy="172" r="11" fill="#d98080" opacity="0.6"/></svg>
+            <div class="c-tag bad">攻撃的な上位が一斉に死ぬ</div>
+          </div>
+          <div class="c-arrow" id="s4-arrow">→</div>
+          <div class="c-card" id="s4-good">
+            <svg width="220" height="220" viewBox="0 0 280 280" aria-label="chimp-calm"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><path d="M100,134 Q118,126 134,134" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M146,134 Q162,126 180,134" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="117" cy="155" r="8" fill="#1d2321"/><circle cx="163" cy="155" r="8" fill="#1d2321"/><path d="M110,200 Q140,228 170,200" stroke="#2f6f4f" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+            <div class="c-tag good">穏やかな気風が定着・伝達</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl">気質は固定でない ── <span class="hl">人の入れ替えと規範設計</span>で変わる</div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 151.26-219 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s5-head" class="head" style="font-size:50px">地位は名誉でなく、<span class="hl">まず体の問題</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> ストレスは仕事の量でなく、裁量の低さで決まる</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 高い地位も、それが不安定ならストレスになる</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 攻撃的な順位文化は構造でなく伝達で維持される</div>
+        </div>
+        <div id="s5-ask" class="ask">忙しさより、<span class="hl">「自分で決められなさ」</span>が体を削る</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※機構の写像で効果保証ではありません。文化転換は単一群れの観察。出典：Sapolsky（霊長類の順位とストレス）／Marmot et al.（ホワイトホール研究）。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="219" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="23.74" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="27.24" data-duration="37.08" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="66.82" data-duration="43.01" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="112.32" data-duration="36.43" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="151.26" data-duration="65.18" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-27.24) — cue: 生々しい5.15 / 寿命13.95 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},13.95);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 ヒヒ×コルチゾール (27.24-66.82) — cue: サポルスキー27.34 / 下位ほど39.15 / 生理46.68 / 不安定54.33 */
+      xfade(2,27.24);
+      tl.set("#s2-head",{opacity:0,y:30},27.24);
+      tl.set("#s2-up",{opacity:0,x:-50},27.24);
+      tl.set("#s2-down",{opacity:0,x:-50},27.24);
+      tl.set("#s2-bar",{scaleX:0},27.24);
+      tl.set("#s2-warn",{opacity:0,y:30},27.24);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},27.7);
+      tl.to("#s2-up",{opacity:1,x:0,duration:0.5,ease:"power2.out"},33.35);
+      tl.to("#s2-down",{opacity:1,x:0,duration:0.5,ease:"power2.out"},39.15);
+      tl.to("#s2-bar",{scaleX:1,duration:1.0,ease:"power2.out"},40.0);
+      tl.to("#s2-warn",{opacity:1,y:0,duration:0.5,ease:"power2.out"},54.33);
+
+      /* S3 量でなく裁量 (66.82-112.32) — cue: 同じ勾配66.92 / 量でない80.69 / 裁量85.3 / 恐怖94.15 / 正体106.41 */
+      xfade(3,66.82);
+      tl.set("#s3-head",{opacity:0,y:30},66.82);
+      tl.set("#s3-curve",{strokeDasharray:900,strokeDashoffset:900},66.82);
+      tl.set("#s3-row .d-item",{opacity:0,x:40},66.82);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},67.3);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:3.0,ease:"power1.inOut"},73.07);
+      tl.to("#s3-d1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},80.69);
+      tl.to("#s3-d2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},85.3);
+      tl.to("#s3-d3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},94.15);
+
+      /* S4 文化は変えられる (112.32-151.26) — cue: 変えられない112.42 / 一斉に死ぬ121.14 / 穏やか125.99 / 文化伝達134.33 / 変えられる143.32 */
+      xfade(4,112.32);
+      tl.set("#s4-head",{opacity:0,y:30},112.32);
+      tl.set("#s4-bad",{opacity:0,scale:0.6},112.32);
+      tl.set("#s4-arrow",{opacity:0,scale:0.4},112.32);
+      tl.set("#s4-good",{opacity:0,scale:0.6},112.32);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},112.32);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},112.8);
+      tl.to("#s4-bad",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},121.14);
+      tl.to("#s4-arrow",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},125.99);
+      tl.to("#s4-good",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},127.0);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},143.32);
+
+      /* S5 まとめ (151.26-219) — cue: まとめ①156.41 ②166.87 ③175.59 / 体の問題185.78 / §0注190.01 */
+      xfade(5,151.26);
+      tl.set("#s5-head",{opacity:0,y:30},151.26);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},151.26);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},151.26);
+      tl.set("#s5-brand",{opacity:0},151.26);
+      tl.set("#s5-note",{opacity:0},151.26);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},151.7);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},156.41);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},166.87);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},175.59);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},185.78);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},190.01);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},203.72);
+
+      var GROUPS = [
+        {s:1.1,e:5.15,t:"地位は、名誉や報酬の話だと思われています。"},
+        {s:5.15,e:10.5,t:"でも、動物行動学が見せるのは、もっと生々しい事実です。"},
+        {s:10.5,e:13.95,t:"順位は、文字どおり、体を変える。"},
+        {s:13.95,e:17.53,t:"血中のホルモンを、そして、寿命を。"},
+        {s:17.53,e:24.69,t:"今日は、サバンナのヒヒと、ある公務員の研究から、ヒエラルキーの、隠れたコストを読みます。"},
+        {s:27.34,e:33.35,t:"神経科学者のサポルスキーは、野生のサバンナヒヒの群れを、長年追いました。"},
+        {s:33.35,e:39.15,t:"社会的な順位と、ストレスホルモン、コルチゾールの関係を調べたのです。"},
+        {s:39.15,e:46.68,t:"安定した群れでは、下位の個体ほど、慢性的にコルチゾールが高く、健康指標が悪かった。"},
+        {s:46.68,e:51.45,t:"順位は、心理だけでなく、生理を左右していたのです。"},
+        {s:51.45,e:54.33,t:"ただし、単純ではありません。"},
+        {s:54.33,e:60.47,t:"順位が不安定な時期には、トップを争う上位個体の、ストレスも跳ね上がる。"},
+        {s:60.47,e:64.26,t:"地位を守るコストもまた、体を削るのです。"},
+        {s:66.92,e:69.82,t:"人でも、同じ勾配が見えます。"},
+        {s:69.82,e:73.07,t:"マーモットらの、ホワイトホール研究。"},
+        {s:73.07,e:80.69,t:"英国の公務員を対象に、地位が低い層ほど、心疾患や死亡率が高いことを示しました。"},
+        {s:80.69,e:85.3,t:"意外なのは、その主因が、仕事の量ではなかったこと。"},
+        {s:85.3,e:87.53,t:"主因は、裁量。"},
+        {s:87.53,e:90.89,t:"自分で決められる度合いの、低さでした。"},
+        {s:90.89,e:94.15,t:"これは、恐怖の話とつながります。"},
+        {s:94.15,e:102.05,t:"統制できない罰が、無力感を生むのと同じで、統制できない、慢性的な圧が、体を蝕む。"},
+        {s:102.05,e:106.41,t:"下位ほど裁量が低く、状況をコントロールできない。"},
+        {s:106.41,e:109.78,t:"それが、健康差の正体だったのです。"},
+        {s:112.42,e:116.9,t:"では、この順位社会の気質は、変えられないのでしょうか。"},
+        {s:116.9,e:121.14,t:"サポルスキーが観察した、ある群れでの逸話があります。"},
+        {s:121.14,e:125.99,t:"攻撃的な上位のオスたちが、偶発的に、一斉に死んだ。"},
+        {s:125.99,e:134.33,t:"すると、残された群れに、穏やかな気風が定着し、後から加わった個体にも、受け継がれていったのです。"},
+        {s:134.33,e:139.17,t:"攻撃性は、遺伝ではなく、文化として伝達されていた。"},
+        {s:139.17,e:143.32,t:"順位社会の気質は、固定されたものではありません。"},
+        {s:143.32,e:148.71,t:"だからこそ、人の入れ替えと、規範の設計で、変えられるのです。"},
+        {s:151.36,e:152.87,t:"まとめます。"},
+        {s:152.87,e:156.41,t:"通俗論と分岐する、三つの予測です。"},
+        {s:156.41,e:162.11,t:"第一に、ストレスは、仕事の量でなく、裁量の低さで決まる。"},
+        {s:162.11,e:166.87,t:"忙しさより、自分で決められなさが、体を削ります。"},
+        {s:166.87,e:171.9,t:"第二に、高い地位も、それが不安定なら、ストレスになる。"},
+        {s:171.9,e:175.59,t:"安定なき頂点は、健康を守りません。"},
+        {s:175.59,e:181.63,t:"第三に、攻撃的な順位文化は、構造でなく、伝達で維持される。"},
+        {s:181.63,e:185.78,t:"だから、人の入れ替えと規範設計で変えられる。"},
+        {s:185.78,e:190.01,t:"地位は、名誉ではなく、まず体の問題です。"},
+        {s:190.01,e:194.9,t:"なお、これは機構の写像であって、効果保証ではありません。"},
+        {s:194.9,e:203.72,t:"順位とストレス生理、裁量と健康の勾配は実証が厚い一方、群れの文化転換は、単一の観察です。"},
+        {s:203.72,e:210.88,t:"動物のヒヒの生理を主役に、人の健康格差は、その勾配の延長として読んでください。"},
+        {s:210.88,e:213.46,t:"動物から、組織を読む。"},
+        {s:213.46,e:216.41,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 78px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 36px; color: #d9893b; background: #f7ece1; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 48px; line-height: 1.38; color: #2f6f4f; max-width: 860px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .equilibria { display: flex; gap: 36px; justify-content: center; }
+      .eq { width: 340px; border-radius: 20px; padding: 30px 24px; font-weight: 800; font-size: 40px; line-height: 1.4; }
+      .eq.good { background: #e6efe9; color: #2f6f4f; border: 3px solid #2f6f4f; }
+      .eq.bad { background: #f7ece1; color: #d9893b; border: 3px solid #d9893b; }
+      .eq small { display: block; font-size: 30px; font-weight: 600; margin-top: 10px; }
+      .crowd-row { display: flex; gap: 18px; align-items: flex-end; justify-content: center; }
+      .panic-unit { position: relative; }
+      .bang { position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
+        font-weight: 900; font-size: 46px; color: #d9893b; }
+      .vs { display: flex; gap: 30px; justify-content: center; align-items: stretch; }
+      .vs-col { width: 360px; border-radius: 20px; padding: 26px 20px; font-weight: 700; font-size: 38px; line-height: 1.4; }
+      .vs-col.fear { background: #f7ece1; color: #d9893b; }
+      .vs-col.brave { background: #e6efe9; color: #2f6f4f; }
+      .vs-col b { display: block; font-size: 48px; font-weight: 900; margin-bottom: 8px; }
+      .vs-col small { display: block; font-size: 28px; font-weight: 600; color: #6b7370; margin-top: 8px; }
+      .pair { display: flex; gap: 50px; align-items: center; justify-content: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-bank"><svg width="230" height="230" viewBox="0 0 240 240" aria-label="bank">
+          <polygon points="120,28 24,84 216,84" fill="#2f6f4f"/>
+          <rect x="32" y="84" width="176" height="13" fill="#3a7a5a"/>
+          <rect x="50" y="97" width="18" height="90" fill="#cfd8d2"/><rect x="91" y="97" width="18" height="90" fill="#cfd8d2"/>
+          <rect x="131" y="97" width="18" height="90" fill="#cfd8d2"/><rect x="172" y="97" width="18" height="90" fill="#cfd8d2"/>
+          <rect x="28" y="187" width="184" height="17" fill="#2f6f4f"/>
+          <text x="120" y="72" text-anchor="middle" font-size="34" font-weight="900" fill="#fff">¥</text>
+        </svg></div>
+        <div id="s1-head" class="head">銀行はなぜ<br />一夜で倒れるのか</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content" style="gap:40px">
+        <div id="s2-eq" class="equilibria">
+          <div class="eq good">健全<small>「必要な人だけ」と皆が信じる</small></div>
+          <div class="eq bad">崩壊<small>「皆が引き出す」と皆が信じる</small></div>
+        </div>
+        <div id="s2-t1" class="head" style="font-size:58px">予想で決まる＝<span class="hl">自己成就</span></div>
+        <div id="s2-telop" class="telop">健全でも倒れる（SVB＝数時間）</div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-t1" class="head" style="font-size:60px">恐怖が<span class="hl">伝播</span>する</div>
+        <div id="s3-crowd" class="crowd-row">
+          <div class="panic-unit"><div id="s3-p1" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit"><div id="s3-p2" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit"><div id="s3-p3" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit"><div id="s3-p4" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit"><div id="s3-p5" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+          <div class="panic-unit"><div id="s3-p6" class="bang">!</div><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/><circle cx="140" cy="80" r="42" fill="#7a3b22"/><circle cx="126" cy="76" r="6" fill="#fff"/><circle cx="154" cy="76" r="6" fill="#fff"/></svg></div>
+        </div>
+        <div id="s3-telop" class="telop" style="font-size:44px">他者の回避→自分も→閾値超え<br />早い者勝ち＋損失回避で窓口へ</div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-pair" class="vs">
+          <div class="vs-col fear"><b>取り付け</b>一瞬で起きる<small>恐怖は無条件に伝わる</small></div>
+          <div class="vs-col brave"><b>蜂起</b>めったに起きない<small>勇気は「勝てる」と思えて初めて</small></div>
+        </div>
+        <div id="s4-telop" class="telop" style="font-size:44px">同じ機構の<span class="hl">符号違い</span></div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-pair" class="pair"><svg width="150" height="150" viewBox="0 0 240 240" aria-label="bank">
+          <polygon points="120,30 28,82 212,82" fill="#2f6f4f"/>
+          <rect x="36" y="82" width="168" height="12" fill="#3a7a5a"/>
+          <rect x="52" y="94" width="16" height="86" fill="#cfd8d2"/><rect x="90" y="94" width="16" height="86" fill="#cfd8d2"/>
+          <rect x="128" y="94" width="16" height="86" fill="#cfd8d2"/><rect x="166" y="94" width="16" height="86" fill="#cfd8d2"/>
+          <rect x="32" y="180" width="176" height="16" fill="#2f6f4f"/>
+          <text x="120" y="70" text-anchor="middle" font-size="32" font-weight="900" fill="#fff">¥</text>
+        </svg><svg width="140" height="156" viewBox="0 0 180 200" aria-label="shield">
+          <path d="M90,12 L165,40 V100 Q165,160 90,190 Q15,160 15,100 V40 Z" fill="#e6efe9" stroke="#2f6f4f" stroke-width="6"/>
+          <path d="M52,98 L80,128 L132,66" fill="none" stroke="#2f6f4f" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></div>
+        <div id="s5-head" class="head" style="font-size:60px">「引き出さなくても安全」<br />で連鎖を断つ</div>
+        <div id="s5-sub" class="telop" style="font-size:42px">＝預金保険・最後の貸し手</div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">協調失敗の均衡として読むレンズであり、個別破綻の単一原因の断定ではない（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-bank",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-bank",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.5)"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.7);
+
+      /* T->S2 自己成就 (3-16) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-eq .eq",{opacity:0,y:30},3);
+      tl.set("#s2-t1",{opacity:0,y:30},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.to("#s2-eq .eq",{opacity:1,y:0,duration:0.5,stagger:0.2,ease:"back.out(1.5)"},3.4);
+      tl.to("#s2-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},5.2);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},6.4);
+
+      /* T->S3 恐怖伝播ドミノ (16-28) */
+      tl.set("#scene3 .scene-content",{y:60},15.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},16);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},16);
+      tl.set("#s3-t1",{opacity:0,y:30},16);
+      tl.set("#s3-crowd .panic-unit",{opacity:0,scale:0.7},16);
+      tl.set("#s3-crowd .bang",{opacity:0,scale:0.3},16);
+      tl.set("#s3-telop",{opacity:0,y:30},16);
+      tl.to("#s3-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},16.4);
+      tl.to("#s3-crowd .panic-unit",{opacity:1,scale:1,duration:0.4,stagger:0.08,ease:"back.out(1.5)"},17.0);
+      tl.to("#s3-p1",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},18.4);
+      tl.to("#s3-p2",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},18.8);
+      tl.to("#s3-p3",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},19.2);
+      tl.to("#s3-p4",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},19.6);
+      tl.to("#s3-p5",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},20.0);
+      tl.to("#s3-p6",{opacity:1,scale:1,duration:0.3,ease:"back.out(2.5)"},20.4);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},21.4);
+
+      /* T->S4 蜂起の鏡像 (28-40) */
+      tl.set("#scene4 .scene-content",{y:60},27.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},28);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},28);
+      tl.set("#s4-pair .vs-col",{opacity:0,y:30},28);
+      tl.set("#s4-telop",{opacity:0,y:30},28);
+      tl.to("#s4-pair .vs-col",{opacity:1,y:0,duration:0.5,stagger:0.22,ease:"back.out(1.5)"},28.4);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},30.2);
+
+      /* T->S5 オチ (40-45) */
+      tl.set("#scene5 .scene-content",{y:60},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},40);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},40);
+      tl.set("#s5-pair svg",{opacity:0,scale:0.6},40);
+      tl.set("#s5-head",{opacity:0,y:40},40);
+      tl.set("#s5-sub",{opacity:0,y:25},40);
+      tl.set("#s5-url",{opacity:0,y:25},40);
+      tl.set("#s5-note",{opacity:0},40);
+      tl.to("#s5-pair svg",{opacity:1,scale:1,duration:0.4,stagger:0.15,ease:"back.out(1.6)"},40.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},40.9);
+      tl.to("#s5-sub",{opacity:1,y:0,duration:0.4,ease:"power2.out"},41.6);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},42.1);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},42.6);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

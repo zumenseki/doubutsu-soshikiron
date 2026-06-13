@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1080px; height: 1920px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 130px 90px;
+        gap: 34px; box-sizing: border-box; text-align: center; }
+      .head { font-weight: 900; font-size: 74px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .tag { font-weight: 700; font-size: 38px; color: #2f6f4f; background: #e6efe9; padding: 12px 30px; border-radius: 999px; }
+      .telop { font-weight: 800; font-size: 48px; line-height: 1.38; color: #2f6f4f; max-width: 860px; }
+      .hl { color: #d9893b; }
+      .note { font-size: 28px; color: #6b7370; max-width: 740px; line-height: 1.4; }
+      .url { font-weight: 700; font-size: 38px; color: #2f6f4f; }
+      .bignum { font-weight: 900; font-size: 150px; color: #2f6f4f; font-variant-numeric: tabular-nums; line-height: 1; }
+      .smallnum { font-weight: 900; font-size: 64px; color: #d9893b; font-variant-numeric: tabular-nums; }
+      .isolate-box { border: 6px dashed #2f6f4f; border-radius: 28px; padding: 24px 40px; }
+      .crowd-row { display: flex; gap: 22px; align-items: flex-end; justify-content: center; }
+      .cmd { display: flex; gap: 26px; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 56px; color: #6b7370; }
+      .cascade { position: relative; width: 320px; height: 300px; display: flex; align-items: center; justify-content: center; }
+      .leaf { position: absolute; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920"
+         data-start="0" data-duration="45">
+
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-crowd" class="crowd-row"><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg></div>
+        <div id="s1-head" class="head">号令では、固まった<br />組織は動かない</div>
+      </div></div>
+
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-cascade" class="cascade">
+          <div id="s2-wolf"><svg width="180" height="180" viewBox="0 0 280 280" aria-label="wolf"><polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/><circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/><circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/><circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/><ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/></svg></div>
+          <div class="leaf" id="s2-leaf1" style="top:4px;left:24px"><svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#2f6f4f"/></svg></div>
+          <div class="leaf" id="s2-leaf2" style="top:24px;right:20px"><svg width="50" height="50" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#3a7a5a"/></svg></div>
+          <div class="leaf" id="s2-leaf3" style="bottom:18px;left:40px"><svg width="48" height="48" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#3a7a5a"/></svg></div>
+          <div class="leaf" id="s2-leaf4" style="bottom:2px;right:46px"><svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#2f6f4f"/></svg></div>
+        </div>
+        <div id="s2-t1" class="head" style="font-size:56px">頂点の細胞を<span class="hl">1つ</span>戻す</div>
+        <div id="s2-telop" class="telop">オオカミ再導入→栄養カスケード<br />系全体が上から再編される</div>
+      </div></div>
+
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-crowd" class="crowd-row"><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg><svg width="100" height="118" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg></div>
+        <div id="s3-cmd" class="cmd">「変われ」の号令 <span class="hl" style="font-size:72px">✕</span></div>
+        <div id="s3-telop" class="telop">同調の引力は閾値。中途半端な緩和は届かない</div>
+        <div id="s3-rate"><span class="tag" style="color:#d9893b;background:#f7ece1">採用率 <span class="smallnum" style="font-size:50px">0.00</span></span></div>
+      </div></div>
+
+      <div id="scene4" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s4-iso" class="isolate-box"><svg width="180" height="180" viewBox="0 0 280 280" aria-label="wolf">
+          <polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+          <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+          <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+          <circle cx="111" cy="139" r="9" fill="#c9aa3c"/><circle cx="169" cy="139" r="9" fill="#c9aa3c"/>
+          <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+          <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s4-num" class="bignum">0.94</div>
+        <div id="s4-t1" class="tag">前例の届かない隔離細胞</div>
+        <div id="s4-telop" class="telop" style="font-size:44px">ただし多数派へ再吸収すると <span class="smallnum">0.00</span> へ</div>
+      </div></div>
+
+      <div id="scene5" class="scene"><div class="scene-content">
+        <div id="s5-wolf"><svg width="210" height="210" viewBox="0 0 280 280" aria-label="wolf">
+          <polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+          <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+          <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+          <circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/>
+          <circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/>
+          <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+          <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+        </svg></div>
+        <div id="s5-head" class="head" style="font-size:60px">解毒剤は励ましでなく<br /><span class="hl">"隔離空間を物理的に"</span></div>
+        <div id="s5-url" class="url">動物から組織を読む → 記事へ</div>
+        <div id="s5-note" class="note">「頂点の小さな再投入が系を再編する」型の挿絵。特定施策の効果保証ではない（比喩）。</div>
+      </div></div>
+
+      <audio id="bgm" src="bgm.wav" data-start="0" data-duration="45" data-track-index="0" data-volume="1.0"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (0-3) */
+      tl.set("#s1-crowd svg",{opacity:0,scale:0.6},0);
+      tl.set("#s1-head",{opacity:0,y:50},0);
+      tl.to("#s1-crowd svg",{opacity:1,scale:1,duration:0.4,stagger:0.1,ease:"power2.out"},0.2);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.6,ease:"power3.out"},0.8);
+
+      /* T->S2 栄養カスケード (3-15) */
+      tl.set("#scene2 .scene-content",{y:60},2.9);
+      tl.to("#scene2",{opacity:1,duration:0.4,ease:"power2.inOut"},3);
+      tl.to("#scene2 .scene-content",{y:0,duration:0.5,ease:"power3.out"},3);
+      tl.set("#s2-wolf",{opacity:0,scale:0.5},3);
+      tl.set("#s2-cascade .leaf",{opacity:0,scale:0.2},3);
+      tl.set("#s2-t1",{opacity:0,y:30},3);
+      tl.set("#s2-telop",{opacity:0,y:30},3);
+      tl.to("#s2-wolf",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},3.4);
+      tl.to("#s2-cascade .leaf",{opacity:1,scale:1,duration:0.5,stagger:0.25,ease:"back.out(1.8)"},4.4);
+      tl.to("#s2-t1",{opacity:1,y:0,duration:0.5,ease:"power3.out"},6.4);
+      tl.to("#s2-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},7.6);
+
+      /* T->S3 号令は効かない (15-26) */
+      tl.set("#scene3 .scene-content",{y:60},14.9);
+      tl.to("#scene3",{opacity:1,duration:0.4,ease:"power2.inOut"},15);
+      tl.to("#scene3 .scene-content",{y:0,duration:0.5,ease:"power3.out"},15);
+      tl.set("#s3-crowd svg",{opacity:0,scale:0.6},15);
+      tl.set("#s3-cmd",{opacity:0,y:30},15);
+      tl.set("#s3-telop",{opacity:0,y:30},15);
+      tl.set("#s3-rate",{opacity:0,scale:0.7},15);
+      tl.to("#s3-crowd svg",{opacity:1,scale:1,duration:0.4,stagger:0.08,ease:"power2.out"},15.4);
+      tl.to("#s3-cmd",{opacity:1,y:0,duration:0.5,ease:"power3.out"},16.2);
+      tl.to("#s3-telop",{opacity:1,y:0,duration:0.5,ease:"power2.out"},17.2);
+      tl.to("#s3-rate",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.8)"},18.4);
+
+      /* T->S4 隔離細胞 0.94 (26-40) */
+      tl.set("#scene4 .scene-content",{y:60},25.9);
+      tl.to("#scene4",{opacity:1,duration:0.4,ease:"power2.inOut"},26);
+      tl.to("#scene4 .scene-content",{y:0,duration:0.5,ease:"power3.out"},26);
+      tl.set("#s4-iso",{opacity:0,scale:0.7},26);
+      tl.set("#s4-num",{opacity:0,scale:0.5},26);
+      tl.set("#s4-t1",{opacity:0,y:20},26);
+      tl.set("#s4-telop",{opacity:0,y:30},26);
+      tl.to("#s4-iso",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},26.4);
+      tl.to("#s4-num",{opacity:1,scale:1,duration:0.6,ease:"back.out(2)"},27.4);
+      tl.to("#s4-t1",{opacity:1,y:0,duration:0.4,ease:"power2.out"},28.4);
+      tl.to("#s4-telop",{opacity:1,y:0,duration:0.5,ease:"power3.out"},29.6);
+
+      /* T->S5 オチ (40-45) */
+      tl.set("#scene5 .scene-content",{y:60},39.9);
+      tl.to("#scene5",{opacity:1,duration:0.4,ease:"power2.inOut"},40);
+      tl.to("#scene5 .scene-content",{y:0,duration:0.5,ease:"power3.out"},40);
+      tl.set("#s5-wolf",{opacity:0,scale:0.6},40);
+      tl.set("#s5-head",{opacity:0,y:40},40);
+      tl.set("#s5-url",{opacity:0,y:25},40);
+      tl.set("#s5-note",{opacity:0},40);
+      tl.to("#s5-wolf",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},40.3);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},41.0);
+      tl.to("#s5-url",{opacity:1,y:0,duration:0.4,ease:"power2.out"},41.8);
+      tl.to("#s5-note",{opacity:1,duration:0.4,ease:"power1.out"},42.4);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
