@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #d9893b; letter-spacing: 0.14em;
+        background: #f7ece1; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 2事例 */
+      .cases { display: flex; gap: 50px; justify-content: center; align-items: stretch; }
+      .case { width: 600px; border-radius: 20px; padding: 28px 36px; border: 2px solid #e3e0d8;
+        border-left: 10px solid #d9893b; background: #fff; text-align: left; }
+      .case-name { font-weight: 900; font-size: 42px; color: #1d2321; margin-bottom: 10px; }
+      .case-body { font-weight: 700; font-size: 30px; color: #6b7370; line-height: 1.4; }
+
+      /* S3 相転移グラフ */
+      .graph-row { display: flex; align-items: center; gap: 50px; justify-content: center; }
+      .graph { width: 720px; height: 440px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveDrop { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 28px; font-weight: 700; }
+      .pt-right { display: flex; flex-direction: column; gap: 18px; width: 560px; text-align: left; }
+      .pt-card { border: 2px solid #e3e0d8; border-radius: 16px; background: #fff; padding: 18px 28px; display: flex; align-items: baseline; gap: 18px; }
+      .pt-card.lo { border-left: 10px solid #2f6f4f; } .pt-card.hi { border-left: 10px solid #d9893b; }
+      .pt-num { font-weight: 900; font-size: 48px; font-variant-numeric: tabular-nums; }
+      .pt-card.lo .pt-num { color: #2f6f4f; } .pt-card.hi .pt-num { color: #d9893b; }
+      .pt-t { font-weight: 800; font-size: 30px; color: #1d2321; line-height: 1.3; }
+
+      /* S4 再野生化 */
+      .rewild { display: flex; align-items: center; gap: 40px; justify-content: center; }
+      .rw-arrow { font-weight: 900; font-size: 60px; color: #2f6f4f; }
+      .rw-chip { font-weight: 800; font-size: 30px; color: #2f6f4f; background: #e6efe9;
+        border-radius: 999px; padding: 12px 28px; }
+      .rw-list { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1240px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 28px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 36px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1260px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="245">
+
+      <!-- S1 フック 1.0-27.62 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">前例固執 ── 規範ロックインの正体</div>
+        <div id="s1-head" class="head">「前からこうだ」の<span class="hl">正体</span></div>
+        <div id="s1-char"><svg width="240" height="290" viewBox="0 0 280 280" aria-label="ant">
+          <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+          <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+          <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+          <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+          <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">怠慢ではない ── <span class="hl">同調</span>という強力な力学の帰結</div>
+      </div></div>
+
+      <!-- S2 Blockbuster/Kodak 27.62-74.74 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:50px">見えていたのに、<span class="hl">動けなかった</span></div>
+        <div id="s2-cases" class="cases">
+          <div class="case" id="s2-bb">
+            <div class="case-name">Blockbuster</div>
+            <div class="case-body">小さかったNetflix買収を退け、延滞料金モデルに留まった</div>
+          </div>
+          <div class="case" id="s2-kd">
+            <div class="case-name">Kodak</div>
+            <div class="case-body">自社がデジカメを早期開発したのに、フィルム事業の規範から出られず衰退</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">無能でなく、皆が皆を見て<span class="hl">現状維持を強化し合う</span></div>
+      </div></div>
+
+      <!-- S3 相転移グラフ 74.74-129.77 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:50px">同調は両刃 ── 強すぎると<span class="hl">相転移</span></div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 720 440">
+            <line class="axis" x1="100" y1="40" x2="100" y2="380" />
+            <line class="axis" x1="100" y1="380" x2="680" y2="380" />
+            <text class="glabel" x="20" y="50" fill="#2f6f4f">最良の採用率</text>
+            <text class="glabel" x="540" y="420" fill="#d9893b">同調の強さ →</text>
+            <path id="s3-curve" class="curveDrop" d="M120,90 C300,100 360,360 660,366" />
+          </svg>
+          <div class="pt-right">
+            <div class="pt-card lo" id="s3-lo">
+              <div class="pt-num">0.81</div>
+              <div class="pt-t">同調が弱い → 個人の学習で最良へ移行</div>
+            </div>
+            <div class="pt-card hi" id="s3-hi">
+              <div class="pt-num">0.00</div>
+              <div class="pt-t">同調が強い → 最良があっても全員が現状維持</div>
+            </div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">合意は1.00だが、<span class="hl">間違いで一致団結</span>した状態</div>
+      </div></div>
+
+      <!-- S4 再野生化 129.77-173.84 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:50px">解凍は内側でなく、<span class="gn">隔離</span>で</div>
+        <div id="s4-rewild" class="rewild">
+          <div id="s4-ant"><svg width="190" height="230" viewBox="0 0 280 280" aria-label="ant">
+            <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+            <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+            <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+            <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+            <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+            <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+          </svg></div>
+          <div class="rw-arrow" id="s4-arrow">＋</div>
+          <div id="s4-wolf"><svg width="230" height="230" viewBox="0 0 280 280" aria-label="wolf">
+            <polygon points="72,74 54,6 122,52" fill="#8a97a5"/>
+            <polygon points="208,74 226,6 158,52" fill="#8a97a5"/>
+            <ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/>
+            <ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/>
+            <circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/>
+            <circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/>
+            <circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/>
+            <path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+            <path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/>
+            <ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/>
+          </svg></div>
+        </div>
+        <div id="s4-list" class="rw-list">
+          <div class="rw-chip" id="s4-c1">既存機構から隔離</div>
+          <div class="rw-chip" id="s4-c2">独自ルールで走らせる</div>
+          <div class="rw-chip" id="s4-c3">2ピザ・チーム／マイクロ企業</div>
+        </div>
+        <div id="s4-concl" class="concl">解毒剤は、<span class="hl">前例の届かない場所</span>を作ること</div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 173.84-245 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:48px">「前からこうだ」は怠慢でなく、<span class="hl">強すぎる同調</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 前例固執は無能でなく同調の帰結（優秀でも起きる）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 合意の速さは正しさでない → 健全な異論が移行を可能に</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 固着は内側の説得でなく、隔離で解ける</div>
+        </div>
+        <div id="s5-ask" class="ask">解毒剤は<span class="gn">前例の届かない場所</span>を作ること</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※Blockbuster/Kodakは公開事例で規範ロックインの型の挿絵。単一原因の断定ではありません。動物・生態系の比喩（レンズ）。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="245" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="24.12" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="27.62" data-duration="44.62" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="74.74" data-duration="52.54" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="129.77" data-duration="41.57" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="173.84" data-duration="68.21" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-27.62) — cue: 同調10.92 / 正体21.78 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.6);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},10.92);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 Blockbuster/Kodak (27.62-74.74) — cue: BB31.23 / Kodak40.06 / 無能でない57.85 / 強化し合う61.02 */
+      xfade(2,27.62);
+      tl.set("#s2-head",{opacity:0,y:30},27.62);
+      tl.set("#s2-bb",{opacity:0,x:-40},27.62);
+      tl.set("#s2-kd",{opacity:0,x:40},27.62);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},27.62);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},28.1);
+      tl.to("#s2-bb",{opacity:1,x:0,duration:0.5,ease:"power2.out"},31.23);
+      tl.to("#s2-kd",{opacity:1,x:0,duration:0.5,ease:"power2.out"},40.06);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},61.02);
+
+      /* S3 相転移グラフ (74.74-129.77) — cue: 両刃74.84 / 0.81=98.8 / 0.00=101.82 / 合意1.00=112.28 / 相転移120.23 */
+      xfade(3,74.74);
+      tl.set("#s3-head",{opacity:0,y:30},74.74);
+      tl.set("#s3-curve",{strokeDasharray:900,strokeDashoffset:900},74.74);
+      tl.set("#s3-lo",{opacity:0,x:40},74.74);
+      tl.set("#s3-hi",{opacity:0,x:40},74.74);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},74.74);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},75.2);
+      tl.to("#s3-lo",{opacity:1,x:0,duration:0.5,ease:"back.out(1.5)"},98.8);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:2.6,ease:"power1.in"},101.82);
+      tl.to("#s3-hi",{opacity:1,x:0,duration:0.5,ease:"back.out(1.5)"},101.82);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},115.45);
+
+      /* S4 再野生化 (129.77-173.84) — cue: 解凍129.87 / 隔離145.16 / 2ピザ153.83 / オオカミ159.46 / 解毒剤164.88 */
+      xfade(4,129.77);
+      tl.set("#s4-head",{opacity:0,y:30},129.77);
+      tl.set("#s4-ant",{opacity:0,scale:0.6},129.77);
+      tl.set("#s4-arrow",{opacity:0,scale:0.4},129.77);
+      tl.set("#s4-wolf",{opacity:0,scale:0.6},129.77);
+      tl.set("#s4-list .rw-chip",{opacity:0,y:24},129.77);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},129.77);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},130.2);
+      tl.to("#s4-ant",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},133.79);
+      tl.to("#s4-arrow",{opacity:1,scale:1,duration:0.4,ease:"back.out(2)"},145.16);
+      tl.to("#s4-wolf",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},159.46);
+      tl.to("#s4-c1",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},145.16);
+      tl.to("#s4-c2",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},150.75);
+      tl.to("#s4-c3",{opacity:1,y:0,duration:0.4,ease:"back.out(1.6)"},153.83);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},164.88);
+
+      /* S5 まとめ (173.84-245) — cue: 予測①178.99 ②190.74 ③204.67 / 正体223.28 / §0注233.17 */
+      xfade(5,173.84);
+      tl.set("#s5-head",{opacity:0,y:30},173.84);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},173.84);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},173.84);
+      tl.set("#s5-brand",{opacity:0},173.84);
+      tl.set("#s5-note",{opacity:0},173.84);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},174.3);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},178.99);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},190.74);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},204.67);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},217.63);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},233.17);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},236.49);
+
+      var GROUPS = [
+        {s:1.1,e:3.21,t:"前からこうやってきた。"},
+        {s:3.21,e:6.42,t:"停滞した組織の、決まり文句です。"},
+        {s:6.42,e:9.34,t:"これは、単なる怠慢でしょうか。"},
+        {s:9.34,e:10.92,t:"違います。"},
+        {s:10.92,e:14.9,t:"同調という、強力な力学の帰結なのです。"},
+        {s:14.9,e:21.78,t:"今日は、なぜ組織が、より良いやり方が見えていても、古い規範に固執して滅びるのか。"},
+        {s:21.78,e:25.07,t:"その形式的な正体を、読みます。"},
+        {s:27.72,e:31.23,t:"レンタルビデオ最大手の、ブロックバスター。"},
+        {s:31.23,e:40.06,t:"まだ小さかったネットフリックスを、買収する機会を退け、延滞料金に依存する、既存モデルに留まったとされます。"},
+        {s:40.06,e:49.12,t:"コダックに至っては、自社がデジタルカメラを、早期に開発していたのに、フィルム事業の規範から抜け出せず、衰退しました。"},
+        {s:49.12,e:52.78,t:"いずれも、より良い選択肢が、見えていた。"},
+        {s:52.78,e:57.85,t:"にもかかわらず、組織は、既存の規範にロックインしたのです。"},
+        {s:57.85,e:61.02,t:"これは、個人の無能ではありません。"},
+        {s:61.02,e:72.2,t:"模倣で規範が形成されると、同調が強い組織では、たとえ優れた代替があっても、皆が皆の様子を見て、現状維持を、強化し合うのです。"},
+        {s:74.84,e:78.01,t:"同調そのものは、悪ではありません。"},
+        {s:78.01,e:82.3,t:"連携を生み、調整コストを下げ、文化を作る。"},
+        {s:82.3,e:85.22,t:"問題は、強すぎるときです。"},
+        {s:85.22,e:91.28,t:"同調が強いほど、合意は速いが、誤った規範に固着するリスクが、上がる。"},
+        {s:91.28,e:98.8,t:"シミュレーションでは、同調を弱めた集団は、個人の学習で、最良のやり方へ移行できました。"},
+        {s:98.8,e:101.82,t:"採用率、0.81。"},
+        {s:101.82,e:108.63,t:"ところが、同調を強めると、最良が存在しても、採用率は、0.00。"},
+        {s:108.63,e:112.28,t:"全員が、現状維持に固まったのです。"},
+        {s:112.28,e:115.45,t:"合意は、1.00に達する。"},
+        {s:115.45,e:120.23,t:"けれどそれは、間違ったことで、一致団結した状態です。"},
+        {s:120.23,e:127.22,t:"より良い選択肢の採用率は、同調を上げると、相転移的に、ゼロへ落ちるのです。"},
+        {s:129.87,e:133.79,t:"では、固まったアリ型を、どう解凍するか。"},
+        {s:133.79,e:137.43,t:"内側からの説得は、たいてい効きません。"},
+        {s:137.43,e:140.62,t:"皆が皆の様子を見ているからです。"},
+        {s:140.62,e:145.16,t:"固着を解くには、外から、エネルギーを注ぐしかない。"},
+        {s:145.16,e:150.75,t:"具体的には、新規事業を、既存の官僚機構から、隔離する。"},
+        {s:150.75,e:153.83,t:"そして、独自ルールで走らせる。"},
+        {s:153.83,e:159.46,t:"アマゾンの2ピザ、チームや、ハイアールのマイクロ企業が、その例です。"},
+        {s:159.46,e:164.88,t:"本理論の言葉なら、オオカミの細胞を、意図的に再投入する。"},
+        {s:164.88,e:171.29,t:"前からこうだ、の唯一の解毒剤は、前例の届かない場所を、作ることなのです。"},
+        {s:173.94,e:175.45,t:"まとめます。"},
+        {s:175.45,e:178.99,t:"通俗論と分岐する、三つの予測です。"},
+        {s:178.99,e:184.41,t:"第一に、前例固執は、無能でなく、同調の帰結である。"},
+        {s:184.41,e:190.74,t:"だから、優秀な人を集めても、同調が強ければ、規範ロックインは起きる。"},
+        {s:190.74,e:194.94,t:"第二に、合意の速さは、正しさを意味しない。"},
+        {s:194.94,e:199.44,t:"全員一致は、間違いで団結した状態かもしれない。"},
+        {s:199.44,e:204.67,t:"むしろ、健全な異論こそが、最良への移行を可能にします。"},
+        {s:204.67,e:209.95,t:"第三に、固着は、内側の説得でなく、隔離で解ける。"},
+        {s:209.95,e:214.5,t:"前例の届かない場所を作り、外からエネルギーを注ぐ。"},
+        {s:214.5,e:217.63,t:"それが、唯一の解毒剤です。"},
+        {s:217.63,e:223.28,t:"前からこうだ、の正体は、怠慢ではなく、強すぎる同調でした。"},
+        {s:223.28,e:233.17,t:"なお、ブロックバスターやコダックは、広く知られた公開事例であり、理論が予測する規範ロックインの型の、挿絵として用いています。"},
+        {s:233.17,e:236.49,t:"単一原因の断定では、ありません。"},
+        {s:236.49,e:239.07,t:"動物から、組織を読む。"},
+        {s:239.07,e:242.01,t:"詳しくは、概要欄の記事へ。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
