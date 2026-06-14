@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px; background:linear-gradient(180deg,#f7ece1 0%, #f1ddc9 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:#d9893b; opacity:0.29; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px; color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px; color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px; box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:154px; }
+  .t1 { font-weight:900; font-size:62px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:120px; line-height:1.0; color:#d9893b; white-space:nowrap; letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:6px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; right:120px; bottom:24px; display:flex; gap:16px; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 11px 0 rgba(217,137,59,0.16)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">報酬の罠</div>
+    <div class="titlewrap">
+      <div class="t1">ご褒美が、</div>
+      <div class="t2">やる気を奪う<span class="q">？</span></div>
+    </div>
+    <div class="row"><svg width="332" height="332" viewBox="0 0 280 280"><polygon points="70,70 58,12 118,55" fill="#b8a48c"/><polygon points="210,70 222,12 162,55" fill="#b8a48c"/><ellipse cx="140" cy="150" rx="96" ry="86" fill="#c4b095"/><ellipse cx="140" cy="178" rx="56" ry="46" fill="#efe7d8"/><circle cx="108" cy="136" r="17" fill="#fff"/><circle cx="172" cy="136" r="17" fill="#fff"/><circle cx="110" cy="141" r="7.5" fill="#1d2321"/><circle cx="170" cy="141" r="7.5" fill="#1d2321"/><path d="M92,130 Q108,121 125,131" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M155,131 Q172,121 188,130" stroke="#8a7960" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="166" rx="14" ry="10" fill="#1d2321"/></svg></div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>

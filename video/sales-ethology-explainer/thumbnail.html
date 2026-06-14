@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px;
+    background:linear-gradient(180deg,#e6efe9 0%, #d6e7dc 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px;
+    background:#2f6f4f; opacity:0.28; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px;
+    color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px;
+    color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px;
+    box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:156px; }
+  .t1 { font-weight:900; font-size:62px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:120px; line-height:1.0; color:#d9893b; white-space:nowrap;
+    letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:6px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; left:0; right:0; bottom:30px; display:flex; gap:40px;
+    justify-content:center; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 11px 0 rgba(47,111,79,0.13)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">営業の心理</div>
+    <div class="titlewrap">
+      <div class="t1">売れる理由は、</div>
+      <div class="t2">動物が知っていた</div>
+    </div>
+    <div class="row">
+      <svg width="250" height="250" viewBox="0 0 280 280"><circle cx="82" cy="102" r="32" fill="#e8aeb8"/><circle cx="198" cy="102" r="32" fill="#e8aeb8"/><ellipse cx="140" cy="154" rx="88" ry="86" fill="#9ca3a3"/><ellipse cx="140" cy="186" rx="52" ry="42" fill="#d7dddd"/><circle cx="116" cy="146" r="8" fill="#1d2321"/><circle cx="164" cy="146" r="8" fill="#1d2321"/><ellipse cx="140" cy="166" rx="12" ry="9" fill="#e8aeb8"/><rect x="126" y="196" width="12" height="24" rx="3" fill="#fff"/><rect x="142" y="196" width="12" height="24" rx="3" fill="#fff"/></svg>
+      <svg width="250" height="250" viewBox="0 0 280 280"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><circle cx="117" cy="153" r="9" fill="#1d2321"/><circle cx="163" cy="153" r="9" fill="#1d2321"/><path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>

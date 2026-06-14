@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px; background:linear-gradient(180deg,#e6efe9 0%, #d6e7dc 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:#2f6f4f; opacity:0.29; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px; color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px; color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px; box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:154px; }
+  .t1 { font-weight:900; font-size:62px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:120px; line-height:1.0; color:#d9893b; white-space:nowrap; letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:6px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; left:0; right:0; bottom:30px; justify-content:center; display:flex; gap:48px; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 11px 0 rgba(47,111,79,0.13)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">交渉の科学</div>
+    <div class="titlewrap">
+      <div class="t1">引けない者が、</div>
+      <div class="t2">なぜ勝つ<span class="q">？</span></div>
+    </div>
+    <div class="row"><svg width="238" height="238" viewBox="0 0 220 220"><path d="M110,44 L150,80 Q170,100 158,128 L150,140 Q130,158 110,158 Q90,158 70,140 L62,128 Q50,100 70,80 Z" fill="#c97a3a"/><path d="M150,80 Q186,70 200,52 Q176,86 158,96 Z" fill="#a8632a"/><path d="M70,80 Q34,70 20,52 Q44,86 62,96 Z" fill="#a8632a"/><path d="M110,150 L96,180 L110,172 L124,180 Z" fill="#a8632a"/><circle cx="92" cy="98" r="9" fill="#fff"/><circle cx="128" cy="98" r="9" fill="#fff"/><circle cx="93" cy="99" r="4.5" fill="#1d2321"/><circle cx="127" cy="99" r="4.5" fill="#1d2321"/><path d="M101,84 L86,76" stroke="#7a4a1e" stroke-width="5" stroke-linecap="round"/><path d="M119,84 L134,76" stroke="#7a4a1e" stroke-width="5" stroke-linecap="round"/><path d="M110,108 L98,120 L110,124 L122,120 Z" fill="#e3b23a"/></svg><svg width="238" height="238" viewBox="0 0 220 220"><ellipse cx="110" cy="120" rx="56" ry="60" fill="#7fae90"/><ellipse cx="110" cy="138" rx="38" ry="42" fill="#a8cbb5"/><circle cx="110" cy="74" r="36" fill="#8fbb9f"/><path d="M160,108 Q196,96 206,76 Q190,118 166,128 Z" fill="#6f9d80"/><circle cx="98" cy="70" r="8" fill="#fff"/><circle cx="124" cy="70" r="8" fill="#fff"/><circle cx="99" cy="71" r="4" fill="#1d2321"/><circle cx="123" cy="71" r="4" fill="#1d2321"/><path d="M110,80 L122,86 L110,92 Z" fill="#e3b23a"/></svg></div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>

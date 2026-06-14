@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px; background:linear-gradient(180deg,#e6efe9 0%, #d6e7dc 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:#2f6f4f; opacity:0.29; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px; color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px; color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px; box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:154px; }
+  .t1 { font-weight:900; font-size:62px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:120px; line-height:1.0; color:#d9893b; white-space:nowrap; letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:6px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; left:0; right:0; bottom:30px; justify-content:center; display:flex; gap:36px; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 11px 0 rgba(47,111,79,0.13)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">採用の科学</div>
+    <div class="titlewrap">
+      <div class="t1">経歴は、</div>
+      <div class="t2">クジャクの尾</div>
+    </div>
+    <div class="row"><svg width="268" height="268" viewBox="0 0 280 280"><path d="M140,130 C70,32 36,86 92,132 C52,140 64,210 124,176 C116,236 184,236 176,176 C236,210 248,140 208,132 C264,86 210,32 140,130Z" fill="#e6efe9" stroke="#2f6f4f" stroke-width="8"/><circle cx="92" cy="116" r="10" fill="#d9893b"/><circle cx="140" cy="86" r="10" fill="#d9893b"/><circle cx="208" cy="116" r="10" fill="#d9893b"/><ellipse cx="140" cy="164" rx="44" ry="64" fill="#2f6f4f"/><circle cx="122" cy="146" r="7" fill="#fff"/><circle cx="158" cy="146" r="7" fill="#fff"/><path d="M118,188 Q140,204 162,188" stroke="#1d2321" stroke-width="5" fill="none"/></svg><svg width="252" height="252" viewBox="0 0 280 280"><path d="M112,72 Q98,26 78,12" stroke="#5a3a22" stroke-width="8" fill="none"/><path d="M168,72 Q182,26 202,12" stroke="#5a3a22" stroke-width="8" fill="none"/><ellipse cx="140" cy="150" rx="78" ry="86" fill="#c99a62"/><ellipse cx="140" cy="180" rx="42" ry="46" fill="#f1ddbd"/><path d="M96,90 L56,52 L72,122" fill="#c99a62"/><path d="M184,90 L224,52 L208,122" fill="#c99a62"/><circle cx="116" cy="142" r="8" fill="#1d2321"/><circle cx="164" cy="142" r="8" fill="#1d2321"/><ellipse cx="140" cy="164" rx="13" ry="9" fill="#5a3a22"/><path d="M116,202 Q140,218 164,202" stroke="#5a3a22" stroke-width="5" fill="none"/></svg></div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>
