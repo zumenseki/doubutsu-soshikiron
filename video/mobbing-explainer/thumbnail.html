@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px; background:linear-gradient(180deg,#f7ece1 0%, #f1ddc9 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:#d9893b; opacity:0.29; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px; color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px; color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px; box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:154px; }
+  .t1 { font-weight:900; font-size:62px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:120px; line-height:1.0; color:#d9893b; white-space:nowrap; letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:6px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; left:0; right:0; bottom:30px; justify-content:center; display:flex; gap:30px; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 11px 0 rgba(217,137,59,0.16)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">同調圧力</div>
+    <div class="titlewrap">
+      <div class="t1">群れはなぜ、</div>
+      <div class="t2">一匹を狩る<span class="q">？</span></div>
+    </div>
+    <div class="row"><svg width="236" height="236" viewBox="0 0 280 280"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg><svg width="280" height="280" viewBox="0 0 280 280"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#b33c2c" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#d9893b"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#e3a05a"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#b3621f"/><path d="M150,142 Q160,164 144,166" fill="#b33c2c"/><path d="M72,168 Q44,158 66,200" fill="#e9c79c"/><path d="M122,238 L114,262" stroke="#b3621f" stroke-width="8"/><path d="M158,238 L166,262" stroke="#b3621f" stroke-width="8"/></svg><svg width="236" height="236" viewBox="0 0 280 280"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg></div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.12em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 70px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1320px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+
+      /* 群れ行 */
+      .flock { display: flex; gap: 46px; align-items: flex-end; justify-content: center; }
+      .mob-stage { display: flex; gap: 34px; align-items: center; justify-content: center; }
+      .badge-g { font-weight: 800; font-size: 34px; color: #2f6f4f; background: #e6efe9;
+        padding: 10px 30px; border-radius: 999px; }
+
+      /* S3 増幅グラフ + カスケード */
+      .diagram { width: 1000px; height: 210px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .draw { fill: none; stroke: #d9893b; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 26px; font-weight: 800; fill: #6b7370; }
+      .casc { display: flex; gap: 26px; justify-content: center; align-items: center; }
+      .sub2 { font-weight: 700; font-size: 32px; color: #1d2321; max-width: 1300px; line-height: 1.4; }
+
+      /* S4 標的 */
+      .target-row { display: flex; gap: 50px; align-items: flex-end; justify-content: center; }
+      .diff-label { font-weight: 800; font-size: 34px; color: #d9893b; background: #f7ece1;
+        padding: 12px 34px; border-radius: 999px; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 15px; width: 1300px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 37px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1340px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="249">
+
+      <!-- S1 フック 1.0-42.14 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">同調 ── 群れを守る力、個を潰す力</div>
+        <div id="s1-head" class="head">群れはなぜ<span class="hl">一匹を狩る</span>のか</div>
+        <div id="s1-chars" class="flock">
+          <svg width="180" height="180" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg width="180" height="180" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg width="240" height="240" viewBox="0 0 280 280" aria-label="owl"><path d="M76,74 L92,24 L126,64" fill="#7a5230"/><path d="M204,74 L188,24 L154,64" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="96" fill="#8a5a33"/><circle cx="112" cy="136" r="30" fill="#f1e2ba"/><circle cx="168" cy="136" r="30" fill="#f1e2ba"/><circle cx="112" cy="136" r="11" fill="#1d2321"/><circle cx="168" cy="136" r="11" fill="#1d2321"/><polygon points="140,150 126,174 154,174" fill="#d9893b"/><path d="M92,214 Q140,236 188,214" stroke="#4a2d1d" stroke-width="6" fill="none"/></svg>
+          <svg width="180" height="180" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg width="180" height="180" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">同じ仕組みが、外の敵を退け、内の仲間を潰す。<span class="gn">同調の光と影</span>を、鳥とニワトリの行動から読む</div>
+      </div></div>
+
+      <!-- S2 モビング=防衛 42.14-87.24 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:58px">モビング ── 群れで<span class="hl">天敵</span>を追い払う</div>
+        <div id="s2-stage" class="mob-stage">
+          <svg id="s2-b1" width="150" height="150" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s2-b2" width="150" height="150" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s2-owl" width="250" height="250" viewBox="0 0 280 280" aria-label="owl"><path d="M76,74 L92,24 L126,64" fill="#7a5230"/><path d="M204,74 L188,24 L154,64" fill="#7a5230"/><ellipse cx="140" cy="150" rx="86" ry="96" fill="#8a5a33"/><circle cx="112" cy="136" r="30" fill="#f1e2ba"/><circle cx="168" cy="136" r="30" fill="#f1e2ba"/><circle cx="112" cy="136" r="11" fill="#1d2321"/><circle cx="168" cy="136" r="11" fill="#1d2321"/><polygon points="140,150 126,174 154,174" fill="#d9893b"/><path d="M92,214 Q140,236 188,214" stroke="#4a2d1d" stroke-width="6" fill="none"/></svg>
+          <svg id="s2-b3" width="150" height="150" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s2-b4" width="150" height="150" viewBox="0 0 280 280" aria-label="bird"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+        </div>
+        <div id="s2-concl" class="concl">一羽では勝てない敵も、群れなら退く。同調＝<span class="gn">生き延びるための協調防衛</span></div>
+        <div id="s2-good" class="badge-g">ここまでは、同調は明らかに〈善〉</div>
+      </div></div>
+
+      <!-- S3 情報カスケード=暴走 87.24-142.08 -->
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s3-head" class="head" style="font-size:54px">同じ仕組みが<span class="hl">暴走</span>する ── 情報カスケード</div>
+        <svg id="s3-diagram" class="diagram" viewBox="0 0 1000 210">
+          <line class="axis" x1="80" y1="172" x2="936" y2="172" />
+          <line class="axis" x1="80" y1="28" x2="80" y2="172" />
+          <path id="s3-curve" class="draw" d="M96,150 C 280,150 380,150 480,142 C 620,130 720,76 840,56 C 884,48 912,44 930,42" />
+          <text class="glabel" x="86" y="46">誤情報も増幅</text>
+          <text class="glabel" x="770" y="200">同調が強まる →</text>
+        </svg>
+        <div id="s3-casc" class="casc">
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#d9893b"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+          <svg width="70" height="70" viewBox="0 0 100 100" aria-label="arrow"><polygon points="20,22 78,50 20,78" fill="#2f6f4f"/></svg>
+        </div>
+        <div id="s3-mui" class="sub2">心の中では皆が疑っても、誰も反対を言い出せない＝<span class="hl">多元的無知</span>（アッシュの同調実験）</div>
+        <div id="s3-concl" class="concl orange">沈黙は、<span class="hl">賛成とは限らない</span></div>
+      </div></div>
+
+      <!-- S4 内側を狩る 142.08-188.67 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">矛先が<span class="hl">内側</span>へ ── 群れが一匹を狩る</div>
+        <div id="s4-targets" class="target-row">
+          <svg id="s4-w1" width="160" height="160" viewBox="0 0 280 280" aria-label="chicken"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s4-w2" width="160" height="160" viewBox="0 0 280 280" aria-label="chicken"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s4-target" width="200" height="200" viewBox="0 0 280 280" aria-label="chicken-target"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#b33c2c" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#d9893b"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#e3a05a"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#b3621f"/><path d="M150,142 Q160,164 144,166" fill="#b33c2c"/><path d="M72,168 Q44,158 66,200" fill="#e9c79c"/><path d="M122,238 L114,262" stroke="#b3621f" stroke-width="8"/><path d="M158,238 L166,262" stroke="#b3621f" stroke-width="8"/></svg>
+          <svg id="s4-w3" width="160" height="160" viewBox="0 0 280 280" aria-label="chicken"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg id="s4-w4" width="160" height="160" viewBox="0 0 280 280" aria-label="chicken"><path d="M104,84 Q112,52 122,82 Q132,50 142,82 Q152,50 162,82 Q172,54 178,86" fill="none" stroke="#d64f3f" stroke-width="14" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="78" ry="74" fill="#f4f4ef"/><ellipse cx="140" cy="120" rx="44" ry="42" fill="#fbfbf7"/><circle cx="158" cy="114" r="9" fill="#1d2321"/><polygon points="180,120 218,130 180,140" fill="#d9893b"/><path d="M150,142 Q160,164 144,166" fill="#d64f3f"/><path d="M72,168 Q44,158 66,200" fill="#dce2e2"/><path d="M122,238 L114,262" stroke="#d9893b" stroke-width="8"/><path d="M158,238 L166,262" stroke="#d9893b" stroke-width="8"/></svg>
+        </div>
+        <div id="s4-diff" class="diff-label">選ばれる基準は、罪でなく〈目立つ差異〉</div>
+        <div id="s4-concl" class="concl orange">村八分・スケープゴート＝同調防衛の<span class="hl">内向き暴発</span></div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 188.67-249 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:50px">同調は善悪でなく、<span class="hl">向き</span>と<span class="hl">強さ</span>の問題</div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 同調は防衛に有用だが、暴走すれば誤情報も増幅する（「みんなが逃げる」は正しさの証明でない）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 集団の攻撃対象は、罪の重さでなく「目立つ差異」で選ばれる</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 沈黙は同意ではない ── 反対意見は、構造で保護して初めて現れる</div>
+        </div>
+        <div id="s5-concl" class="concl">空気は、根性ではなく<span class="gn">仕組み</span>で止める</div>
+        <div id="s5-note" class="note">※式でなく機構の写像で、効果保証ではありません。鳥のモビング・群れの情報カスケード・ニワトリのつつき順位は動物行動学で観察され、ヒトの同調・多元的無知はアッシュらの社会心理学で示されてきました。特定の集団や個人を断定するものではありません。出典：鳥類のモビング行動／Asch (1951)／情報カスケード理論。</div>
+        <div id="s5-ask" class="ask">あなたの組織の沈黙は、<span class="hl">同意</span>か、空気への<span class="hl">服従</span>か</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="249" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="38.64" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="42.14" data-duration="42.6" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="87.24" data-duration="52.34" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="142.08" data-duration="44.09" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="188.67" data-duration="57.1" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-42.14) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-chars svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.8);
+      tl.to("#s1-chars svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.12,ease:"back.out(1.5)"},2.8);
+      tl.to("#s1-chars svg",{y:-14,duration:0.5,yoyo:true,repeat:3,ease:"sine.inOut"},11.4);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},18.0);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 モビング (42.14-87.24) — cue: モビング52.24 / 協調防衛59.81 / 善80.73 */
+      xfade(2,42.14);
+      tl.set("#s2-head",{opacity:0,y:30},42.14);
+      tl.set("#s2-stage svg",{opacity:0,scale:0.6},42.14);
+      tl.set("#s2-b1",{x:-90},42.14); tl.set("#s2-b2",{x:-50},42.14);
+      tl.set("#s2-b3",{x:50},42.14); tl.set("#s2-b4",{x:90},42.14);
+      tl.set("#s2-concl",{opacity:0,scale:0.82},42.14);
+      tl.set("#s2-good",{opacity:0,y:20},42.14);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},42.7);
+      tl.to("#s2-stage svg",{opacity:1,scale:1,duration:0.5,stagger:0.1,ease:"back.out(1.5)"},44.65);
+      tl.to("#s2-b1",{x:-30,duration:0.6,ease:"power2.inOut"},52.24);
+      tl.to("#s2-b2",{x:-12,duration:0.6,ease:"power2.inOut"},52.24);
+      tl.to("#s2-b3",{x:12,duration:0.6,ease:"power2.inOut"},52.24);
+      tl.to("#s2-b4",{x:30,duration:0.6,ease:"power2.inOut"},52.24);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},59.81);
+      tl.to("#s2-good",{opacity:1,y:0,duration:0.5,ease:"power2.out"},80.73);
+
+      /* S3 情報カスケード (87.24-142.08) — cue: 雪崩れ90.61 / 増幅110.43 / カスケード114.6 / 多元的無知128.65 / 沈黙136.07 */
+      xfade(3,87.24);
+      tl.set("#s3-head",{opacity:0,y:30},87.24);
+      tl.set("#s3-diagram",{opacity:0,y:24},87.24);
+      tl.set("#s3-curve",{strokeDasharray:1300,strokeDashoffset:1300},87.24);
+      tl.set("#s3-casc svg",{opacity:0,x:-26},87.24);
+      tl.set("#s3-mui",{opacity:0,y:22},87.24);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},87.24);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},87.7);
+      tl.to("#s3-diagram",{opacity:1,y:0,duration:0.5,ease:"power2.out"},90.61);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:2.2,ease:"power1.inOut"},91.0);
+      tl.to("#s3-casc svg",{opacity:1,x:0,duration:0.4,stagger:0.32,ease:"power2.out"},103.31);
+      tl.to("#s3-mui",{opacity:1,y:0,duration:0.5,ease:"power2.out"},128.65);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},136.07);
+
+      /* S4 内側を狩る (142.08-188.67) — cue: つつく145.28 / 標的151.52 / 差異164.15 / 暴発167.39 / 筋違い180.83 */
+      xfade(4,142.08);
+      tl.set("#s4-head",{opacity:0,y:30},142.08);
+      tl.set("#s4-targets svg",{opacity:0,scale:0.6,y:20},142.08);
+      tl.set("#s4-diff",{opacity:0,y:20},142.08);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},142.08);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},142.6);
+      tl.to("#s4-targets svg",{opacity:1,scale:1,y:0,duration:0.45,stagger:0.12,ease:"back.out(1.5)"},145.28);
+      tl.to("#s4-target",{scale:1.16,duration:0.55,yoyo:true,repeat:3,ease:"sine.inOut"},151.52);
+      tl.to("#s4-diff",{opacity:1,y:0,duration:0.5,ease:"back.out(1.6)"},164.15);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},180.83);
+
+      /* S5 まとめ (188.67-249) — cue: 予測①193.0 ②202.87 ③209.1 / 仕組み222.42 / §0注226.27 / ask238.82 */
+      xfade(5,188.67);
+      tl.set("#s5-head",{opacity:0,y:30},188.67);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},188.67);
+      tl.set("#s5-concl",{opacity:0,scale:0.82},188.67);
+      tl.set("#s5-note",{opacity:0},188.67);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},188.67);
+      tl.set("#s5-brand",{opacity:0},188.67);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},189.2);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},193.0);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},202.87);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},209.1);
+      tl.to("#s5-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.7)"},222.42);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},226.27);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},238.82);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},244.0);
+
+      var GROUPS = [
+        {s:1.1,e:5.2,t:"カラスの群れが、一羽のタカを取り囲んで追い払う。"},
+        {s:5.2,e:9.34,t:"弱い者が力を合わせ、強い敵を退ける。"},
+        {s:9.34,e:11.54,t:"美しい連携です。"},
+        {s:11.54,e:18.01,t:"ところが同じ群れが、ある日、仲間の一羽を、寄ってたかってつつき殺すことがある。"},
+        {s:18.01,e:24.14,t:"同調は、群れを守る力であると同時に、群れが個を潰す力でもあります。"},
+        {s:24.14,e:27.12,t:"同じコインの、裏と表です。"},
+        {s:27.12,e:32.7,t:"今日はこの同調の光と影を、鳥とニワトリの行動から読み解きます。"},
+        {s:32.7,e:39.59,t:"先に断ると、これは生物学ではなく、組織の空気を読むための比喩、レンズです。"},
+        {s:42.24,e:44.65,t:"まず、光の側から。"},
+        {s:44.65,e:52.24,t:"カラスやスズメは、タカやフクロウを見つけると、集団で取り囲み、けたたましく鳴き立てて追い払います。"},
+        {s:52.24,e:54.95,t:"これを、モビングと呼びます。"},
+        {s:54.95,e:59.81,t:"一羽ではとてもかなわない相手でも、群れで囲めば退けられる。"},
+        {s:59.81,e:64.98,t:"これは適応的な協調防衛、つまり生き延びるための装置です。"},
+        {s:64.98,e:69.0,t:"同じ敵に向かって、皆がいっせいに同調する。"},
+        {s:69.0,e:75.8,t:"この同調こそ、弱い個体が生き残るために進化が用意した、強力な仕組みなんです。"},
+        {s:75.8,e:80.73,t:"組織でいえば、危機に全員が結束する、あの一体感。"},
+        {s:80.73,e:84.7,t:"ここまでは、同調は明らかに善に見えます。"},
+        {s:87.34,e:90.61,t:"ところが、同じ仕組みが暴走します。"},
+        {s:90.61,e:97.23,t:"魚や鳥の大きな群れでは、一匹が逃げた方向に、全体が一瞬で雪崩れます。"},
+        {s:97.23,e:101.94,t:"それが本物の危険でも、ただの誤報でも、関係ない。"},
+        {s:101.94,e:103.31,t:"なぜか。"},
+        {s:103.31,e:110.43,t:"各個体にとっては、自分の感覚を信じるより、周りの動きに従うほうが安全だからです。"},
+        {s:110.43,e:114.6,t:"こうして、間違った情報すらも増幅されていく。"},
+        {s:114.6,e:117.7,t:"これを、情報カスケードと言います。"},
+        {s:117.7,e:121.3,t:"人間の空気も、これと同じ構造です。"},
+        {s:121.3,e:128.65,t:"心の中では皆が疑っていても、みんなが賛成しているように見えると、誰も反対を言い出せない。"},
+        {s:128.65,e:131.7,t:"これを、多元的無知と呼びます。"},
+        {s:131.7,e:136.07,t:"アッシュの同調実験が示したのも、まさにこれでした。"},
+        {s:136.07,e:139.53,t:"沈黙は、賛成とは限らないんです。"},
+        {s:142.18,e:145.28,t:"そして、最も暗い局面です。"},
+        {s:145.28,e:151.52,t:"モビングの矛先が、外の敵ではなく、群れの内側の一匹へ向かうことがある。"},
+        {s:151.52,e:157.4,t:"ニワトリは、弱った個体や、毛色の違う個体を、集団でつつきます。"},
+        {s:157.4,e:164.15,t:"重要なのは、攻撃の対象が、悪いことをしたから選ばれるのではない、という点です。"},
+        {s:164.15,e:167.39,t:"選ばれる基準は、ただ、目立つ差異。"},
+        {s:167.39,e:174.19,t:"村八分やスケープゴートは、この同調防衛が内側へ暴発した姿に他なりません。"},
+        {s:174.19,e:180.83,t:"群れの知恵が独立性を失ったとき、群れは賢さを失い、ときに一匹を狩る。"},
+        {s:180.83,e:186.1,t:"スケープゴートに合理的な理由を探すこと自体が、筋違いなんです。"},
+        {s:188.77,e:193.0,t:"最後に、通俗論と分かれる、三つの予測です。"},
+        {s:193.0,e:198.79,t:"一つ、同調は防衛に役立つが、暴走すれば誤情報も増幅する。"},
+        {s:198.79,e:202.87,t:"みんなが逃げている、は、正しさの証明ではない。"},
+        {s:202.87,e:209.1,t:"二つ、集団の攻撃対象は、罪の重さでなく、目立つ差異で選ばれる。"},
+        {s:209.1,e:214.53,t:"三つ、同調圧力の下では、内心の反対は表に出ない。"},
+        {s:214.53,e:218.1,t:"だから、沈黙を同意と読んではいけません。"},
+        {s:218.1,e:222.42,t:"反対意見は、構造で保護して初めて現れます。"},
+        {s:222.42,e:226.27,t:"空気は、根性ではなく、仕組みで止める。"},
+        {s:226.27,e:231.82,t:"なお、これは機構の写像であって、効果を保証する理論ではありません。"},
+        {s:231.82,e:238.82,t:"鳥のモビングやニワトリのつつき順位を主役に、人の組織はその応用として読んでいます。"},
+        {s:238.82,e:242.46,t:"あなたの組織の沈黙は、同意でしょうか。"},
+        {s:242.46,e:245.73,t:"それとも、空気への服従でしょうか。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
