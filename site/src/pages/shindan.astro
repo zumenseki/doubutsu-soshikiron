@@ -78,18 +78,23 @@ const grouped = {
 
 <style is:global>
   .target-switch { display: flex; gap: .5rem; flex-wrap: wrap; border: 0; padding: 0; margin: 1rem 0 .4rem; }
-  .target-switch .target-opt { display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .85rem; border: 1px solid #d8d2c4; border-radius: 999px; cursor: pointer; font-size: .92rem; background: #fff; }
-  .target-switch input { accent-color: #c9622e; }
-  .target-switch .target-opt:has(input:checked) { background: #fbf1e8; border-color: #c9622e; font-weight: 600; }
+  .target-switch .target-opt { display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .85rem; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: .92rem; background: #fff; }
+  .target-switch input { accent-color: var(--accent); }
+  .target-switch .target-opt:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); font-weight: 600; }
   .target-tagline { margin: .2rem 0 .6rem; }
   .blend-wrap { margin: 1rem 0 1.4rem; }
   .blend-title { font-weight: 600; margin: 0 0 .4rem; font-size: .95rem; }
-  .blend-bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; border: 1px solid #e4ddcf; background: #f3eee2; }
-  .blend-seg { min-width: 2px; }
-  .blend-legend { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; padding: .5rem 0 0; margin: 0; font-size: .85rem; }
+  .blend-bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: #f1eee6; }
+  .blend-seg { min-width: 3px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .blend-seg + .blend-seg { box-shadow: inset 1px 0 0 rgba(255, 255, 255, .65); }
+  .blend-legend { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; padding: .55rem 0 0; margin: 0; font-size: .85rem; }
   .blend-legend li { display: inline-flex; align-items: center; gap: .35rem; }
-  .blend-legend .dot { width: .7rem; height: .7rem; border-radius: 50%; display: inline-block; }
+  .blend-legend .dot { width: .7rem; height: .7rem; border-radius: 50%; display: inline-block; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .vlink { display: inline-block; font-weight: 600; }
+  @media (max-width: 480px) {
+    .blend-legend { gap: .25rem .8rem; font-size: .8rem; }
+    .target-switch .target-opt { font-size: .88rem; padding: .4rem .7rem; }
+  }
 </style>
 
 <script>
@@ -101,7 +106,8 @@ const grouped = {
 
   const TYPES_BY_TARGET = { org: TYPES, self: TYPES_SELF, family: TYPES_FAMILY };
   const RADAR_LABELS = { org: ['安全', '報酬', '学習', '連携'], self: ['安全', '報酬', '学習', '一貫'], family: ['安全', '報酬', '学習', '一貫'] };
-  const TYPE_COLORS = { ookami: '#6b7280', ari: '#2f8f6b', kochoku: '#9c7a4d', hyena: '#e06c5a', chimp: '#8a6fc0', bonobo: '#d27aa6', ecosys: '#4a9d5b' };
+  // 型別の categorical 配色（配合バー／凡例）。ari=青・ecosys=緑で分離し、危険系hyenaは赤寄り。
+  const TYPE_COLORS = { ookami: '#6b7280', ari: '#3b7dd8', kochoku: '#9c7a4d', hyena: '#e0584a', chimp: '#8a6fc0', bonobo: '#d27aa6', ecosys: '#3f9d5b' };
 
   const VALID = ['org', 'self', 'family'];
   const qs = new URLSearchParams(location.search);
@@ -134,6 +140,7 @@ const grouped = {
       .map((o) => `<span class="blend-seg" style="flex:${o.pct};background:${TYPE_COLORS[o.key] || '#999'}" title="${o.label} ${o.pct}%"></span>`)
       .join('');
     const legend = blend.ordered
+      .filter((o) => o.pct > 0)
       .map((o) => `<li><span class="dot" style="background:${TYPE_COLORS[o.key] || '#999'}"></span>${o.label} <b>${o.pct}%</b></li>`)
       .join('');
     return `<div class="blend-bar">${segs}</div><ul class="blend-legend">${legend}</ul>`;
