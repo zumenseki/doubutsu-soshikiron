@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.12em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 70px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1280px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+      .formula { font-variant-numeric: tabular-nums; font-size: 64px; font-weight: 700;
+        color: #1d2321; background: #e6efe9; border-radius: 18px; padding: 16px 46px; }
+      .formula .g { color: #d9893b; }
+
+      /* S2 鳩の迷信 */
+      .mis-row { display: flex; gap: 60px; align-items: center; justify-content: center; }
+      .speech { width: 820px; border: 3px solid #e3e0d8; border-radius: 20px; background: #fffdf9;
+        padding: 30px 38px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
+      .sp-tag { font-weight: 900; font-size: 36px; color: #d9893b; }
+      .sp-body { font-weight: 700; font-size: 33px; color: #1d2321; line-height: 1.4; }
+      .sp-chips { display: flex; gap: 16px; margin-top: 4px; }
+      .sp-chip { font-weight: 800; font-size: 28px; color: #6b7370; background: #f4f1ea;
+        border-radius: 999px; padding: 10px 26px; }
+
+      /* S3 対比メーター */
+      .cmp-row { display: flex; gap: 44px; justify-content: center; }
+      .cmp { width: 560px; border-radius: 18px; padding: 26px 32px; text-align: left;
+        background: #fff; border: 2px solid #e3e0d8; }
+      .cmp.non { border-color: #d9893b; } .cmp.con { border-color: #2f6f4f; }
+      .cmp-t { font-weight: 900; font-size: 36px; } .cmp.non .cmp-t { color: #d9893b; } .cmp.con .cmp-t { color: #2f6f4f; }
+      .cmp-d { font-weight: 700; font-size: 26px; color: #6b7370; margin: 8px 0 16px; line-height: 1.35; }
+      .meter { height: 32px; background: #ece5d8; border-radius: 8px; overflow: hidden; }
+      .mfill { height: 100%; width: 100%; transform-origin: left center; }
+      .mfill.non { background: #d9893b; } .mfill.con { background: #2f6f4f; }
+      .mval { font-weight: 900; font-size: 30px; margin-top: 10px; }
+      .cmp.non .mval { color: #d9893b; } .cmp.con .mval { color: #2f6f4f; }
+
+      /* S4 fork */
+      .fork-row { display: flex; gap: 46px; justify-content: center; align-items: stretch; }
+      .fbranch { width: 600px; border-radius: 20px; padding: 26px 32px; display: flex;
+        flex-direction: column; gap: 12px; text-align: left; background: #fff; }
+      .fbranch.bad { border: 2px solid #d9893b; } .fbranch.good { border: 2px solid #2f6f4f; }
+      .fb-tag { font-weight: 900; font-size: 37px; } .fbranch.bad .fb-tag { color: #d9893b; } .fbranch.good .fb-tag { color: #2f6f4f; }
+      .fb-flow { font-weight: 700; font-size: 29px; color: #1d2321; line-height: 1.45; }
+      .fb-out { font-weight: 900; font-size: 33px; margin-top: 4px; }
+      .fbranch.bad .fb-out { color: #d9893b; } .fbranch.good .fb-out { color: #2f6f4f; }
+
+      /* S5 まとめ3予測 */
+      .sum-list { display: flex; flex-direction: column; gap: 16px; width: 1240px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 34px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 16px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 46px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 25px; color: #6b7370; max-width: 1280px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="230">
+
+      <!-- S1 フック 1.0-34.27 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">帰属 ── 「自分のおかげ」の検出器</div>
+        <div id="s1-head" class="head">「たまたま」を実力と<span class="hl">誤解する脳</span></div>
+        <div id="s1-chars" style="display:flex; gap:40px; align-items:flex-end;">
+          <svg width="210" height="210" viewBox="0 0 280 280" aria-label="pigeon"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+          <svg width="200" height="200" viewBox="0 0 280 280" aria-label="rat"><circle cx="82" cy="102" r="32" fill="#e8aeb8"/><circle cx="198" cy="102" r="32" fill="#e8aeb8"/><ellipse cx="140" cy="154" rx="88" ry="86" fill="#9ca3a3"/><ellipse cx="140" cy="186" rx="52" ry="42" fill="#d7dddd"/><circle cx="116" cy="146" r="8" fill="#1d2321"/><circle cx="164" cy="146" r="8" fill="#1d2321"/><ellipse cx="140" cy="166" rx="12" ry="9" fill="#e8aeb8"/><rect x="126" y="196" width="12" height="24" rx="3" fill="#fff"/><rect x="142" y="196" width="12" height="24" rx="3" fill="#fff"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">成果が学習を生むかは、報酬の大きさでなく<span class="gn">「自分の行動に随伴したか」</span>で決まる</div>
+      </div></div>
+
+      <!-- S2 鳩の迷信 34.27-81.41 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">鳩は<span class="hl">迷信</span>を持つ ── スキナー 1948</div>
+        <div id="s2-row" class="mis-row">
+          <div id="s2-pigeon"><svg width="300" height="300" viewBox="0 0 280 280" aria-label="pigeon"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="12" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg></div>
+          <div id="s2-speech" class="speech">
+            <div class="sp-tag">非随伴な報酬が、誤帰属を生む</div>
+            <div class="sp-body">餌は<b>行動と無関係</b>に出る。なのに鳩は、餌が出た瞬間の動作を「これで出た」と学習してしまう</div>
+            <div class="sp-chips">
+              <div class="sp-chip" id="s2-c1">首を振る</div>
+              <div class="sp-chip" id="s2-c2">ぐるぐる回る</div>
+            </div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">帰属＝結果を自分に結びつける<span class="hl">検出器</span>。簡単に誤作動する</div>
+      </div></div>
+
+      <!-- S3 帰属ゲートg 81.41-122.67 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">成果でなく、<span class="hl">随伴</span>が学習を駆動する</div>
+        <div id="s3-formula" class="formula">ΔV = η · <span class="g">g</span> · (u − V)　<span style="font-size:34px;color:#6b7370;font-weight:700;">g＝帰属ゲート</span></div>
+        <div id="s3-cmp" class="cmp-row">
+          <div class="cmp non" id="s3-non">
+            <div class="cmp-t">✕ 非随伴（自分の行動と無関係）</div>
+            <div class="cmp-d">大きな報酬でも、学習は起きない</div>
+            <div class="meter"><div id="s3-mnon" class="mfill non"></div></div>
+            <div class="mval">迷信・無関心</div>
+          </div>
+          <div class="cmp con" id="s3-con">
+            <div class="cmp-t">○ 随伴（自分のおかげ）</div>
+            <div class="cmp-d">同じ報酬が、学習と内発に点火する</div>
+            <div class="meter"><div id="s3-mcon" class="mfill con"></div></div>
+            <div class="mval">学習が点火</div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl">効くのは報酬の<span class="hl">大きさ</span>でなく、<span class="gn">随伴の有無</span></div>
+      </div></div>
+
+      <!-- S4 マイクロマネジメント 122.67-165.46 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:48px">なぜ<span class="hl">マイクロマネジメント</span>は優秀な人を腐らせるか</div>
+        <div id="s4-fork" class="fork-row">
+          <div class="fbranch bad" id="s4-bad">
+            <div class="fb-tag">細かく指示する</div>
+            <div class="fb-flow">「上司に言われた通り」<br>→ 成果は上司のもの<br>→ 帰属ゲート g が閉じる</div>
+            <div class="fb-out">→ 報酬は内発を生まない・学習が止まる</div>
+          </div>
+          <div class="fbranch good" id="s4-good">
+            <div class="fb-tag">裁量を与える</div>
+            <div class="fb-flow">「自分で選び、自分でやった」<br>→ 成果を自分に帰属<br>→ 帰属ゲート g が開く</div>
+            <div class="fb-out">→ 同じ成果でも内発に火がつく</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl">自律性とは、つまるところ<span class="gn">帰属ゲートを開けること</span>（デシ）</div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 165.46-230 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s5-head" class="head" style="font-size:50px">組織にも、<span class="hl">迷信</span>がある</div>
+        <div id="s5-lead" class="sub" style="font-size:32px">たまたま当たった施策を「我々の戦略のおかげ」と誤帰属＝検証なき<span class="hl">勝ちパターン</span>の教義化</div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 報酬は「大きさ」でなく「随伴」で効く（紐づかない報酬は迷信か無関心）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> マイクロマネジメントは、成果を出しても人を育てない</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 成功は誤帰属されやすい → 「勝ちパターン」を検証せよ</div>
+        </div>
+        <div id="s5-ask" class="ask">その手応えは、<span class="hl">自分のおかげ</span>だと思えているか</div>
+        <div id="s5-note" class="note">※式で機構を表したもので効果保証ではありません。スキナーの迷信行動（1948）は解釈に議論があり挿絵として扱います。随伴性の検出が学習を駆動することはロバストで、ヒトの内発（デシらの自己決定理論）と二層で接続します。出典：Skinner (1948)／Deci, Koestner &amp; Ryan (1999)。</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="230" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="30.77" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="34.27" data-duration="44.64" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="81.41" data-duration="38.76" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="122.67" data-duration="40.3" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="165.46" data-duration="61.3" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-34.27) — cue: 成果でなく6.33 / 帰属13.98 / 鳩誤解24.06 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-chars",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.6);
+      tl.to("#s1-chars",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.8);
+      tl.to("#s1-chars",{y:-12,duration:0.9,yoyo:true,repeat:2,ease:"sine.inOut"},24.06);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},6.33);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 鳩の迷信 (34.27-81.41) — cue: 鳩45.63 / 首振りchips52.29 / 信じ込む67.37 / 検出器70.05 */
+      xfade(2,34.27);
+      tl.set("#s2-head",{opacity:0,y:30},34.27);
+      tl.set("#s2-pigeon",{opacity:0,scale:0.65},34.27);
+      tl.set("#s2-speech",{opacity:0,x:40},34.27);
+      tl.set("#s2-c1",{opacity:0,y:16},34.27);
+      tl.set("#s2-c2",{opacity:0,y:16},34.27);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},34.27);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},34.8);
+      tl.to("#s2-pigeon",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},37.22);
+      tl.to("#s2-speech",{opacity:1,x:0,duration:0.55,ease:"power3.out"},39.84);
+      tl.to("#s2-c1",{opacity:1,y:0,duration:0.4,ease:"back.out(1.7)"},52.29);
+      tl.to("#s2-c2",{opacity:1,y:0,duration:0.4,ease:"back.out(1.7)"},53.4);
+      tl.to("#s2-pigeon",{y:-14,duration:0.4,yoyo:true,repeat:5,ease:"sine.inOut"},52.29);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},70.05);
+
+      /* S3 帰属ゲートg (81.41-122.67) — cue: 式84.36 / 非随伴99.64 / 随伴点火88.75 / concl115.22 */
+      xfade(3,81.41);
+      tl.set("#s3-head",{opacity:0,y:30},81.41);
+      tl.set("#s3-formula",{opacity:0,scale:0.85},81.41);
+      tl.set("#s3-non",{opacity:0,x:-40},81.41);
+      tl.set("#s3-con",{opacity:0,x:40},81.41);
+      tl.set("#s3-mnon",{scaleX:0},81.41);
+      tl.set("#s3-mcon",{scaleX:0},81.41);
+      tl.set("#s3-concl",{opacity:0,scale:0.8},81.41);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},81.9);
+      tl.to("#s3-formula",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.6)"},84.36);
+      tl.to("#s3-con",{opacity:1,x:0,duration:0.5,ease:"power2.out"},88.75);
+      tl.to("#s3-mcon",{scaleX:0.86,duration:1.0,ease:"power2.out"},90.0);
+      tl.to("#s3-non",{opacity:1,x:0,duration:0.5,ease:"power2.out"},99.64);
+      tl.to("#s3-mnon",{scaleX:0.22,duration:1.0,ease:"power2.out"},100.8);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},115.22);
+
+      /* S4 マイクロマネジメント (122.67-165.46) — cue: 言われた通り126.95 / g下がる135.82 / 裁量145.82 / デシ155.63 */
+      xfade(4,122.67);
+      tl.set("#s4-head",{opacity:0,y:30},122.67);
+      tl.set("#s4-bad",{opacity:0,x:-40},122.67);
+      tl.set("#s4-good",{opacity:0,x:40},122.67);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},122.67);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},123.2);
+      tl.to("#s4-bad",{opacity:1,x:0,duration:0.55,ease:"power2.out"},126.95);
+      tl.to("#s4-good",{opacity:1,x:0,duration:0.55,ease:"power2.out"},145.82);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},155.63);
+
+      /* S5 まとめ (165.46-230) — cue: 教義168.79 / 予測①190.36 ②194.81 ③200.2 / §0注205.13 / ask220.73 */
+      xfade(5,165.46);
+      tl.set("#s5-head",{opacity:0,y:30},165.46);
+      tl.set("#s5-lead",{opacity:0,y:24},165.46);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},165.46);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},165.46);
+      tl.set("#s5-note",{opacity:0},165.46);
+      tl.set("#s5-brand",{opacity:0},165.46);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},165.96);
+      tl.to("#s5-lead",{opacity:1,y:0,duration:0.5,ease:"power2.out"},168.79);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},190.36);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},194.81);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},200.2);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},205.13);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},220.73);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},224.5);
+
+      var GROUPS = [
+        {s:1.1,e:3.08,t:"努力が報われた。"},
+        {s:3.08,e:6.33,t:"その手応えは、どこから来るのでしょう。"},
+        {s:6.33,e:9.52,t:"実は、成果そのものではありません。"},
+        {s:9.52,e:13.98,t:"それを、自分の行動のおかげだ、と結びつけられるか。"},
+        {s:13.98,e:16.33,t:"これを、帰属と言います。"},
+        {s:16.33,e:24.06,t:"そして動物の実験は、この帰属が、いかに脆く、いかに学習を左右するかを、見せてくれます。"},
+        {s:24.06,e:28.55,t:"鳩が、偶然の餌を、自分のおかげだと誤解する。"},
+        {s:28.55,e:31.73,t:"その、奇妙な話から始めましょう。"},
+        {s:34.37,e:37.22,t:"スキナーの、有名な実験です。"},
+        {s:37.22,e:39.84,t:"一九四八年。"},
+        {s:39.84,e:45.63,t:"鳩に、その行動とは無関係に、一定の間隔で、餌を与えます。"},
+        {s:45.63,e:52.29,t:"すると鳩は、餌が出た瞬間に、たまたまやっていた動作を、繰り返すようになりました。"},
+        {s:52.29,e:54.95,t:"首を振る、ぐるぐる回る。"},
+        {s:54.95,e:59.82,t:"この動作のおかげで餌が出た、と誤って結びつけたのです。"},
+        {s:59.82,e:62.94,t:"餌は、何をしてもしなくても出る。"},
+        {s:62.94,e:67.37,t:"なのに鳩は、自分の儀式が効いた、と信じ込む。"},
+        {s:67.37,e:70.05,t:"これが、迷信行動です。"},
+        {s:70.05,e:78.87,t:"帰属とは、結果を自分の行動に結びつける、検出器であり、それは驚くほど簡単に、誤作動するのです。"},
+        {s:81.51,e:84.36,t:"ここが、この理論の核心です。"},
+        {s:84.36,e:88.75,t:"学習のスイッチには、帰属ゲート、ジーがあります。"},
+        {s:88.75,e:99.64,t:"報酬や成果が、学習や、内側からのやる気を生むのは、それが自分の行動に随伴した、つまり、自分のおかげだ、と検出されたときだけ。"},
+        {s:99.64,e:108.32,t:"同じ大きさの報酬でも、自分の行動と結びつかなければ、学習は起きず、迷信か、無関心に終わります。"},
+        {s:108.32,e:111.38,t:"鳩の迷信は、迷信のほう。"},
+        {s:111.38,e:115.22,t:"宝くじに当たった成功は、無関心のほう。"},
+        {s:115.22,e:120.14,t:"効くのは、報酬の大きさではなく、随伴の、有無なのです。"},
+        {s:122.77,e:126.95,t:"ここから、マネジメントの、非自明な帰結が出ます。"},
+        {s:126.95,e:135.82,t:"部下が成果を上げても、それが、上司に言われた通りにやっただけなら、本人は、その成果を、自分に帰属できません。"},
+        {s:135.82,e:139.69,t:"ジーが下がり、報酬は、内発を生まない。"},
+        {s:139.69,e:145.82,t:"指示が細かいほど、成果は上司のものになり、部下の学習は、止まります。"},
+        {s:145.82,e:155.63,t:"逆に、裁量を与え、自分で選んで、自分でやった、と帰属できる設計は、同じ成果でも、内側のやる気に火をつける。"},
+        {s:155.63,e:162.91,t:"デシらの自己決定理論が言う、自律性とは、つまるところ、帰属ゲートを、開けることなのです。"},
+        {s:165.56,e:168.79,t:"個体の迷信は、組織にもあります。"},
+        {s:168.79,e:177.41,t:"たまたま当たった施策を、我々の戦略のおかげだ、と誤帰属すると、効いてもいない成功が、教義になる。"},
+        {s:177.41,e:183.34,t:"鳩が首を振り続けるように、組織は、効かない儀式を、反復します。"},
+        {s:183.34,e:187.05,t:"検証されていない勝ちパターンを、疑いましょう。"},
+        {s:187.05,e:190.36,t:"通俗論と分かれる予測は、三つ。"},
+        {s:190.36,e:194.81,t:"一つ、報酬は、大きさでなく、随伴で効く。"},
+        {s:194.81,e:200.2,t:"二つ、マイクロマネジメントは、成果を出しても、人を育てない。"},
+        {s:200.2,e:203.87,t:"三つ、成功は、誤帰属されやすい。"},
+        {s:203.87,e:205.13,t:"注意。"},
+        {s:205.13,e:211.5,t:"スキナーの迷信行動は、解釈に議論もあり、ここでは挿絵として扱います。"},
+        {s:211.5,e:216.12,t:"随伴性の検出が学習を動かすことは、確かです。"},
+        {s:216.12,e:220.73,t:"動物実験を主役に、組織はその応用として読む。"},
+        {s:220.73,e:226.7,t:"努力が報われる手応えは、自分のおかげだ、と思えたときに、生まれるのです。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

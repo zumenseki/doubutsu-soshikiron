@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#faf8f4; font-family:"Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif; }
+  #root { position:relative; width:1280px; height:720px; overflow:hidden; background:#faf8f4; }
+  .band { position:absolute; left:0; right:0; bottom:0; height:296px;
+    background:linear-gradient(180deg,#f7ece1 0%, #f1ddc9 100%); }
+  .band:before { content:""; position:absolute; left:0; right:0; top:0; height:7px; background:#d9893b; opacity:0.30; }
+  .kicker { position:absolute; left:60px; top:52px; font-weight:800; font-size:31px;
+    color:#2f6f4f; letter-spacing:0.08em; background:#e6efe9; padding:11px 30px; border-radius:999px; }
+  .badge { position:absolute; right:54px; top:50px; font-weight:900; font-size:34px;
+    color:#fff; background:#d9893b; padding:13px 32px; border-radius:14px; box-shadow:0 9px 0 rgba(184,110,40,0.30); }
+  .titlewrap { position:absolute; left:66px; top:150px; }
+  .t1 { font-weight:900; font-size:60px; color:#1d2321; letter-spacing:-0.01em; white-space:nowrap; }
+  .t2 { font-weight:900; font-size:122px; line-height:1.0; color:#d9893b; white-space:nowrap;
+    letter-spacing:-0.02em; text-shadow:0 6px 0 rgba(29,35,33,0.14); margin-top:8px; }
+  .t2 .q { color:#1d2321; }
+  .row { position:absolute; right:118px; bottom:22px; display:flex; align-items:flex-end; }
+  .row svg { filter:drop-shadow(0 12px 0 rgba(217,137,59,0.16)); }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-width="1280" data-height="720" data-start="0" data-duration="1">
+    <div class="band"></div>
+    <div class="kicker">動物行動学 × マネジメント</div>
+    <div class="badge">帰属と誤帰属</div>
+    <div class="titlewrap">
+      <div class="t1">その「勝ちパターン」、</div>
+      <div class="t2">ただの迷信<span class="q">？</span></div>
+    </div>
+    <div class="row">
+      <svg width="336" height="336" viewBox="0 0 280 280" aria-label="pigeon"><ellipse cx="142" cy="150" rx="88" ry="82" fill="#f4f4ef"/><ellipse cx="142" cy="190" rx="58" ry="46" fill="#dce2e2"/><polygon points="180,132 230,150 180,166" fill="#d9893b"/><circle cx="116" cy="134" r="13" fill="#1d2321"/><path d="M84,88 Q130,48 178,90" stroke="#aeb8b9" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M96,222 L80,246" stroke="#d9893b" stroke-width="8"/><path d="M156,222 L172,246" stroke="#d9893b" stroke-width="8"/></svg>
+    </div>
+  </div>
+  <script>window.__timelines = window.__timelines || {}; var tl = gsap.timeline({ paused: true }); window.__timelines["main"] = tl;</script>
+</body>
+</html>
