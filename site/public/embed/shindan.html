@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>どうぶつ診断 — 組織・自分・家庭</title>
+<!--
+  note 埋め込み用（CodePen ソース）＋フォールバックページ兼用。単一HTML・依存ゼロ・ESモジュール無し。
+  正本は site/src の Astro 版（diagnosis.js / questions.js / types.js）。ここはそれを1ファイルへ移植したもの。
+  結果リンクは note 型記事（large_weasel4290/n/<id>）へ送客。§0：実測でなく仮説生成ツール・型を人/子に貼らない。
+  ※ org/self の型記事は公開で有効化（未公開時は note 側で404）。family はハブ記事=公開済。
+-->
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1d2321; --muted:#6b7370; --accent:#2f6f4f; --accent-weak:#e6efe9; --line:#e3e0d8;
+    --sans: ui-sans-serif, system-ui, "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:var(--sans); color:var(--fg); background:var(--bg); line-height:1.7; -webkit-text-size-adjust:100%}
+  .wrap{max-width:42rem; margin:0 auto; padding:1rem 1rem 2rem}
+  h1{font-size:1.5rem; margin:.2em 0 .4em}
+  h2{font-size:1.25rem; margin:.2rem 0}
+  p{margin:.5rem 0}
+  a{color:var(--accent)}
+  .muted{color:var(--muted)} .small{font-size:.85rem}
+  .tag{display:inline-block; font-size:.78rem; color:var(--accent); background:var(--accent-weak); padding:.15rem .6rem; border-radius:999px; margin-bottom:.5rem}
+  .lede{font-size:1.05rem; color:#33403a}
+
+  /* 対象セレクタ */
+  .switch{display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0 .4rem}
+  .switch button{padding:.45rem .85rem; border:1px solid var(--line); border-radius:999px; background:#fff; cursor:pointer; font:inherit; font-size:.92rem; color:var(--fg)}
+  .switch button[aria-pressed="true"]{background:var(--accent-weak); border-color:var(--accent); font-weight:600}
+  .tagline{margin:.2rem 0 .4rem}
+  .note0{margin:.2rem 0 1rem}
+
+  /* 設問 */
+  .q-group{border:1px solid var(--line); border-radius:.7rem; padding:.8rem 1rem; margin:1rem 0; background:#fff}
+  .q-group>.legend{font-weight:700; color:var(--accent); margin-bottom:.2rem}
+  .q-item{padding:.6rem 0; border-top:1px dashed var(--line)}
+  .q-item:first-of-type{border-top:0}
+  .q-text{margin:.2rem 0 .5rem}
+  .q-num{display:inline-block; min-width:2.4rem; color:var(--muted); font-weight:600; font-size:.82rem}
+  .scale{display:flex; gap:.4rem; flex-wrap:wrap}
+  .scale label{position:relative; cursor:pointer}
+  .scale input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
+  .scale span{display:flex; align-items:center; justify-content:center; width:2.4rem; height:2.4rem; border:1px solid var(--line); border-radius:.5rem; background:#fff; font-weight:600}
+  .scale input:checked + span{background:var(--accent); color:#fff; border-color:var(--accent)}
+  .scale-ends{display:flex; justify-content:space-between; max-width:14rem; margin-top:.3rem; font-size:.72rem; color:var(--muted)}
+  .cta{display:inline-block; margin:.5rem 0; padding:.6rem 1rem; border:1px solid var(--accent); border-radius:.5rem; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; font:inherit; text-decoration:none}
+  .cta.solid{font-size:1.02rem}
+  .ghost{display:inline-block; padding:.5rem .9rem; border:1px solid var(--line); border-radius:.5rem; background:none; color:var(--fg); cursor:pointer; font:inherit}
+  .err{color:#b3261e; font-weight:600}
+
+  /* 結果 */
+  .result{margin-top:1.4rem; border:1px solid var(--accent); border-radius:.8rem; padding:1.2rem 1.1rem; background:#fff}
+  .radar{max-width:16rem; margin:.8rem auto}
+  .radar svg{width:100%; height:auto}
+  .r-grid{fill:none; stroke:var(--line)} .r-axis{stroke:var(--line)}
+  .r-shape{fill:rgba(47,111,79,.22); stroke:var(--accent); stroke-width:2}
+  .r-label{font-size:12px; fill:var(--fg)}
+  .cards{display:grid; gap:.7rem; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); margin:.9rem 0}
+  .card{border:1px solid var(--line); border-radius:.6rem; padding:.7rem .9rem}
+  .card b{display:block; font-size:.82rem; color:var(--muted); margin-bottom:.25rem}
+  .card.weak{border-left:3px solid #d9893b} .card.act{border-left:3px solid var(--accent)}
+  .blend-title{font-weight:600; margin:.6rem 0 .35rem; font-size:.95rem}
+  .blend-bar{display:flex; height:30px; border-radius:8px; overflow:hidden; border:1px solid var(--line); background:#f1eee6}
+  .blend-seg{min-width:3px}
+  .blend-seg + .blend-seg{box-shadow:inset 1px 0 0 rgba(255,255,255,.65)}
+  .legend{list-style:none; display:flex; flex-wrap:wrap; gap:.3rem 1rem; padding:.5rem 0 0; margin:0; font-size:.85rem}
+  .legend li{display:inline-flex; align-items:center; gap:.35rem}
+  .dot{width:.7rem; height:.7rem; border-radius:50%; display:inline-block}
+  .note-cta{margin:1rem 0 .4rem; padding:.9rem 1rem; border-radius:.6rem; background:var(--accent-weak)}
+  details{margin:.8rem 0}
+  summary{cursor:pointer; color:var(--accent)}
+  table{border-collapse:collapse; width:100%; font-size:.9rem; margin:.5rem 0}
+  th,td{border:1px solid var(--line); padding:.35rem .55rem; text-align:left}
+  th{background:var(--accent-weak)}
+  .disclaimer{margin-top:.9rem; border-top:1px solid var(--line); padding-top:.6rem}
+  .actions{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">無料・登録不要</span>
+  <h1>どうぶつ診断</h1>
+  <p class="lede">人が動かないのは、性格ではなく<strong>「関わりの設計」</strong>かもしれない。恐怖・報酬・学習・同調の4つから、<strong>組織・自分・家庭</strong>がどの動物の設計に寄っているかを見る。</p>
+
+  <div class="switch" role="group" aria-label="診断する対象">
+    <button type="button" data-t="org" aria-pressed="true">組織・チーム</button>
+    <button type="button" data-t="self" aria-pressed="false">自分（関わり方の癖）</button>
+    <button type="button" data-t="family" aria-pressed="false">家庭・子育て</button>
+  </div>
+  <p class="tagline muted" id="tagline"></p>
+  <p class="note0 muted small" id="note0"></p>
+
+  <form id="f" novalidate></form>
+  <p id="err" class="err" hidden>未回答の質問があります。すべて選んでください。</p>
+  <button type="button" class="cta solid" id="go">診断する</button>
+
+  <section id="result" class="result" hidden aria-live="polite"></section>
+
+  <p class="muted small disclaimer" style="margin-top:1.5rem">
+    動物から組織を読む二層理論。これは実測モデルではなく、行動学の知見を使った仮説生成ツールです。
+  </p>
+</div>
+
+<script>
+/* ===== データ（site/src を1ファイルへ移植）===== */
+var SCALE = [1,2,3,4,5];
+var QUESTION_SETS = {
+  org: [
+    {id:'q1',group:'恐怖と安全',text:'ヒヤリ・ミスがあったとき、すぐ上に報告が上がる'},
+    {id:'q2',group:'恐怖と安全',text:'部下は「誰の責任か」より先に「どう直すか」を話す'},
+    {id:'q3',group:'恐怖と安全',text:'朝礼・会議で若手が反対意見を言える'},
+    {id:'q20',group:'恐怖と安全',text:'悪い情報ほど、早く・正確に上へ上がってくる'},
+    {id:'q23',group:'恐怖と安全',text:'普段は穏やかでも、事故・危険には即・厳しく切り替わる'},
+    {id:'q4',group:'報酬と評価',text:'頑張った職人がきちんと評価・処遇される'},
+    {id:'q5',group:'報酬と評価',text:'評価・賃金の基準が明確で、不公平感が少ない'},
+    {id:'q6',group:'報酬と評価',text:'賞与・歩合が「数字だけ」に偏っていない'},
+    {id:'q16',group:'報酬と評価',text:'未達のとき、詰め（強いプレッシャー）で取り返そうとする空気がある'},
+    {id:'q22',group:'報酬と評価',text:'一度与えた裁量や手当を戻すと、強い不満が出る'},
+    {id:'q7',group:'学習と改善',text:'現場改善の提案が出て、実際に採用される'},
+    {id:'q8',group:'学習と改善',text:'失敗を共有して次に活かす場がある'},
+    {id:'q9',group:'学習と改善',text:'新しい道具・工法を試す余地がある'},
+    {id:'q19',group:'学習と改善',text:'「うちのやり方」を変える提案は、通りにくい'},
+    {id:'q10',group:'連携と一体感',text:'班・支店でやり方がバラバラでない（共通の理念がある）'},
+    {id:'q11',group:'連携と一体感',text:'新人の意見が通ることがある'},
+    {id:'q12',group:'連携と一体感',text:'雑談・横の連携がある'},
+    {id:'q17',group:'連携と一体感',text:'物事は、会議の前の根回しで実質的に決まる'},
+    {id:'q24',group:'連携と一体感',text:'周りに合わせること自体が目的化していない（理念で揃っている）'},
+    {id:'q13',group:'現場の体質',text:'親方・社長が抜けても現場が回る'},
+    {id:'q14',group:'現場の体質',text:'「前からこうだ」で提案が却下されがち'},
+    {id:'q15',group:'現場の体質',text:'マニュアル・KPI・評価制度が整っている'},
+    {id:'q18',group:'現場の体質',text:'締切や品質の基準が、あいまいなまま流れることがある'},
+    {id:'q21',group:'現場の体質',text:'役割はかっちり決まっておらず、その場で動ける人が動く'}
+  ],
+  self: [
+    {id:'s1',group:'恐怖と安全',text:'相手が報告・相談しやすい雰囲気を、意識して作っている'},
+    {id:'s2',group:'恐怖と安全',text:'うまくいかないと、つい語気が強くなる'},
+    {id:'s3',group:'報酬と承認',text:'動いてほしいことは、報酬や評価とセットで示すことが多い'},
+    {id:'s4',group:'報酬と承認',text:'成果が出たら、金額や順位より先に「どこが良かったか」を具体的に伝える'},
+    {id:'s9',group:'報酬と承認',text:'「これができたら○○」と、先に交換条件を出すことが多い'},
+    {id:'s5',group:'学習と自走',text:'やり方が非効率に見えても、まず本人に試させる'},
+    {id:'s6',group:'学習と自走',text:'つい先回りして、答えややり方を渡してしまう'},
+    {id:'s12',group:'学習と自走',text:'相手が自分で決めて動けるよう、任せる範囲を意識している'},
+    {id:'s7',group:'同調と比較',text:'「普通はこうする」「みんなこうしている」で説明しがち'},
+    {id:'s8',group:'同調と比較',text:'周りと違うやり方でも、理由があれば認める'},
+    {id:'s10',group:'一貫性',text:'同じ失敗でも、自分の機嫌や状況で反応が変わってしまう'},
+    {id:'s11',group:'一貫性',text:'言ったことと実際の対応が、ブレないようにしている'}
+  ],
+  family: [
+    {id:'f1',group:'恐怖と安全',text:'子どもは、失敗しても安心して親に話せている'},
+    {id:'f2',group:'恐怖と安全',text:'言うことを聞かせるために、強い叱責や罰を使うことが多い'},
+    {id:'f12',group:'恐怖と安全',text:'危険なこと（道路に飛び出す等）には、即・はっきり止める'},
+    {id:'f3',group:'報酬とごほうび',text:'勉強や手伝いを、ごほうび・お小遣い・順位で動かすことが多い'},
+    {id:'f4',group:'報酬とごほうび',text:'できたことは、ごほうびより先に「工夫した点」を具体的に認めている'},
+    {id:'f11',group:'報酬とごほうび',text:'一度与えたごほうびや自由を取り上げると、強く反発する'},
+    {id:'f5',group:'学習と自走',text:'時間がかかっても、本人にやり方を選ばせ、結果を本人に返している'},
+    {id:'f6',group:'学習と自走',text:'つい先回りして、代わりにやってあげてしまう'},
+    {id:'f7',group:'同調と比較',text:'「みんなやってる」「普通は」で行動を揃えさせがち'},
+    {id:'f8',group:'同調と比較',text:'他の子と比べず、昨日の本人と比べるようにしている'},
+    {id:'f9',group:'一貫性',text:'同じことでも、親の機嫌でしかったり流したりすることがある'},
+    {id:'f10',group:'一貫性',text:'約束やルールは、ブレずに毎回同じ対応にしている'}
+  ]
+};
+
+var TARGETS = {
+  org:    {label:'組織・チーム', tagline:'部下が動かない・若手が辞める・ヒヤリが上がらない、その背景を見る', heading:'あなたの現場タイプ', note:'これは実測モデルではなく、行動学の知見を使った仮説生成ツールです。組織の自己点検であり、個人の評価・医療や心理の診断ではありません。'},
+  self:   {label:'自分（関わり方の癖）', tagline:'あなたの関わり方・マネジメントの癖が、どの動物の設計に寄っているかを見る', heading:'あなたの関わりが寄っている設計', note:'これは性格占いではありません。あなたの“関わり方・マネジメントの癖”がどの動物の設計に寄っているかを見る仮説生成ツールであり、人格や能力の評価ではありません。'},
+  family: {label:'家庭・子育て', tagline:'家庭の関わりの配合を、しつけ・学習の機構から見る', heading:'家庭の関わりが寄っている配合', note:'これは育児メソッドでも診断でもありません。型を子どもや親に貼り付けず、“どんな配合か”を見るレンズ（仮説生成ツール）です。係数は測っていません。'}
+};
+
+var TYPES = {
+  ookami:{label:'親方オオカミ型',finding:'少人数で現場判断が速い、熱量の高い群れ。創業期〜部族期の強さがある。',weakness:'親方依存。あの人が抜けたら回らない（属人化）。',action:'親方の判断基準を3つだけ言語化し、朝礼で共有することから始める。'},
+  ari:{label:'規律アリ型',finding:'手順と再現性が効いた安定した群れ。拡大・品質・安全管理に強い。',weakness:'現場の即応・創造が出にくい。放置すると硬直へ向かう。',action:'現場チームだけ「オオカミ枠」を作り、小さな実験を許可する。'},
+  kochoku:{label:'硬直アリ型',finding:'前例主義が強く、提案が出にくい。ゆっくり活力を失いつつある段階。',weakness:'学習が止まり、悪い情報も新しい工夫も上がってこない。',action:'「前からこう」が出たら「今ならどうする?」を15分問う場を、月1回入れる。'},
+  hyena:{label:'恐怖ハイエナ型',finding:'数字と未達への緊張で走る群れ。短期は強いが、代償が積み上がりやすい。',weakness:'悪い情報が遅れる構造。事故・離職・不正のリスクにつながりやすい。',action:'ミス報告を「叱る対象」から外すと朝礼で宣言する。報告した人を責めない。'},
+  chimp:{label:'政治チンパン型',finding:'規模が増え、根回し・社内調整にエネルギーが向き始めた群れ。',weakness:'力が社外（顧客）でなく社内（政治）へ向く。意思決定が遅くなる。',action:'意思決定の前の根回しを、「誰が決めるか」を書いた1枚のフローに置き換える。'},
+  bonobo:{label:'ぬるいボノボ型',finding:'心理的に安全で離職は少ないが、駆動と緊張が不足した群れ。',weakness:'居心地は良いが停滞しやすい。基準と締切が緩い（ぬるま湯）。',action:'優しさは保ったまま、締切と基準だけを明確にする（高基準×高安全の学習ゾーンへ）。'},
+  ecosys:{label:'生態系混成型',finding:'層ごとに動物相を使い分けられている、バランスの良い群れ。',weakness:'目立つ弱点は少ない。慢心と慣性で、徐々にアリ化する点に注意。',action:'今の配置を維持。層の継ぎ目（どの規則がどこに効くか）を年1回点検する。'}
+};
+var TYPES_SELF = {
+  ookami:{label:'牽引オオカミ型',finding:'恐怖・締切・緊張で人を動かす関わりに寄っている。立ち上げや危機ではスピードが出る。',weakness:'悪い情報が遅れ、相手が「止まった」のを「育った」と読み違えやすい。',action:'危機以外では、「叱る」を「同じ基準を毎回フィードバックする」へ置き換える。'},
+  ari:{label:'規範アリ型',finding:'前例・規範・「普通は」で揃える関わりに寄っている。再現性と安定に強い。',weakness:'相手個人の手応えが育ちにくく、例外や新しいやり方への即応が鈍る。',action:'「他の人はこうしている」ではなく「あなたは前回どうだった」で返す場面を増やす。'},
+  chimp:{label:'競争チンパン型',finding:'比較・順位・インセンティブで動かす関わりに寄っている。短期の駆動は強い。',weakness:'報酬で動かすほど「報酬が無いと動かない」に傾き（アンダーマイニング）、評価への不公平感もコストになりやすい。',action:'「ご褒美の予告」を一つ減らし、事後に「工夫した点」を具体的に認める形へ。'},
+  bonobo:{label:'受容ボノボ型',finding:'衝突を避け、受け止め・先回りで支える関わりに寄っている。安心の土台はある。',weakness:'先回りで用意し続けると、相手が「自分でやってできた」機会を失い、優しさが自走を奪う側に回る。',action:'小さくても「本人に決めさせ、結果を本人に返す」場面を一つ戻す。'},
+  hyena:{label:'ムラありハイエナ型',finding:'その時々で対応がブレやすい関わりに寄っている。',weakness:'対応がブレると相手は「何が正解か」を読めず、何度言っても定着しにくい。',action:'叱る「強さ」より「毎回同じ」を優先する。まず一つの行動だけ対応を固定して試す。'}
+};
+var TYPES_FAMILY = {
+  ookami:{label:'オオカミ家庭',finding:'上下と規律が明確で、止めるべき行動は速く止まる関わりに寄っている。',weakness:'叱りで動かし続けると、回避や「どうせ無理」（学習性無力感）に傾きやすい。「止まった」は「育った」とは別。',action:'危険の即時停止だけ恐怖を残し、日常のしつけは「同じ行動には毎回同じ結果」へ寄せる。'},
+  ari:{label:'アリ家庭',finding:'「みんなやってる」「普通は」で揃える、秩序の効いた関わりに寄っている。',weakness:'基準が「みんな」という外側にあるぶん、子ども自身の「やってみたらできた」という手応えが育ちにくい。',action:'「他の子」ではなく「昨日の本人」と比べる場面を一つ増やす。'},
+  chimp:{label:'チンパン家庭',finding:'ごほうび・順位・比較でやる気を作る関わりに寄っている。短期は動く。',weakness:'ごほうびで釣るほど「ごほうびが無いとやらない」に傾き（アンダーマイニング）、一度あげた物を減らすと実際以上に強く嫌がる（損失回避）。',action:'ごほうびを「事後の・予期せぬ・工夫を認める」形へ。「○点で△△」の予告を一つ減らす。'},
+  bonobo:{label:'ボノボ家庭',finding:'受容的で衝突が少なく、安心の土台がある関わりに寄っている。',weakness:'先回りして代わりにやり続けると「自分でやってできた」経験が減り、優しさが「どうせ無理」（学習性無力感）を育てる側に回る。',action:'小さくても「本人に選ばせ、結果を本人に返す」場面を一つ戻す。'},
+  hyena:{label:'ハイエナ家庭',finding:'その場の機嫌・損得で対応が決まる関わりに寄っている。',weakness:'同じ行動でも対応がバラつくと、子は「何が正解か」を読めず、言う回数を増やすほど混乱が増える。',action:'叱る「強さ」より「毎回同じ」を優先する。一つの行動だけ対応を固定して試す。'}
+};
+var TYPES_BY_TARGET = {org:TYPES, self:TYPES_SELF, family:TYPES_FAMILY};
+
+/* note 型記事への送客（org/self の型記事は公開で有効化／family はハブ記事=公開済）*/
+var NOTE = 'https://note.com/large_weasel4290/n/';
+var NOTE_LINKS = {
+  org:    {ookami:NOTE+'ne12a84a42c15', ari:NOTE+'n7a7dffb6cd19', kochoku:NOTE+'n7a7dffb6cd19', hyena:NOTE+'n97da4f76ffcf', chimp:NOTE+'n106fde59a835', bonobo:NOTE+'n23e38d55ef9d', ecosys:NOTE+'n6d98d24d19f3'},
+  self:   {ookami:NOTE+'ne12a84a42c15', ari:NOTE+'n7a7dffb6cd19', chimp:NOTE+'n106fde59a835', bonobo:NOTE+'n23e38d55ef9d', hyena:NOTE+'n97da4f76ffcf'},
+  family: {ookami:NOTE+'na510696cbe44', ari:NOTE+'na510696cbe44', chimp:NOTE+'na510696cbe44', bonobo:NOTE+'na510696cbe44', hyena:NOTE+'na510696cbe44'}
+};
+var TYPE_COLORS = {ookami:'#6b7280', ari:'#3b7dd8', kochoku:'#9c7a4d', hyena:'#e0584a', chimp:'#8a6fc0', bonobo:'#d27aa6', ecosys:'#3f9d5b'};
+
+/* ===== 採点（diagnosis.js を移植・決定的）===== */
+function mean(){var a=[].slice.call(arguments),s=0,i;for(i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+function norm(m){return Math.round((m-1)/4*100);}
+function clamp01(x){return Math.max(0,Math.min(1,x));}
+function hi(v){return clamp01((v-50)/50);}
+function lo(v){return clamp01((50-v)/50);}
+function mid(v){return clamp01(1-Math.abs(v-65)/35);}
+function stdev(xs){var m=mean.apply(null,xs);return Math.sqrt(mean.apply(null,xs.map(function(x){return (x-m)*(x-m);})));}
+function balance(){var vs=[].slice.call(arguments);return clamp01((mean.apply(null,vs)-55)/35)*clamp01(1-stdev(vs)/30);}
+function normMean(){var xs=[].slice.call(arguments).filter(function(v){return isFinite(v);});return xs.length?norm(mean.apply(null,xs)):50;}
+var ORG_PRIORITY=['hyena','kochoku','chimp','bonobo','ookami','ari','ecosys'];
+var ANIMAL_PRIORITY=['hyena','chimp','bonobo','ookami','ari'];
+
+function blend(scores, exclude, types){
+  exclude=exclude||[];
+  var entries=Object.keys(scores).filter(function(k){return exclude.indexOf(k)<0;}).map(function(k){return [k,scores[k]];});
+  var S=entries.reduce(function(a,e){return a+Math.max(0,e[1]);},0);
+  var maxRaw=entries.reduce(function(m,e){return Math.max(m,e[1]);},0);
+  if(S<0.05||maxRaw<0.25) return {ordered:[],weak:true};
+  var raw=entries.map(function(e){return {key:e[0],label:(types[e[0]]||{}).label||e[0],pct:Math.max(0,e[1])/S*100};})
+    .sort(function(a,b){return b.pct-a.pct;})
+    .map(function(p){return {key:p.key,label:p.label,pct:Math.round(p.pct)};});
+  var diff=100-raw.reduce(function(a,p){return a+p.pct;},0);
+  if(raw.length) raw[0].pct+=diff;
+  return {ordered:raw,weak:false};
+}
+function pickWinner(scores, priority){
+  var ranked=Object.keys(scores).map(function(k){return [k,scores[k]];}).sort(function(a,b){return b[1]-a[1] || priority.indexOf(a[0])-priority.indexOf(b[0]);});
+  var top=ranked[0][1];
+  var near=ranked.filter(function(e){return top-e[1]<0.05;}).sort(function(a,b){return priority.indexOf(a[0])-priority.indexOf(b[0]);});
+  var key=near[0][0];
+  return {ranked:ranked,winnerKey:key,winnerScore:scores[key]};
+}
+function diagnose(target, answers){
+  if(target==='self') return diagnoseSelf(answers);
+  if(target==='family') return diagnoseFamily(answers);
+  return diagnoseOrg(answers);
+}
+function diagnoseOrg(a){
+  function r(k){return Number(a['q'+k]);}
+  var fear=norm(mean(r(1),r(2),r(3))), reward=norm(mean(r(4),r(5),r(6))), learn=norm(mean(r(7),r(8),r(9))), conform=norm(mean(r(10),r(11),r(12)));
+  var solo=normMean(6-r(13),r(21)), prec=normMean(r(14),r(19)), inst=normMean(r(15)), numBias=normMean(6-r(6),r(16)),
+      open=normMean(r(11),6-r(17)), badNews=normMean(r(20)), slack=normMean(r(18)), confq=normMean(r(24));
+  var scores={
+    ookami:mean(hi(learn),hi(fear),hi(solo),lo(inst)),
+    ari:mean(hi(inst),hi(conform),mid(learn),mid(fear),hi(confq)),
+    kochoku:mean(lo(learn),hi(conform),hi(prec),hi(inst),lo(confq)),
+    hyena:mean(lo(fear),hi(numBias),lo(learn),lo(badNews)),
+    chimp:mean(lo(fear),hi(inst),lo(open),mid(prec)),
+    bonobo:mean(hi(fear),lo(learn),lo(reward),hi(conform),hi(slack)),
+    ecosys:balance(fear,reward,learn,conform)
+  };
+  var w=pickWinner(scores,ORG_PRIORITY), splitted=w.winnerScore<0.35;
+  var alt=w.ranked.filter(function(e){return e[0]!==w.winnerKey;}).slice(0,2).map(function(e){return {key:e[0],label:TYPES[e[0]].label};});
+  var pct={};Object.keys(scores).forEach(function(k){pct[k]=Math.round(scores[k]*100);});
+  return {target:'org',axes:{fear:fear,reward:reward,learn:learn,conform:conform},stage:null,type:assign(TYPES[w.winnerKey],{key:w.winnerKey}),alt:splitted?alt:[],splitted:splitted,scores:pct,blend:blend(scores,['ecosys'],TYPES)};
+}
+var SELF_MAP={safety:[['s1',0],['s2',1]],intrinsic:[['s4',0]],rewardCtrl:[['s3',0],['s9',0]],autonomy:[['s5',0],['s12',0],['s6',1]],conform:[['s7',0]],confq:[['s8',0]],consist:[['s11',0],['s10',1]]};
+var FAMILY_MAP={safety:[['f1',0],['f2',1]],intrinsic:[['f4',0]],rewardCtrl:[['f3',0]],autonomy:[['f5',0],['f6',1]],conform:[['f7',0]],confq:[['f8',0]],consist:[['f10',0],['f9',1]]};
+function constructs(a,map){
+  var c={};Object.keys(map).forEach(function(key){var vals=map[key].map(function(s){var v=Number(a[s[0]]);return s[1]?(6-v):v;});c[key]=normMean.apply(null,vals);});
+  ['safety','intrinsic','rewardCtrl','autonomy','conform','confq','consist'].forEach(function(k){if(!(k in c))c[k]=50;});
+  return c;
+}
+function relatingScores(c){
+  return {
+    ookami:mean(lo(c.safety),hi(c.conform)),
+    ari:mean(hi(c.conform),mid(c.autonomy)),
+    chimp:mean(hi(c.rewardCtrl),lo(c.intrinsic)),
+    bonobo:mean(hi(c.safety),lo(c.rewardCtrl),lo(c.autonomy)),
+    hyena:mean(lo(c.consist),lo(c.safety))
+  };
+}
+function relatingResult(a,map,types,name){
+  var c=constructs(a,map), scores=relatingScores(c);
+  var anchor=clamp01(mean(hi(c.safety),hi(c.autonomy),hi(c.confq),hi(c.intrinsic),hi(c.consist)));
+  var w=pickWinner(scores,ANIMAL_PRIORITY), splitted=w.winnerScore<0.35;
+  var alt=w.ranked.filter(function(e){return e[0]!==w.winnerKey;}).slice(0,2).map(function(e){return {key:e[0],label:types[e[0]].label};});
+  var pct={};Object.keys(scores).forEach(function(k){pct[k]=Math.round(scores[k]*100);});
+  var axes={fear:Math.round(c.safety),reward:Math.round((c.intrinsic+(100-c.rewardCtrl))/2),learn:Math.round(c.autonomy),conform:Math.round(c.consist)};
+  return {target:name,axes:axes,stage:null,aux:{healthyAnchor:Math.round(anchor*100)},type:assign(types[w.winnerKey],{key:w.winnerKey}),alt:splitted?alt:[],splitted:splitted,scores:pct,blend:blend(scores,[],types)};
+}
+function diagnoseSelf(a){return relatingResult(a,SELF_MAP,TYPES_SELF,'self');}
+function diagnoseFamily(a){return relatingResult(a,FAMILY_MAP,TYPES_FAMILY,'family');}
+function assign(o,extra){var r={},k;for(k in o)r[k]=o[k];for(k in extra)r[k]=extra[k];return r;}
+
+/* ===== 画面 ===== */
+var RADAR_LABELS={org:['安全','報酬','学習','連携'],self:['安全','報酬','学習','一貫'],family:['安全','報酬','学習','一貫']};
+var current='org';
+var form=document.getElementById('f'), result=document.getElementById('result'), err=document.getElementById('err'),
+    tagline=document.getElementById('tagline'), note0=document.getElementById('note0');
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderForm(){
+  var list=QUESTION_SETS[current], html='', groups=[], map={}, n=0;
+  list.forEach(function(q){if(!map[q.group]){map[q.group]=[];groups.push(q.group);}map[q.group].push(q);});
+  groups.forEach(function(g){
+    html+='<div class="q-group"><div class="legend">'+esc(g)+'</div>';
+    map[g].forEach(function(q){
+      n++;
+      html+='<div class="q-item"><p class="q-text"><span class="q-num">Q'+n+'</span>'+esc(q.text)+'</p><div class="scale" role="radiogroup" aria-label="'+esc(q.text)+'">';
+      SCALE.forEach(function(v){html+='<label><input type="radio" name="'+q.id+'" value="'+v+'"><span>'+v+'</span></label>';});
+      html+='</div><div class="scale-ends"><span>全くそう思わない</span><span>とてもそう思う</span></div></div>';
+    });
+    html+='</div>';
+  });
+  form.innerHTML=html;
+  tagline.textContent=TARGETS[current].tagline;
+  note0.textContent=TARGETS[current].note;
+  result.hidden=true; result.innerHTML=''; err.hidden=true;
+}
+function radarSVG(axes){
+  var labels=RADAR_LABELS[current], vals=[axes.fear,axes.reward,axes.learn,axes.conform], cx=100,cy=100,R=70;
+  function ang(i){return (-90+i*90)*Math.PI/180;}
+  function P(i,rad){return [cx+rad*Math.cos(ang(i)),cy+rad*Math.sin(ang(i))];}
+  function poly(rad){return [0,1,2,3].map(function(i){return P(i,rad).join(',');}).join(' ');}
+  var grid=[0.25,0.5,0.75,1].map(function(g){return '<polygon points="'+poly(R*g)+'" class="r-grid"/>';}).join('');
+  var ax=[0,1,2,3].map(function(i){var p=P(i,R);return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" class="r-axis"/>';}).join('');
+  var shape='<polygon points="'+[0,1,2,3].map(function(i){return P(i,R*vals[i]/100).join(',');}).join(' ')+'" class="r-shape"/>';
+  var lab=labels.map(function(l,i){var p=P(i,R+17);return '<text x="'+p[0]+'" y="'+p[1]+'" class="r-label" text-anchor="middle">'+l+' '+vals[i]+'</text>';}).join('');
+  return '<svg viewBox="-18 -12 236 224" role="img" aria-label="4軸レーダー">'+grid+ax+shape+lab+'</svg>';
+}
+function blendBar(b){
+  if(b.weak) return '<p class="muted small">配合を出すには回答の振れが小さすぎます（中庸な回答が多い）。各設問への当てはまりに差が出ると、型の配合が表示されます。</p>';
+  var segs=b.ordered.filter(function(o){return o.pct>0;}).map(function(o){return '<span class="blend-seg" style="flex:'+o.pct+';background:'+(TYPE_COLORS[o.key]||'#999')+'" title="'+esc(o.label)+' '+o.pct+'%"></span>';}).join('');
+  var leg=b.ordered.filter(function(o){return o.pct>0;}).map(function(o){return '<li><span class="dot" style="background:'+(TYPE_COLORS[o.key]||'#999')+'"></span>'+esc(o.label)+' <b>'+o.pct+'%</b></li>';}).join('');
+  return '<div class="blend-bar">'+segs+'</div><ul class="legend">'+leg+'</ul>';
+}
+function render(res){
+  var T=TARGETS[current], t=res.type, labels=TYPES_BY_TARGET[current];
+  var noteUrl=(NOTE_LINKS[current]||{})[t.key]||NOTE+'n6d98d24d19f3';
+  var alt=res.alt.length?'<p class="muted small">次に近いタイプ：'+res.alt.map(function(a){return esc(a.label);}).join(' / ')+'（混成・移行期の可能性）</p>':'';
+  var rows=Object.keys(res.scores).map(function(k){return [k,res.scores[k]];}).sort(function(a,b){return b[1]-a[1];}).map(function(e){return '<tr><td>'+esc((labels[e[0]]||{}).label||e[0])+'</td><td>'+e[1]+'</td></tr>';}).join('');
+  var anchor=(res.aux&&typeof res.aux.healthyAnchor==='number')?'<p class="muted small">学習ゾーンへの近さ（健全アンカー）：'+res.aux.healthyAnchor+'％</p>':'';
+  result.innerHTML=
+    '<span class="tag">'+(res.splitted?'混成タイプ':esc(T.heading))+'</span>'+
+    '<h2>〈'+esc(t.label)+'〉</h2>'+
+    '<div><p class="blend-title">型の配合（純血種はいない＝どの動物の混血か）</p>'+blendBar(res.blend)+'</div>'+
+    '<div class="radar">'+radarSVG(res.axes)+'</div>'+
+    '<p class="lede">'+esc(t.finding)+'</p>'+
+    '<div class="cards"><div class="card weak"><b>いちばんの弱点</b><p>'+esc(t.weakness)+'</p></div><div class="card act"><b>明日からの打ち手</b><p>'+esc(t.action)+'</p></div></div>'+
+    '<div class="note-cta"><p><b>この型を深掘りする（note）</b></p><a class="cta" href="'+noteUrl+'" target="_blank" rel="noopener">noteの記事で読む →</a></div>'+
+    alt+
+    '<details><summary>判定の内訳（透明性）</summary><p class="muted small">「当てる」ためではなく、どの型に寄っているかを示す指標です。</p><table><thead><tr><th>型</th><th>適合度</th></tr></thead><tbody>'+rows+'</tbody></table>'+anchor+'</details>'+
+    '<p class="muted small disclaimer">'+esc(T.note)+'</p>'+
+    '<div class="actions"><button type="button" class="ghost" id="again">もう一度診断する</button></div>';
+  result.hidden=false;
+  document.getElementById('again').addEventListener('click',function(){renderForm();window.scrollTo({top:0,behavior:'smooth'});});
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* イベント */
+[].slice.call(document.querySelectorAll('.switch button')).forEach(function(btn){
+  btn.addEventListener('click',function(){
+    current=btn.getAttribute('data-t');
+    [].slice.call(document.querySelectorAll('.switch button')).forEach(function(b){b.setAttribute('aria-pressed', b===btn?'true':'false');});
+    renderForm();
+  });
+});
+document.getElementById('go').addEventListener('click',function(){
+  var ids=QUESTION_SETS[current].map(function(q){return q.id;}), answers={}, missing=false;
+  for(var i=0;i<ids.length;i++){var el=form.querySelector('input[name="'+ids[i]+'"]:checked'); if(!el){missing=true;break;} answers[ids[i]]=Number(el.value);}
+  if(missing){err.hidden=false; err.scrollIntoView({behavior:'smooth',block:'center'}); return;}
+  err.hidden=true; render(diagnose(current,answers));
+});
+renderForm();
+</script>
+</body>
+</html>
