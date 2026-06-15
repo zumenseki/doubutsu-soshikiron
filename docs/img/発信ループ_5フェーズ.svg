@@ -1,0 +1,110 @@
+<svg viewBox="0 0 820 660" width="820" height="660" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>発信ループ5フェーズの具体アクション</title>
+  <desc>DISCOVER(材料集め)・PLAN(設計図)・EXECUTE(製造)・VERIFY(検品)の各フェーズで、L-A記事生成とL-B動画生成が実際に叩くコマンドを並べた図。VERIFYで落ちるとITERATE(やり直し)でDISCOVERに戻り、通ると人間ゲートを経て完了。</desc>
+  <style>
+    text{font-family:system-ui,'Segoe UI','Hiragino Sans','Noto Sans JP',sans-serif;}
+    .h1{font-weight:700;font-size:16px;fill:#1d2321;}
+    .col{font-weight:700;font-size:12.5px;fill:#1d2321;}
+    .cap{font-size:10.5px;fill:#5a5a55;}
+    .ln{font-size:11px;fill:#1d2321;}
+    .cmd{font-size:10.5px;fill:#0f6e56;font-family:ui-monospace,Consolas,'Courier New',monospace;}
+    .pill{font-weight:700;font-size:13px;fill:#ffffff;}
+    .pills{font-size:10px;fill:#eafff7;}
+    .box{fill:#E1F5EE;stroke:#1D9E75;stroke-width:1.4;}
+    .gate{fill:#FAECE7;stroke:#D85A30;stroke-width:1.5;}
+  </style>
+  <defs>
+    <marker id="bT" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1D9E75"/></marker>
+    <marker id="bO" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#D85A30"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="820" height="660" fill="#faf8f4"/>
+
+  <text class="h1" x="40" y="28">発信ループの4フェーズ：具体的に何をするか</text>
+
+  <text class="col" x="190" y="56" text-anchor="middle">L-A 記事 → note 下書き</text>
+  <text class="cap" x="410" y="56" text-anchor="middle">5フェーズの背骨</text>
+  <text class="col" x="630" y="56" text-anchor="middle">L-B 動画 → YouTube mp4</text>
+
+  <!-- DISCOVER -->
+  <rect class="box" x="40"  y="70" width="300" height="96" rx="8"/>
+  <text class="ln" x="56" y="94">・元ネタ doc を読む</text>
+  <text class="ln" x="56" y="113">　（正本／比喩／橋渡し／応用）</text>
+  <text class="ln" x="56" y="138">・既存記事と重複チェック</text>
+  <text class="ln" x="56" y="157">　（同じ「一致」を二度書かない）</text>
+  <rect class="box" x="480" y="70" width="300" height="96" rx="8"/>
+  <text class="ln" x="496" y="94">・対象記事を読む</text>
+  <text class="ln" x="496" y="119">・流用元の動画を確認</text>
+  <text class="ln" x="496" y="138">　（five-types / reward-trap …）</text>
+  <text class="ln" x="496" y="157">・使うキャラSVG・グラフを把握</text>
+  <rect width="104" height="42" rx="21" x="358" y="97" fill="#1D9E75"/>
+  <text class="pill"  x="410" y="118" text-anchor="middle">DISCOVER</text>
+  <text class="pills" x="410" y="132" text-anchor="middle">材料集め</text>
+
+  <!-- PLAN -->
+  <rect class="box" x="40"  y="180" width="300" height="96" rx="8"/>
+  <text class="ln" x="56" y="204">・表題フックを決める</text>
+  <text class="ln" x="56" y="223">・h2 見出しを設計</text>
+  <text class="ln" x="56" y="242">・二層配置（式は深掘りリンク）</text>
+  <text class="ln" x="56" y="261">・固定タグ #動物行動学 を入れる</text>
+  <rect class="box" x="480" y="180" width="300" height="96" rx="8"/>
+  <text class="ln" x="496" y="204">・台本5章を構成</text>
+  <text class="ln" x="496" y="223">　フック→論点3つ→まとめ＋§0注</text>
+  <text class="ln" x="496" y="242">・各章25〜40秒 / 計約1000字</text>
+  <text class="ln" x="496" y="261">・流用するSVG・グラフを決める</text>
+  <rect width="104" height="42" rx="21" x="358" y="207" fill="#1D9E75"/>
+  <text class="pill"  x="410" y="228" text-anchor="middle">PLAN</text>
+  <text class="pills" x="410" y="242" text-anchor="middle">設計図</text>
+
+  <!-- EXECUTE -->
+  <rect class="box" x="40"  y="290" width="300" height="126" rx="8"/>
+  <text class="ln"  x="56" y="314">・本文 Markdown を書く</text>
+  <text class="cmd" x="56" y="336">  astro2note.py で変換</text>
+  <text class="cmd" x="56" y="356">  chrome-devtools MCP → note下書き</text>
+  <text class="ln"  x="56" y="378">・段落を流し込み</text>
+  <text class="cmd" x="56" y="400">  Ctrl+Alt+2 で h2 化</text>
+  <rect class="box" x="480" y="290" width="300" height="126" rx="8"/>
+  <text class="cmd" x="496" y="314">edge-tts → 音声 mp3 ＋ 字幕 srt</text>
+  <text class="cmd" x="496" y="336">ffprobe で尺実測 → make_groups.py</text>
+  <text class="cmd" x="496" y="358">index.html（既存コピー＋差替）</text>
+  <text class="cmd" x="496" y="380">ffmpeg で BGM 合成</text>
+  <text class="cmd" x="496" y="402">hyperframes render → mp4</text>
+  <rect width="104" height="42" rx="21" x="358" y="332" fill="#0F6E56"/>
+  <text class="pill"  x="410" y="353" text-anchor="middle">EXECUTE</text>
+  <text class="pills" x="410" y="367" text-anchor="middle">製造（手を動かす）</text>
+
+  <!-- VERIFY -->
+  <rect class="box" x="40"  y="430" width="300" height="100" rx="8"/>
+  <text class="cmd" x="56" y="456">verify-article.py = FAIL0 / WARN0</text>
+  <text class="ln"  x="56" y="480">・整形QA：h2 全件・emptyH2:0</text>
+  <text class="ln"  x="56" y="504">・chars が流し込み時と一致</text>
+  <rect class="box" x="480" y="430" width="300" height="100" rx="8"/>
+  <text class="cmd" x="496" y="456">lint 0 error / inspect 0 issue</text>
+  <text class="ln"  x="496" y="480">・音量 mean −18〜−20dB</text>
+  <text class="ln"  x="496" y="504">・トンマナ・§0 末尾注あり</text>
+  <rect width="104" height="42" rx="21" x="358" y="459" fill="#1D9E75"/>
+  <text class="pill"  x="410" y="480" text-anchor="middle">VERIFY</text>
+  <text class="pills" x="410" y="494" text-anchor="middle">検品</text>
+
+  <!-- spine forward arrows -->
+  <line x1="410" y1="139" x2="410" y2="205" stroke="#1D9E75" stroke-width="1.6" marker-end="url(#bT)"/>
+  <line x1="410" y1="249" x2="410" y2="330" stroke="#1D9E75" stroke-width="1.6" marker-end="url(#bT)"/>
+  <line x1="410" y1="374" x2="410" y2="457" stroke="#1D9E75" stroke-width="1.6" marker-end="url(#bT)"/>
+
+  <!-- ITERATE return -->
+  <path d="M358,480 H349 V118 H356" fill="none" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#bO)"/>
+  <text transform="translate(341,300) rotate(-90)" text-anchor="middle" fill="#993C1D" font-size="11" font-weight="700">ITERATE：やり直し</text>
+
+  <!-- PASS -> gate -->
+  <line x1="410" y1="501" x2="410" y2="556" stroke="#D85A30" stroke-width="1.6" marker-end="url(#bO)"/>
+  <text class="cap" x="424" y="528">PASS</text>
+  <rect class="gate" x="320" y="558" width="180" height="44" rx="8"/>
+  <text x="410" y="580" text-anchor="middle" font-weight="700" font-size="12.5" fill="#7a2f15">🔴 人間ゲート → 完了</text>
+  <text x="410" y="596" text-anchor="middle" font-size="10.5" fill="#8a4326">公開・アイキャッチ・YouTubeアップ</text>
+
+  <!-- legend -->
+  <rect class="box" x="40" y="622" width="14" height="14" rx="3"/>
+  <text class="cap" x="60" y="633">緑＝ループが自動で回す（濃緑＝EXECUTE＝唯一手を動かす）</text>
+  <rect class="gate" x="430" y="622" width="14" height="14" rx="3"/>
+  <text class="cap" x="450" y="633">オレンジ＝やり直し（3回失敗→人間）／人間ゲート</text>
+</svg>
