@@ -69,7 +69,11 @@
   .legend{list-style:none; display:flex; flex-wrap:wrap; gap:.3rem 1rem; padding:.5rem 0 0; margin:0; font-size:.85rem}
   .legend li{display:inline-flex; align-items:center; gap:.35rem}
   .dot{width:.7rem; height:.7rem; border-radius:50%; display:inline-block}
-  .note-cta{margin:1rem 0 .4rem; padding:.9rem 1rem; border-radius:.6rem; background:var(--accent-weak)}
+  .ref-card{display:block; margin:1rem 0 .4rem; padding:.85rem 1rem; border:1px solid var(--accent); border-radius:.6rem; background:var(--accent-weak); text-decoration:none; color:var(--fg)}
+  .ref-card:hover{background:#dcebe2}
+  .ref-card .ref-k{display:block; font-size:.78rem; color:var(--accent); font-weight:600; margin-bottom:.2rem}
+  .ref-card b{display:block; font-size:1.02rem; margin-bottom:.15rem; color:var(--fg)}
+  .ref-card .ref-s{display:block; font-size:.9rem; color:var(--muted)}
   details{margin:.8rem 0}
   summary{cursor:pointer; color:var(--accent)}
   table{border-collapse:collapse; width:100%; font-size:.9rem; margin:.5rem 0}
@@ -195,12 +199,27 @@ var TYPES_FAMILY = {
 };
 var TYPES_BY_TARGET = {org:TYPES, self:TYPES_SELF, family:TYPES_FAMILY};
 
-/* note 型記事への送客（org/self の型記事は公開で有効化／family はハブ記事=公開済）*/
+/* 結果→参考記事（リッチカード用：t=タイトル/s=要点/u=URL）。org/self の型記事は公開で有効化／family はハブ記事=公開済 */
 var NOTE = 'https://note.com/large_weasel4290/n/';
-var NOTE_LINKS = {
-  org:    {ookami:NOTE+'ne12a84a42c15', ari:NOTE+'n7a7dffb6cd19', kochoku:NOTE+'n7a7dffb6cd19', hyena:NOTE+'n97da4f76ffcf', chimp:NOTE+'n106fde59a835', bonobo:NOTE+'n23e38d55ef9d', ecosys:NOTE+'n6d98d24d19f3'},
-  self:   {ookami:NOTE+'ne12a84a42c15', ari:NOTE+'n7a7dffb6cd19', chimp:NOTE+'n106fde59a835', bonobo:NOTE+'n23e38d55ef9d', hyena:NOTE+'n97da4f76ffcf'},
-  family: {ookami:NOTE+'na510696cbe44', ari:NOTE+'na510696cbe44', chimp:NOTE+'na510696cbe44', bonobo:NOTE+'na510696cbe44', hyena:NOTE+'na510696cbe44'}
+var FAM = {t:'あなたの家庭は、どの動物の群れに似ているか', s:'子育てを動かす「4つのダイヤル」（無料・全文）', u:NOTE+'na510696cbe44'};
+var NOTE_REF = {
+  org: {
+    ookami: {t:'親方オオカミ型を深掘り', s:'少人数で速い群れの強みと「属人化」の解き方', u:NOTE+'ne12a84a42c15'},
+    ari:    {t:'規律アリ型を深掘り',   s:'再現性の強さと、創造が出にくくなる境目',   u:NOTE+'n7a7dffb6cd19'},
+    kochoku:{t:'硬直アリ型を深掘り',   s:'前例主義が組織を固める仕組みと、その壊し方', u:NOTE+'n7a7dffb6cd19'},
+    hyena:  {t:'恐怖ハイエナ型を深掘り', s:'数字で走る強さと、悪い情報が止まる代償',   u:NOTE+'n97da4f76ffcf'},
+    chimp:  {t:'政治チンパン型を深掘り', s:'力が社外でなく社内（政治）へ向く構造',     u:NOTE+'n106fde59a835'},
+    bonobo: {t:'ぬるいボノボ型を深掘り', s:'安全だが停滞する理由と、基準の立て方',     u:NOTE+'n23e38d55ef9d'},
+    ecosys: {t:'5類型の地図（総論）',   s:'層ごとに動物相を使い分ける設計',           u:NOTE+'n6d98d24d19f3'}
+  },
+  self: {
+    ookami: {t:'オオカミ型の関わりを深掘り',       s:'恐怖・締切で動かす癖の強みと限界',     u:NOTE+'ne12a84a42c15'},
+    ari:    {t:'アリ型の関わりを深掘り',           s:'規範で揃える強さと、内発が薄まる場面', u:NOTE+'n7a7dffb6cd19'},
+    chimp:  {t:'チンパン型の関わりを深掘り',       s:'比較・報酬で動かす癖と、その副作用',   u:NOTE+'n106fde59a835'},
+    bonobo: {t:'ボノボ型の関わりを深掘り',         s:'受容・先回りが相手の自走を奪うとき',   u:NOTE+'n23e38d55ef9d'},
+    hyena:  {t:'ムラありハイエナ型の関わりを深掘り', s:'一貫性のブレが学習を止める仕組み',   u:NOTE+'n97da4f76ffcf'}
+  },
+  family: {ookami:FAM, ari:FAM, chimp:FAM, bonobo:FAM, hyena:FAM}
 };
 var TYPE_COLORS = {ookami:'#6b7280', ari:'#3b7dd8', kochoku:'#9c7a4d', hyena:'#e0584a', chimp:'#8a6fc0', bonobo:'#d27aa6', ecosys:'#3f9d5b'};
 
@@ -338,6 +357,7 @@ function render(res){
   var alt=res.alt.length?'<p class="muted small">次に近いタイプ：'+res.alt.map(function(a){return esc(a.label);}).join(' / ')+'（混成・移行期の可能性）</p>':'';
   var rows=Object.keys(res.scores).map(function(k){return [k,res.scores[k]];}).sort(function(a,b){return b[1]-a[1];}).map(function(e){return '<tr><td>'+esc((labels[e[0]]||{}).label||e[0])+'</td><td>'+e[1]+'</td></tr>';}).join('');
   var anchor=(res.aux&&typeof res.aux.healthyAnchor==='number')?'<p class="muted small">学習ゾーンへの近さ（健全アンカー）：'+res.aux.healthyAnchor+'％</p>':'';
+  var ref=(NOTE_REF[current]||{})[t.key];
   result.innerHTML=
     '<span class="tag">'+(res.splitted?'混成タイプ':esc(T.heading))+'</span>'+
     '<h2>〈'+esc(t.label)+'〉</h2>'+
@@ -345,7 +365,7 @@ function render(res){
     '<div class="radar">'+radarSVG(res.axes)+'</div>'+
     '<p class="lede">'+esc(t.finding)+'</p>'+
     '<div class="cards"><div class="card weak"><b>いちばんの弱点</b><p>'+esc(t.weakness)+'</p></div><div class="card act"><b>明日からの打ち手</b><p>'+esc(t.action)+'</p></div></div>'+
-    '<p class="muted small" style="margin:.8rem 0">※この型の詳しい解説は、診断を紹介した記事に戻ってご覧ください。</p>'+
+    (ref?'<a class="ref-card" href="'+ref.u+'" target="_blank" rel="noopener"><span class="ref-k">📖 あなたの型の参考記事</span><b>'+esc(ref.t)+'</b><span class="ref-s">'+esc(ref.s)+'</span></a>':'')+
     alt+
     '<details><summary>判定の内訳（透明性）</summary><p class="muted small">「当てる」ためではなく、どの型に寄っているかを示す指標です。</p><table><thead><tr><th>型</th><th>適合度</th></tr></thead><tbody>'+rows+'</tbody></table>'+anchor+'</details>'+
     '<p class="muted small disclaimer">'+esc(T.note)+'</p>'+
