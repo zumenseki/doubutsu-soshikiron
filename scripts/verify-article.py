@@ -36,6 +36,11 @@ METAPHOR = ["オオカミ", "アリ", "チンパン", "ボノボ", "ハイエナ
             "カラス", "カプチン", "霊長類", "採餌", "捕食", "縄張り", "テリトリー", "つがい",
             "営巣", "帰巣", "餌", "本能", "警戒", "威嚇", "求愛", "順位", "エソグラム",
             "ハンディキャップ", "威信", "個体群", "共生"]
+# --- 「動物比喩が薄い」を §0 判断で意図的に許容する記事（slug→理由）。比喩チェックのみ免除。
+#     記事側は触らず採点器で管理（現状維持の決定に忠実・Astro frontmatter スキーマに影響しない）。
+EXEMPT_THIN_METAPHOR = {
+    "crowding-out": "ドメイン外の一致記事＝設計上あえて人間制度(託児所罰金/献血謝礼)を主役にし、動物機構は reward-trap に委譲（2026-06-15 §0判断で意図的例外と確定）",
+}
 # --- §0 注記っぽい語（末尾注記の有無を info で）。
 S0_NOTE = ["比喩", "レンズ", "仮説", "実測モデルでは", "係数は観測", "断定するもの", "単一の原因"]
 
@@ -97,7 +102,11 @@ def verify(path):
     has_meta = any(w in body for w in METAPHOR)
     infos.append(f"二層素材: 式記号={'有' if has_formula else '無'} / 比喩語={'有' if has_meta else '無'}")
     if not has_meta:
-        warns.append("比喩語（動物/生態系/レンズ）が見当たらない → ブランド核が薄まっていないか確認")
+        slug = os.path.basename(path)[:-3] if path.endswith(".md") else os.path.basename(path)
+        if slug in EXEMPT_THIN_METAPHOR:
+            infos.append("比喩語なし・意図的例外: " + EXEMPT_THIN_METAPHOR[slug])
+        else:
+            warns.append("比喩語（動物/生態系/レンズ）が見当たらない → ブランド核が薄まっていないか確認")
 
     # --- INFO: §0 注記の気配
     infos.append(f"§0注記の気配: {'有' if any(w in body for w in S0_NOTE) else '無（末尾に比喩/仮説の注記を検討）'}")
