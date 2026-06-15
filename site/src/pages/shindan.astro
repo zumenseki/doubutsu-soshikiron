@@ -2,45 +2,72 @@
 import Base from '../layouts/Base.astro';
 import { url } from '../lib/url.js';
 import { groupedQuestions, SCALE } from '../data/questions.js';
-const groups = groupedQuestions();
-const num = (id) => id.replace('q', '');
+import { TARGETS } from '../data/types.js';
+
+const targetKeys = ['org', 'self', 'family'];
+// 各対象の設問を取得し、表示用の連番(n)を振る（id は採点キー・n は画面表示用）
+function withNums(groups) {
+  let n = 0;
+  return groups.map((g) => ({ group: g.group, items: g.items.map((q) => ({ ...q, n: ++n })) }));
+}
+const grouped = {
+  org: withNums(groupedQuestions('org')),
+  self: withNums(groupedQuestions('self')),
+  family: withNums(groupedQuestions('family')),
+};
 ---
 <Base
-  title="現場どうぶつ診断 — 60秒で組織タイプ診断"
-  description="部下が動かない・若手が辞める・ヒヤリが上がらない。その背景にある恐怖・報酬・学習・連携のズレを、動物行動学のレンズで見える化する無料の自己点検。"
+  title="どうぶつ診断 — 組織・自分・家庭の関わりを点検"
+  description="人が動かないのは、性格ではなく「関わりの設計」かもしれない。恐怖・報酬・学習・同調の4つから、組織・自分・家庭がどの動物の設計に寄っているかを見る無料の自己点検。"
 >
   <section class="hero">
-    <span class="tag">無料・60秒・登録不要</span>
-    <h1>現場どうぶつ診断</h1>
+    <span class="tag">無料・登録不要</span>
+    <h1>どうぶつ診断</h1>
     <p class="lede">
-      部下が動かないのは、性格ではなく<strong>「群れの設計」</strong>かもしれない。
-      恐怖・報酬・学習・連携の4つから、あなたの現場がどの動物タイプに寄っているかを見る。
+      人が動かないのは、性格ではなく<strong>「関わりの設計」</strong>かもしれない。
+      恐怖・報酬・学習・同調の4つから、<strong>組織・自分・家庭</strong>がどの動物の設計に寄っているかを見る。
     </p>
-    <p class="muted small">
-      15問・各5段階。これは実測モデルではなく、行動学の知見を使った<strong>仮説生成ツール</strong>です。
-      組織の自己点検であり、個人の評価・医療や心理の診断ではありません。
-    </p>
+
+    <fieldset class="target-switch" role="radiogroup" aria-label="診断する対象">
+      {targetKeys.map((k, i) => (
+        <label class="target-opt">
+          <input type="radio" name="__target" value={k} checked={i === 0} />
+          <span>{TARGETS[k].label}</span>
+        </label>
+      ))}
+    </fieldset>
+    <p class="target-tagline muted" id="target-tagline">{TARGETS.org.tagline}</p>
+
+    {targetKeys.map((k) => (
+      <p class="muted small target-note" data-target={k} hidden={k !== 'org'}>
+        {TARGETS[k].note}
+      </p>
+    ))}
   </section>
 
   <form id="shindan-form" novalidate>
-    {groups.map((g) => (
-      <fieldset class="q-group">
-        <legend>{g.group}</legend>
-        {g.items.map((q) => (
-          <div class="q-item">
-            <p class="q-text"><span class="q-num">Q{num(q.id)}</span>{q.text}</p>
-            <div class="scale" role="radiogroup" aria-label={q.text}>
-              {SCALE.map((s) => (
-                <label class="scale-opt">
-                  <input type="radio" name={q.id} value={s.v} required />
-                  <span class="scale-v">{s.v}</span>
-                </label>
-              ))}
-            </div>
-            <div class="scale-ends"><span>全くそう思わない</span><span>とてもそう思う</span></div>
-          </div>
+    {targetKeys.map((tk) => (
+      <div class="qset" data-target={tk} hidden={tk !== 'org'}>
+        {grouped[tk].map((g) => (
+          <fieldset class="q-group">
+            <legend>{g.group}</legend>
+            {g.items.map((q) => (
+              <div class="q-item">
+                <p class="q-text"><span class="q-num">Q{q.n}</span>{q.text}</p>
+                <div class="scale" role="radiogroup" aria-label={q.text}>
+                  {SCALE.map((s) => (
+                    <label class="scale-opt">
+                      <input type="radio" name={q.id} value={s.v} required />
+                      <span class="scale-v">{s.v}</span>
+                    </label>
+                  ))}
+                </div>
+                <div class="scale-ends"><span>全くそう思わない</span><span>とてもそう思う</span></div>
+              </div>
+            ))}
+          </fieldset>
         ))}
-      </fieldset>
+      </div>
     ))}
     <p id="form-error" class="form-error" hidden>未回答の質問があります。すべて選んでください。</p>
     <button type="submit" class="cta">診断する</button>
@@ -49,23 +76,51 @@ const num = (id) => id.replace('q', '');
   <section id="result" class="result-card" hidden aria-live="polite"></section>
 </Base>
 
+<style is:global>
+  .target-switch { display: flex; gap: .5rem; flex-wrap: wrap; border: 0; padding: 0; margin: 1rem 0 .4rem; }
+  .target-switch .target-opt { display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .85rem; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: .92rem; background: #fff; }
+  .target-switch input { accent-color: var(--accent); }
+  .target-switch .target-opt:has(input:checked) { background: var(--accent-weak); border-color: var(--accent); font-weight: 600; }
+  .target-tagline { margin: .2rem 0 .6rem; }
+  .blend-wrap { margin: 1rem 0 1.4rem; }
+  .blend-title { font-weight: 600; margin: 0 0 .4rem; font-size: .95rem; }
+  .blend-bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: #f1eee6; }
+  .blend-seg { min-width: 3px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .blend-seg + .blend-seg { box-shadow: inset 1px 0 0 rgba(255, 255, 255, .65); }
+  .blend-legend { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; padding: .55rem 0 0; margin: 0; font-size: .85rem; }
+  .blend-legend li { display: inline-flex; align-items: center; gap: .35rem; }
+  .blend-legend .dot { width: .7rem; height: .7rem; border-radius: 50%; display: inline-block; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .vlink { display: inline-block; font-weight: 600; }
+  @media (max-width: 480px) {
+    .blend-legend { gap: .25rem .8rem; font-size: .8rem; }
+    .target-switch .target-opt { font-size: .88rem; padding: .4rem .7rem; }
+  }
+</style>
+
 <script>
   import { diagnose } from '../lib/diagnosis.js';
-  import { TYPES } from '../data/types.js';
+  import { TYPES, TYPES_SELF, TYPES_FAMILY, TARGETS } from '../data/types.js';
+  import { QUESTION_SETS } from '../data/questions.js';
+  import { VIDEOS, videoHref } from '../data/videos.js';
   import { url } from '../lib/url.js';
 
-  const LABELS = Object.fromEntries(Object.values(TYPES).map((t) => [t.key, t.label]));
+  const TYPES_BY_TARGET = { org: TYPES, self: TYPES_SELF, family: TYPES_FAMILY };
+  const RADAR_LABELS = { org: ['安全', '報酬', '学習', '連携'], self: ['安全', '報酬', '学習', '一貫'], family: ['安全', '報酬', '学習', '一貫'] };
+  // 型別の categorical 配色（配合バー／凡例）。ari=青・ecosys=緑で分離し、危険系hyenaは赤寄り。
+  const TYPE_COLORS = { ookami: '#6b7280', ari: '#3b7dd8', kochoku: '#9c7a4d', hyena: '#e0584a', chimp: '#8a6fc0', bonobo: '#d27aa6', ecosys: '#3f9d5b' };
 
-  function radarSVG(axes) {
-    const labels = ['安全', '報酬', '学習', '連携'];
+  const VALID = ['org', 'self', 'family'];
+  const qs = new URLSearchParams(location.search);
+  let currentTarget = VALID.includes(qs.get('t')) ? qs.get('t') : 'org';
+
+  function radarSVG(axes, target) {
+    const labels = RADAR_LABELS[target] || RADAR_LABELS.org;
     const vals = [axes.fear, axes.reward, axes.learn, axes.conform];
     const cx = 100, cy = 100, R = 70;
     const ang = (i) => ((-90 + i * 90) * Math.PI) / 180;
     const P = (i, rad) => [cx + rad * Math.cos(ang(i)), cy + rad * Math.sin(ang(i))];
     const poly = (rad) => [0, 1, 2, 3].map((i) => P(i, rad).join(',')).join(' ');
-    const grid = [0.25, 0.5, 0.75, 1]
-      .map((g) => `<polygon points="${poly(R * g)}" class="r-grid"/>`)
-      .join('');
+    const grid = [0.25, 0.5, 0.75, 1].map((g) => `<polygon points="${poly(R * g)}" class="r-grid"/>`).join('');
     const axisLines = [0, 1, 2, 3]
       .map((i) => { const [x, y] = P(i, R); return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="r-axis"/>`; })
       .join('');
@@ -73,51 +128,86 @@ const num = (id) => id.replace('q', '');
     const labelEls = labels
       .map((l, i) => { const [x, y] = P(i, R + 17); return `<text x="${x}" y="${y}" class="r-label" text-anchor="middle">${l} ${vals[i]}</text>`; })
       .join('');
-    return `<svg viewBox="-18 -12 236 224" role="img" aria-label="4軸の健全度レーダー">${grid}${axisLines}${shape}${labelEls}</svg>`;
+    return `<svg viewBox="-18 -12 236 224" role="img" aria-label="4軸レーダー">${grid}${axisLines}${shape}${labelEls}</svg>`;
   }
 
-  function render(res) {
-    const el = document.getElementById('result');
+  function blendBar(blend) {
+    if (blend.weak) {
+      return `<p class="muted small">配合を出すには回答の振れが小さすぎます（中庸な回答が多い）。各設問への当てはまりに差が出ると、型の配合が表示されます。</p>`;
+    }
+    const segs = blend.ordered
+      .filter((o) => o.pct > 0)
+      .map((o) => `<span class="blend-seg" style="flex:${o.pct};background:${TYPE_COLORS[o.key] || '#999'}" title="${o.label} ${o.pct}%"></span>`)
+      .join('');
+    const legend = blend.ordered
+      .filter((o) => o.pct > 0)
+      .map((o) => `<li><span class="dot" style="background:${TYPE_COLORS[o.key] || '#999'}"></span>${o.label} <b>${o.pct}%</b></li>`)
+      .join('');
+    return `<div class="blend-bar">${segs}</div><ul class="blend-legend">${legend}</ul>`;
+  }
+
+  function render(res, target) {
+    const T = TARGETS[target];
     const t = res.type;
+    const labelsOf = Object.fromEntries(Object.values(TYPES_BY_TARGET[target]).map((x) => [x.key, x.label]));
+    const el = document.getElementById('result');
     const articleUrl = url('articles/' + t.article + '/');
-    // 型別の購入URL（types.js の t.kitUrl）。設定済なら「購入」CTA、未設定なら無料相談へフォールバック。
-    const kitCta = t.kitUrl
-      ? `<a class="cta" href="${t.kitUrl}" target="_blank" rel="noopener">このキットを入手する（¥980・早割¥500）</a>
-        <span class="muted small">明日の現場で使う実務キット（noteで販売）。</span>`
-      : `<a class="cta" href="${url('about/')}">キットの相談をする</a>
-        <span class="muted small">※型別キットは順次提供。まずは無料相談から。</span>`;
+
+    // 関連動画：youtubeId 有→YouTube / 空→記事へフォールバック（壊れリンクを出さない）
+    const v = VIDEOS[t.video];
+    const yt = videoHref(t.video);
+    const videoHtml = !v ? '' : yt
+      ? `<p><a class="vlink" href="${yt}" target="_blank" rel="noopener">▶ 関連動画：${v.label}</a></p>`
+      : `<p><a class="vlink" href="${url('articles/' + v.articleSlug + '/')}">関連記事：${v.label} →</a><span class="muted small">（動画は近日公開）</span></p>`;
+
+    // 型別キットは org のみ（self/family には kit なし）。kitUrl 有→購入 / 無→相談へフォールバック。
+    const kitHtml = !t.kit ? '' : `
+      <div class="kit-cta">
+        <p><b>この型の実務キット</b><br>${t.kit}</p>
+        ${t.kitUrl
+          ? `<a class="cta" href="${t.kitUrl}" target="_blank" rel="noopener">このキットを入手する（¥980・早割¥500）</a>
+             <span class="muted small">明日の現場で使う実務キット（noteで販売）。</span>`
+          : `<a class="cta" href="${url('about/')}">キットの相談をする</a>
+             <span class="muted small">※型別キットは順次提供。まずは無料相談から。</span>`}
+      </div>`;
+
     const altHtml = res.alt.length
       ? `<p class="muted small">次に近いタイプ：${res.alt.map((a) => a.label).join(' / ')}（混成・移行期の可能性）</p>`
       : '';
     const scoreRows = Object.entries(res.scores)
       .sort((a, b) => b[1] - a[1])
-      .map(([k, v]) => `<tr><td>${LABELS[k]}</td><td>${v}</td></tr>`)
+      .map(([k, val]) => `<tr><td>${labelsOf[k] || k}</td><td>${val}</td></tr>`)
       .join('');
+    const anchorRow = (res.aux && typeof res.aux.healthyAnchor === 'number')
+      ? `<p class="muted small">学習ゾーンへの近さ（健全アンカー）：${res.aux.healthyAnchor}％</p>` : '';
 
     el.innerHTML = `
       <div class="result-head">
-        <span class="tag">${res.splitted ? '混成タイプ' : 'あなたの現場タイプ'}</span>
+        <span class="tag">${res.splitted ? '混成タイプ' : T.typeHeading}</span>
         <h2>〈${t.label}〉</h2>
-        <p class="muted">Stage ${res.stage.n}：${res.stage.name}</p>
+        ${res.stage ? `<p class="muted">Stage ${res.stage.n}：${res.stage.name}</p>` : ''}
       </div>
-      <div class="radar-wrap">${radarSVG(res.axes)}</div>
+      <div class="blend-wrap">
+        <p class="blend-title">型の配合（純血種はいない＝どの動物の混血か）</p>
+        ${blendBar(res.blend)}
+      </div>
+      <div class="radar-wrap">${radarSVG(res.axes, target)}</div>
       <p class="lede">${t.finding}</p>
       <div class="card-row">
         <div class="mini-card weak"><b>いちばんの弱点</b><p>${t.weakness}</p></div>
         <div class="mini-card act"><b>明日からの打ち手</b><p>${t.action}</p></div>
       </div>
       <p><a href="${articleUrl}">詳しく：${t.articleHint} →</a></p>
-      <div class="kit-cta">
-        <p><b>この型の実務キット</b><br>${t.kit}</p>
-        ${kitCta}
-      </div>
+      ${videoHtml}
+      ${kitHtml}
       ${altHtml}
       <details class="scores">
         <summary>判定の内訳（透明性）</summary>
         <p class="muted small">「当てる」ためではなく、どの型に寄っているかを示す指標です。</p>
         <table><thead><tr><th>型</th><th>適合度</th></tr></thead><tbody>${scoreRows}</tbody></table>
+        ${anchorRow}
       </details>
-      <p class="muted small disclaimer">これは実測モデルではなく、行動学の知見を使った仮説生成ツールです。組織の自己点検であり、個人の評価・医療や心理の診断ではありません。</p>
+      <p class="muted small disclaimer">${T.note}</p>
       <div class="result-actions">
         <button type="button" class="cta" id="print-btn">カルテを印刷 / PDF保存</button>
         <button type="button" class="ghost-btn" id="retry-btn">もう一度診断する</button>
@@ -131,16 +221,41 @@ const num = (id) => id.replace('q', '');
 
   const form = document.getElementById('shindan-form');
   const errEl = document.getElementById('form-error');
+  const qsets = Array.from(document.querySelectorAll('.qset[data-target]'));
+  const notes = Array.from(document.querySelectorAll('.target-note[data-target]'));
+  const tagline = document.getElementById('target-tagline');
+
+  function applyTarget(tk) {
+    currentTarget = tk;
+    qsets.forEach((el) => { el.hidden = el.dataset.target !== tk; });
+    notes.forEach((el) => { el.hidden = el.dataset.target !== tk; });
+    if (tagline) tagline.textContent = TARGETS[tk].tagline;
+    const radio = form?.querySelector(`input[name="__target"][value="${tk}"]`);
+    if (radio) radio.checked = true;
+    const res = document.getElementById('result');
+    if (res) { res.hidden = true; res.innerHTML = ''; }
+    errEl.hidden = true;
+    const u = new URL(location.href);
+    u.searchParams.set('t', tk);
+    history.replaceState(null, '', u);
+  }
+
+  // 対象セレクタ（.target-switch）は form の外（hero内）にあるため document で受ける
+  document.addEventListener('change', (e) => {
+    if (e.target && e.target.name === '__target') applyTarget(e.target.value);
+  });
+
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const fd = new FormData(form);
+      const ids = QUESTION_SETS[currentTarget].map((q) => q.id);
       const answers = {};
       let missing = false;
-      for (let i = 1; i <= 15; i++) {
-        const v = fd.get('q' + i);
-        if (v == null) { missing = true; break; }
-        answers['q' + i] = Number(v);
+      for (const id of ids) {
+        const val = fd.get(id);
+        if (val == null) { missing = true; break; }
+        answers[id] = Number(val);
       }
       if (missing) {
         errEl.hidden = false;
@@ -148,7 +263,9 @@ const num = (id) => id.replace('q', '');
         return;
       }
       errEl.hidden = true;
-      render(diagnose(answers));
+      render(diagnose(currentTarget, answers), currentTarget);
     });
+    // 初期化（?t= ディープリンク対応）
+    applyTarget(currentTarget);
   }
 </script>
