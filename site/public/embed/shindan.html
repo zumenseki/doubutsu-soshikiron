@@ -221,6 +221,12 @@ var NOTE_REF = {
   },
   family: {ookami:FAM, ari:FAM, chimp:FAM, bonobo:FAM, hyena:FAM}
 };
+/* いちばん低い軸→公開済の会員連載「群れの計器盤」で"測り方"を深掘り。恐怖/学習/報酬=公開確認済の3軸のみ（#4同調 n1d10265affa6・#5無力感 ne93b64f9d3cd は公開未確認のため除外＝公開確定後に conform 行を足して4軸化可） */
+var GAUGE = {
+  fear:   {label:'安全', t:'群れの計器盤①　恐怖を測る',       s:'恐怖レベルを“行動の痕跡”から読む3つの計器（会員）', u:NOTE+'n89995254ea15'},
+  learn:  {label:'学習', t:'群れの計器盤②　学習を測る',       s:'学習が回っているかを実装率で測る計器（会員）',     u:NOTE+'n5f6aec834fdd'},
+  reward: {label:'報酬', t:'群れの計器盤③　報酬の罠を検知する', s:'報酬で締めた群れの燃え尽きを先回り検知（会員）',   u:NOTE+'n8895d21c308b'}
+};
 var TYPE_COLORS = {ookami:'#6b7280', ari:'#3b7dd8', kochoku:'#9c7a4d', hyena:'#e0584a', chimp:'#8a6fc0', bonobo:'#d27aa6', ecosys:'#3f9d5b'};
 
 /* ===== 採点（diagnosis.js を移植・決定的）===== */
@@ -358,6 +364,9 @@ function render(res){
   var rows=Object.keys(res.scores).map(function(k){return [k,res.scores[k]];}).sort(function(a,b){return b[1]-a[1];}).map(function(e){return '<tr><td>'+esc((labels[e[0]]||{}).label||e[0])+'</td><td>'+e[1]+'</td></tr>';}).join('');
   var anchor=(res.aux&&typeof res.aux.healthyAnchor==='number')?'<p class="muted small">学習ゾーンへの近さ（健全アンカー）：'+res.aux.healthyAnchor+'％</p>':'';
   var ref=(NOTE_REF[current]||{})[t.key];
+  var GAUGE_AXES=['fear','learn','reward'];
+  var weakAxis=GAUGE_AXES.reduce(function(m,k){return res.axes[k]<res.axes[m]?k:m;},GAUGE_AXES[0]);
+  var gauge=GAUGE[weakAxis];
   result.innerHTML=
     '<span class="tag">'+(res.splitted?'混成タイプ':esc(T.heading))+'</span>'+
     '<h2>〈'+esc(t.label)+'〉</h2>'+
@@ -366,6 +375,7 @@ function render(res){
     '<p class="lede">'+esc(t.finding)+'</p>'+
     '<div class="cards"><div class="card weak"><b>いちばんの弱点</b><p>'+esc(t.weakness)+'</p></div><div class="card act"><b>明日からの打ち手</b><p>'+esc(t.action)+'</p></div></div>'+
     (ref?'<a class="ref-card" href="'+ref.u+'" target="_blank" rel="noopener"><span class="ref-k">📖 あなたの型の参考記事</span><b>'+esc(ref.t)+'</b><span class="ref-s">'+esc(ref.s)+'</span></a>':'')+
+    (gauge?'<a class="ref-card" href="'+gauge.u+'" target="_blank" rel="noopener"><span class="ref-k">📊 いちばん低い軸〈'+esc(gauge.label)+' '+res.axes[weakAxis]+'〉を測る</span><b>'+esc(gauge.t)+'</b><span class="ref-s">'+esc(gauge.s)+'</span></a>':'')+
     alt+
     '<details><summary>判定の内訳（透明性）</summary><p class="muted small">「当てる」ためではなく、どの型に寄っているかを示す指標です。</p><table><thead><tr><th>型</th><th>適合度</th></tr></thead><tbody>'+rows+'</tbody></table>'+anchor+'</details>'+
     '<p class="muted small disclaimer">'+esc(T.note)+'</p>'+
