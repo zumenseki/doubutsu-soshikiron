@@ -43,6 +43,8 @@ docs/デモ*.md
 docs/kit_*.md
 docs/kits/
 docs/提出*.md
+# 統合図＝コンテスト戦略＋価格(¥500/¥980)入り。docs/img/ の理論図は公開のまま、この1本だけ除外。
+docs/img/統合_診断と発信ループの循環.svg
 
 # --- note 自動入稿ツール (ローカル専用・公開 repo に載せない) ---
 note-publisher/
@@ -58,3 +60,10 @@ note-export/
 note-images/
 # 🔴 scripts/_note_json/ = note-drafts の派生JSON(本文全文＝有料テキスト含む)。同様に流出防止で追跡しない。
 scripts/_note_json/
+
+# --- Threads 集客ツール (scripts/threads/) ---
+# queue.json = 投稿キューの実行状態(下書き/承認/投稿済ID)。ローカル運用＝追跡しない。
+scripts/threads/queue.json
+# _*.json = フック一括importのローカル作業ファイル(_hooks_import.json 等)。
+scripts/threads/_*.json
+# .env / .env.* は上の秘密ルールで既にグローバル無視（.env.example のみ追跡）。
