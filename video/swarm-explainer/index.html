@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.08em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 66px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1340px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+      .flock { display: flex; gap: 50px; align-items: center; justify-content: center; }
+      .row-mid { display: flex; gap: 50px; align-items: center; justify-content: center; }
+      .speech { background: #fffdf9; border: 3px solid #e3e0d8; border-radius: 18px;
+        padding: 24px 34px; font-weight: 800; font-size: 36px; color: #1d2321; line-height: 1.4; max-width: 640px; text-align: left; }
+      .speech b { color: #d9893b; }
+      .tips { display: flex; flex-direction: column; gap: 16px; width: 1180px; }
+      .tip { display: flex; align-items: center; gap: 22px; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 18px 32px; text-align: left; }
+      .tip-n { color: #2f6f4f; font-weight: 900; font-size: 38px; flex-shrink: 0; }
+      .tip-t { font-weight: 800; font-size: 34px; color: #1d2321; }
+      .tip-t small { display:block; font-weight: 700; font-size: 26px; color: #6b7370; margin-top: 4px; }
+      .moves { display: flex; gap: 26px; justify-content: center; }
+      .move { width: 380px; background: #e6efe9; border-radius: 16px; padding: 22px 26px; }
+      .move-n { color: #2f6f4f; font-weight: 900; font-size: 34px; }
+      .move-t { font-weight: 800; font-size: 30px; color: #1d2321; margin-top: 8px; line-height: 1.35; }
+      .sum-list { display: flex; flex-direction: column; gap: 15px; width: 1320px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 37px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 43px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1340px; line-height: 1.5; }
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="263">
+
+      <!-- S1 フック 1.0-50.59 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">群れの意思決定 ── 女王は、決めない</div>
+        <div id="s1-head" class="head">数万匹がどう<span class="hl">最良を選ぶ</span>か</div>
+        <div id="s1-bees" class="flock">
+          <svg width="200" height="200" viewBox="0 0 280 280" aria-label="bee"><ellipse cx="96" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="184" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="140" cy="154" rx="78" ry="66" fill="#d9893b"/><rect x="98" y="98" width="18" height="106" fill="#1d2321" opacity="0.82"/><rect x="136" y="92" width="18" height="118" fill="#1d2321" opacity="0.82"/><rect x="174" y="104" width="18" height="96" fill="#1d2321" opacity="0.82"/><circle cx="112" cy="148" r="8" fill="#fff"/><circle cx="164" cy="148" r="8" fill="#fff"/><path d="M118,214 Q140,228 162,214" stroke="#1d2321" stroke-width="5" fill="none"/></svg>
+          <svg width="200" height="200" viewBox="0 0 280 280" aria-label="bee"><ellipse cx="96" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="184" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="140" cy="154" rx="78" ry="66" fill="#d9893b"/><rect x="98" y="98" width="18" height="106" fill="#1d2321" opacity="0.82"/><rect x="136" y="92" width="18" height="118" fill="#1d2321" opacity="0.82"/><rect x="174" y="104" width="18" height="96" fill="#1d2321" opacity="0.82"/><circle cx="112" cy="148" r="8" fill="#fff"/><circle cx="164" cy="148" r="8" fill="#fff"/><path d="M118,214 Q140,228 162,214" stroke="#1d2321" stroke-width="5" fill="none"/></svg>
+          <svg width="200" height="200" viewBox="0 0 280 280" aria-label="bee"><ellipse cx="96" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="184" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="140" cy="154" rx="78" ry="66" fill="#d9893b"/><rect x="98" y="98" width="18" height="106" fill="#1d2321" opacity="0.82"/><rect x="136" y="92" width="18" height="118" fill="#1d2321" opacity="0.82"/><rect x="174" y="104" width="18" height="96" fill="#1d2321" opacity="0.82"/><circle cx="112" cy="148" r="8" fill="#fff"/><circle cx="164" cy="148" r="8" fill="#fff"/><path d="M118,214 Q140,228 162,214" stroke="#1d2321" stroke-width="5" fill="none"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">中央の司令塔なしに、しばしば最良の物件を選び当てる。<span class="gn">強いリーダーなしの賢い決定</span>を、会議のレンズで読む</div>
+      </div></div>
+
+      <!-- S2 ワッグルダンスと定足数 50.59-101.23 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:54px">ダンスで宣伝し、<span class="hl">定足数</span>で決める</div>
+        <div id="s2-row" class="row-mid">
+          <svg id="s2-dance" width="340" height="260" viewBox="0 0 320 240" aria-label="waggle-dance"><path d="M160,120 C200,70 250,90 250,120 C250,150 200,170 160,120 C120,70 70,90 70,120 C70,150 120,170 160,120 Z" fill="none" stroke="#d9893b" stroke-width="8" stroke-linecap="round" stroke-dasharray="6 14"/><line x1="120" y1="120" x2="200" y2="120" stroke="#1d2321" stroke-width="9" stroke-linecap="round"/><text x="160" y="214" text-anchor="middle" font-family="Noto Sans JP, sans-serif" font-size="26" font-weight="800" fill="#6b7370">8の字＝方角と質</text></svg>
+          <div id="s2-speech" class="speech">良い候補を見つけたバチほど、<b>長く熱心に踊り</b>、より多くの仲間を動員する</div>
+        </div>
+        <div id="s2-concl" class="concl orange">多数決でも全会一致でもなく、<span class="hl">定足数</span>に達した瞬間に飛び立つ</div>
+      </div></div>
+
+      <!-- S3 集合知の3条件 101.23-149.28 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:52px">独立な探索が残ると、群れは<span class="hl">個体より賢く</span>なる</div>
+        <div id="s3-tips" class="tips">
+          <div class="tip" id="s3-t1"><div class="tip-n">①</div><div class="tip-t">独立な評価<small>各バチが、誰かの真似でなく、自分の目で評価する</small></div></div>
+          <div class="tip" id="s3-t2"><div class="tip-n">②</div><div class="tip-t">質に比例した支持<small>良い候補ほど強く支持される（重みがつく）</small></div></div>
+          <div class="tip" id="s3-t3"><div class="tip-n">③</div><div class="tip-t">収束する装置<small>クロス・インヒビション＝互いの宣伝を抑え合い、決定へ収束</small></div></div>
+        </div>
+        <div id="s3-concl" class="concl">この三つが揃うと、群れは一匹一匹より賢くなる</div>
+      </div></div>
+
+      <!-- S4 集合愚と設計 149.28-202.69 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:50px">集合知が<span class="hl">集合愚</span>に転じる瞬間</div>
+        <div id="s4-warn" class="concl orange" style="font-size:36px">先に声の大きい結論が出ると、全員が引きずられる（情報カスケード）／探索が狭いと最良は載らない</div>
+        <div id="s4-moves" class="moves">
+          <div class="move" id="s4-m1"><div class="move-n">設計①</div><div class="move-t">意見は議論の前に独立に集める</div></div>
+          <div class="move" id="s4-m2"><div class="move-n">設計②</div><div class="move-t">候補を広く探索する</div></div>
+          <div class="move" id="s4-m3"><div class="move-n">設計③</div><div class="move-t">十分な支持で、全会一致を待たず決め切る</div></div>
+        </div>
+        <div id="s4-concl" class="concl">ミツバチの巣のように、会議を設計する</div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 202.69-263 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:48px">合議は声の大きさでなく、<span class="hl">独立性</span>で強くなる</div>
+        <div id="s5-bee"><svg width="130" height="130" viewBox="0 0 280 280" aria-label="bee"><ellipse cx="96" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="184" cy="108" rx="42" ry="30" fill="#dceeed" opacity="0.9"/><ellipse cx="140" cy="154" rx="78" ry="66" fill="#d9893b"/><rect x="98" y="98" width="18" height="106" fill="#1d2321" opacity="0.82"/><rect x="136" y="92" width="18" height="118" fill="#1d2321" opacity="0.82"/><rect x="174" y="104" width="18" height="96" fill="#1d2321" opacity="0.82"/><circle cx="112" cy="148" r="8" fill="#fff"/><circle cx="164" cy="148" r="8" fill="#fff"/><path d="M118,214 Q140,228 162,214" stroke="#1d2321" stroke-width="5" fill="none"/></svg></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 集合知には独立性が要る（先に強い意見が出ると同調のカスケードで質が落ちる）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 全会一致より定足数で決めるほうが速く、質も落ちない</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 決定の質は探索の多様性で決まる（選択肢を広げないと最良は見つからない）</div>
+        </div>
+        <div id="s5-note" class="note">※ミツバチの機構を人間の会議に写した比喩で、効果を保証するものではありません。主役はあくまで動物の意思決定で、組織はその応用として読みます。出典：Seeley（ミツバチの民主主義・定足数センシング）／Galton 1907（群衆の知恵）。</div>
+        <div id="s5-ask" class="ask">あなたの会議は、<span class="hl">独立に集めてから</span>決めているか</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="263" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="47.09" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="50.59" data-duration="48.14" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="101.23" data-duration="45.55" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="149.28" data-duration="50.9" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="202.69" data-duration="56.9" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 (1.0-50.59) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-bees svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.8);
+      tl.to("#s1-bees svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.14,ease:"back.out(1.5)"},2.8);
+      tl.to("#s1-bees svg",{y:-14,duration:0.9,yoyo:true,repeat:6,stagger:0.1,ease:"sine.inOut"},8.44);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},18.28);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+        if (s>1) tl.set("#scene"+(s-1),{opacity:0},t+0.6);
+      }
+
+      /* S2 (50.59-101.23) */
+      xfade(2,50.59);
+      tl.set("#s2-head",{opacity:0,y:30},50.59);
+      tl.set("#s2-dance",{opacity:0,scale:0.7},50.59);
+      tl.set("#s2-dance path",{strokeDasharray:900,strokeDashoffset:900},50.59);
+      tl.set("#s2-speech",{opacity:0,x:40},50.59);
+      tl.set("#s2-concl",{opacity:0,scale:0.82},50.59);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},50.69);
+      tl.to("#s2-dance",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.5)"},62.35);
+      tl.to("#s2-dance path",{strokeDashoffset:0,duration:2.0,ease:"power1.inOut"},63.0);
+      tl.to("#s2-speech",{opacity:1,x:0,duration:0.55,ease:"power3.out"},72.74);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},87.11);
+
+      /* S3 (101.23-149.28) */
+      xfade(3,101.23);
+      tl.set("#s3-head",{opacity:0,y:30},101.23);
+      tl.set("#s3-tips .tip",{opacity:0,x:-40},101.23);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},101.23);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},101.33);
+      tl.to("#s3-t1",{opacity:1,x:0,duration:0.5,ease:"power3.out"},106.47);
+      tl.to("#s3-t2",{opacity:1,x:0,duration:0.5,ease:"power3.out"},115.57);
+      tl.to("#s3-t3",{opacity:1,x:0,duration:0.5,ease:"power3.out"},122.26);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},140.53);
+
+      /* S4 (149.28-202.69) */
+      xfade(4,149.28);
+      tl.set("#s4-head",{opacity:0,y:30},149.28);
+      tl.set("#s4-warn",{opacity:0,y:24},149.28);
+      tl.set("#s4-moves .move",{opacity:0,y:30},149.28);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},149.28);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},149.38);
+      tl.to("#s4-warn",{opacity:1,y:0,duration:0.5,ease:"power2.out"},159.22);
+      tl.to("#s4-moves .move",{opacity:1,y:0,duration:0.5,stagger:0.18,ease:"back.out(1.5)"},183.94);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},196.13);
+
+      /* S5 (202.69-263) */
+      xfade(5,202.69);
+      tl.set("#s5-head",{opacity:0,y:30},202.69);
+      tl.set("#s5-bee",{opacity:0,scale:0.6},202.69);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},202.69);
+      tl.set("#s5-note",{opacity:0},202.69);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},202.69);
+      tl.set("#s5-brand",{opacity:0},202.69);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},202.79);
+      tl.to("#s5-bee",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},204.0);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},207.02);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},220.11);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},230.93);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},242.08);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},254.84);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},258.5);
+
+      var GROUPS = [
+        {s:1.1,e:6.54,t:"数万匹のミツバチが、古い巣を捨てて、新しい家を探します。"},
+        {s:6.54,e:8.44,t:"誰が決めるのか。"},
+        {s:8.44,e:10.5,t:"女王ではありません。"},
+        {s:10.5,e:15.57,t:"女王は卵を産むだけで、引っ越し先を選ぶ権限を持ちません。"},
+        {s:15.57,e:18.28,t:"中央の司令塔は、いない。"},
+        {s:18.28,e:23.11,t:"それでも群れは、しばしば最良の物件を、選び当てます。"},
+        {s:23.11,e:27.17,t:"強いリーダーがいないのに、賢い決定が生まれる。"},
+        {s:27.17,e:32.58,t:"私たちは、良い決定は強い指導者から来る、と思いがちです。"},
+        {s:32.58,e:35.42,t:"けれどミツバチは、逆を行く。"},
+        {s:35.42,e:40.26,t:"今日はこの群れの意思決定を、ミツバチのダンスから読み解きます。"},
+        {s:40.26,e:48.03,t:"先に断ると、これは生物学そのものではなく、人間の会議を考えるための比喩、レンズです。"},
+        {s:50.69,e:55.56,t:"ミツバチの研究で知られる、トーマス、シーリーの観察です。"},
+        {s:55.56,e:62.35,t:"巣分かれの季節、数百匹の偵察バチが、てんでに候補地を探しに飛び立ちます。"},
+        {s:62.35,e:68.51,t:"良い物件を見つけたバチは、巣に戻って、おしりを振る、ワッグルダンスを踊る。"},
+        {s:68.51,e:72.74,t:"ダンスの向きが方角を、長さが質を、伝えます。"},
+        {s:72.74,e:80.34,t:"良い候補を見つけたバチほど、長く、熱心に踊り、より多くの仲間を、その場所へ動員する。"},
+        {s:80.34,e:83.62,t:"ここで決定的なのは、決め方です。"},
+        {s:83.62,e:87.11,t:"多数決でも、全会一致でもありません。"},
+        {s:87.11,e:95.58,t:"ある候補地を支持するバチが、一定の数、定足数に達した瞬間、群れは決断し、いっせいに飛び立つ。"},
+        {s:95.58,e:98.7,t:"全員の合意は、待たないのです。"},
+        {s:101.33,e:104.13,t:"なぜ、それで賢くなれるのか。"},
+        {s:104.13,e:106.47,t:"鍵は、三つあります。"},
+        {s:106.47,e:112.4,t:"一つ、各偵察バチは、独立に、自分の見つけた場所を評価します。"},
+        {s:112.4,e:115.57,t:"誰かの真似ではなく、自分の目で。"},
+        {s:115.57,e:119.39,t:"二つ、良い候補ほど、強く支持される。"},
+        {s:119.39,e:122.26,t:"質に比例して、重みがつく。"},
+        {s:122.26,e:127.7,t:"三つ、競合する候補の支持者は、たがいの宣伝を、抑え合います。"},
+        {s:127.7,e:135.71,t:"クロス、インヒビションと呼ばれる仕組みで、群れが中途半端な妥協で止まらず、はっきりした決定へ収束する。"},
+        {s:135.71,e:140.53,t:"独立な評価、質に比例した支持、収束する装置。"},
+        {s:140.53,e:146.73,t:"この三つが揃ったとき、群れは、一匹一匹のバチよりも、賢くなります。"},
+        {s:149.38,e:153.28,t:"ところが、この条件は、簡単に壊れます。"},
+        {s:153.28,e:159.22,t:"会議で、最初に声の大きい誰かが、結論を口にすると、どうなるか。"},
+        {s:159.22,e:162.48,t:"ほかの全員が、それに引きずられる。"},
+        {s:162.48,e:169.21,t:"情報カスケードと呼ばれる現象で、独立性が失われ、群れの賢さが、消えます。"},
+        {s:169.21,e:177.01,t:"さらに、少数の選択肢しか探さなければ、最良の物件は、そもそも検討の俎上に載らない。"},
+        {s:177.01,e:180.96,t:"集合知は、こうして、集合愚に転じます。"},
+        {s:180.96,e:183.94,t:"逆に言えば、設計で防げる。"},
+        {s:183.94,e:187.9,t:"意見は、議論の前に、独立に集める。"},
+        {s:187.9,e:190.71,t:"候補は、広く探索する。"},
+        {s:190.71,e:196.13,t:"そして十分な支持が集まったら、全会一致を待たずに、決め切る。"},
+        {s:196.13,e:200.14,t:"ミツバチの巣のように、会議を設計するのです。"},
+        {s:202.79,e:207.02,t:"最後に、通俗論と分かれる、三つの予測です。"},
+        {s:207.02,e:210.8,t:"一つ、集合知には、独立性が要る。"},
+        {s:210.8,e:215.84,t:"先に強い意見が出ると、同調のカスケードで、質が落ちる。"},
+        {s:215.84,e:220.11,t:"だから意見は、独立に集めてから、統合する。"},
+        {s:220.11,e:226.74,t:"二つ、全会一致を待つより、定足数で決めるほうが、速く、質も落ちない。"},
+        {s:226.74,e:230.93,t:"完全な合意は、しばしば、過剰なコストです。"},
+        {s:230.93,e:235.38,t:"三つ、決定の質は、探索の多様性で決まる。"},
+        {s:235.38,e:240.28,t:"選択肢を広げなければ、最良は、そもそも見つからない。"},
+        {s:240.28,e:242.08,t:"ひとつ注意を。"},
+        {s:242.08,e:248.92,t:"これはミツバチの機構を、人間の会議に写した比喩で、効果を保証するものではありません。"},
+        {s:248.92,e:254.84,t:"主役はあくまで動物の意思決定で、組織はその応用として読んでください。"},
+        {s:254.84,e:259.55,t:"あなたの会議は、独立に集めてから、決めているでしょうか。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

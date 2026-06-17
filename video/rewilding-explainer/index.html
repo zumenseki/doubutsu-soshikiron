@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 28px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.08em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 64px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 35px; color: #6b7370; max-width: 1340px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 41px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+      .factstrip { font-weight: 800; font-size: 32px; color: #6b7370; letter-spacing: 0.04em; }
+      .leaves { display: flex; gap: 26px; }
+      .barrow { display: flex; gap: 44px; justify-content: center; }
+      .barcard { width: 560px; background: #fff; border: 2px solid #e3e0d8; border-radius: 18px; padding: 24px 30px; text-align: left; }
+      .barcard.good { border-color: #2f6f4f; } .barcard.bad { border-color: #d9893b; }
+      .bar-t { font-weight: 900; font-size: 33px; color: #1d2321; }
+      .bar-meter { height: 30px; background: #ece5d8; border-radius: 8px; overflow: hidden; margin-top: 14px; }
+      .bar-fill { height: 100%; transform-origin: left center; }
+      .bar-fill.good { background: #2f6f4f; } .bar-fill.bad { background: #d9893b; }
+      .bar-v { font-weight: 900; font-size: 30px; margin-top: 10px; }
+      .barcard.good .bar-v { color: #2f6f4f; } .barcard.bad .bar-v { color: #d9893b; }
+      .speech { position: relative; background: #fffdf9; border: 3px solid #d9893b; border-radius: 18px;
+        padding: 22px 40px; font-weight: 900; font-size: 44px; color: #d9893b; }
+      .iso-box { border: 6px dashed #2f6f4f; border-radius: 28px; padding: 26px 44px;
+        display: flex; align-items: center; gap: 36px; background: #fbfdfb; }
+      .iso-label { font-weight: 800; font-size: 30px; color: #2f6f4f; max-width: 280px; text-align: left; line-height: 1.35; }
+      .bignum { font-weight: 900; font-size: 150px; color: #2f6f4f; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; }
+      .bignum-label { font-weight: 800; font-size: 30px; color: #6b7370; margin-top: 12px; }
+      .warn { font-weight: 800; font-size: 30px; color: #d9893b; }
+      .chips { display: flex; gap: 18px; justify-content: center; }
+      .chip { font-weight: 800; font-size: 28px; color: #2f6f4f; background: #e6efe9; border-radius: 999px; padding: 12px 28px; }
+      .sum-list { display: flex; flex-direction: column; gap: 14px; width: 1300px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 14px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 37px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 43px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1360px; line-height: 1.5; }
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="268">
+
+      <!-- S1 イエローストーンのオオカミ 1.0-51.69 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">再野生化 ── 固まった群れを動かす、唯一の一手</div>
+        <div id="s1-head" class="head">オオカミ十数頭が、<span class="hl">川辺をよみがえらせた</span></div>
+        <div id="s1-wolf"><svg width="220" height="220" viewBox="0 0 280 280" aria-label="wolf"><polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/><circle cx="110" cy="138" r="15" fill="#fff"/><circle cx="170" cy="138" r="15" fill="#fff"/><circle cx="111" cy="139" r="8" fill="#c9aa3c"/><circle cx="169" cy="139" r="8" fill="#c9aa3c"/><circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/><ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/></svg></div>
+        <div id="s1-leaves" class="leaves">
+          <svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#2f6f4f"/></svg>
+          <svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#3a7a5a"/></svg>
+          <svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#2f6f4f"/></svg>
+          <svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#3a7a5a"/></svg>
+          <svg width="56" height="56" viewBox="0 0 60 60"><path d="M30,8 Q52,30 30,54 Q8,30 30,8Z" fill="#2f6f4f"/></svg>
+        </div>
+        <div id="s1-fact" class="factstrip">1995年 ・ 約70年ぶり ・ わずか十数頭</div>
+        <div id="s1-sub" class="sub">頂点の捕食者を一つ戻すだけで、生態系が上から下まで作りかえられる＝<span class="gn">再野生化</span>。これは組織を見るレンズ</div>
+      </div></div>
+
+      <!-- S2 なぜ固まるか 51.69-99.38 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:58px">固まった組織は<span class="hl">アリ型</span></div>
+        <div id="s2-ants" class="leaves" style="gap:36px">
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="120" height="142" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+        </div>
+        <div id="s2-bars" class="barrow">
+          <div class="barcard good" id="s2-b1">
+            <div class="bar-t">同調 低い</div>
+            <div class="bar-meter"><div class="bar-fill good" style="width:81%"></div></div>
+            <div class="bar-v">良いやり方の採用率 0.81</div>
+          </div>
+          <div class="barcard bad" id="s2-b2">
+            <div class="bar-t">同調 高い</div>
+            <div class="bar-meter"><div class="bar-fill bad" style="width:3%"></div></div>
+            <div class="bar-v">採用率 0.00 ── 前例に固着</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl orange">見つけても踏み出せない ── 採用率は<span class="hl">ゼロに張りつく</span></div>
+      </div></div>
+
+      <!-- S3 号令は空振り 99.38-148.95 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:56px">「変われ」の号令は<span class="hl">届かない</span></div>
+        <div id="s3-row" style="display:flex; align-items:center; gap:40px;">
+          <div id="s3-speech" class="speech">「変われ」「挑戦しろ」</div>
+          <div id="s3-x" style="font-weight:900; font-size:90px; color:#d9893b;">✕</div>
+        </div>
+        <div id="s3-ants" class="leaves" style="gap:40px">
+          <svg width="110" height="130" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="110" height="130" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+          <svg width="110" height="130" viewBox="0 0 280 280" aria-label="ant"><path d="M120,66 Q104,28 88,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,66 Q176,28 192,18" stroke="#7a7066" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="226" rx="50" ry="50" fill="#857a6c"/><ellipse cx="140" cy="150" rx="38" ry="42" fill="#9a8e7e"/><circle cx="140" cy="80" r="42" fill="#8a8072"/><circle cx="126" cy="78" r="6" fill="#efe7d8"/><circle cx="154" cy="78" r="6" fill="#efe7d8"/></svg>
+        </div>
+        <div id="s3-note2" class="warn">全体を少し緩める → 0.00 ／ 同調を全廃 → 0.81（数百人では非現実的）</div>
+        <div id="s3-concl" class="concl orange">同調には<span class="hl">閾値</span>。中途半端な号令は、誰にも届かない</div>
+      </div></div>
+
+      <!-- S4 隔離細胞 148.95-204.34 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">効くのは<span class="hl">前例の届かない場所</span>を作ること</div>
+        <div id="s4-iso" class="iso-box">
+          <svg width="170" height="170" viewBox="0 0 280 280" aria-label="wolf"><polygon points="72,74 54,6 122,52" fill="#8a97a5"/><polygon points="208,74 226,6 158,52" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="182" rx="52" ry="44" fill="#eef1f4"/><circle cx="111" cy="139" r="9" fill="#c9aa3c"/><circle cx="169" cy="139" r="9" fill="#c9aa3c"/><circle cx="111" cy="139" r="4" fill="#1d2321"/><circle cx="169" cy="139" r="4" fill="#1d2321"/><path d="M94,124 L126,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/><path d="M186,124 L154,135" stroke="#5f6b78" stroke-width="5" stroke-linecap="round"/><ellipse cx="140" cy="170" rx="14" ry="10" fill="#1d2321"/></svg>
+          <div class="iso-label">独自ルールを走らせる、隔離した小さな細胞＝オオカミの細胞</div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div id="s4-num" class="bignum">0.94</div>
+            <div class="bignum-label">隔離細胞での採用率</div>
+          </div>
+        </div>
+        <div id="s4-crit" class="warn" style="color:#2f6f4f;">臨界質量 ≈ 母集団の三割（小さすぎると効かない）</div>
+        <div id="s4-concl" class="concl orange">自律を奪って本体へ再吸収すると、<span class="hl">再び 0.00 へ転落</span></div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 204.34-268 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:20px">
+        <div id="s5-head" class="head" style="font-size:48px">解毒剤は号令でなく、<span class="hl">隔離空間を物理的に</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 励ましや精神論で動かそうとしても、採用率は上がらない</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 効くのは、前例の重力が届かない隔離空間を物理的に作ること</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 細胞の自律を奪って本体に吸収すれば、効果は消えて元に戻る</div>
+        </div>
+        <div id="s5-chips" class="chips">
+          <div class="chip">アマゾン 2ピザ・チーム</div>
+          <div class="chip">ハイアール マイクロ企業</div>
+          <div class="chip">社内「出島」</div>
+        </div>
+        <div id="s5-note" class="note">※シミュレーションが示すのは機構で、特定のやり方が必ず効く保証ではありません。イエローストーンの栄養カスケードは規模に学術的議論があり「頂点の小さな再投入が系を再編する型」の挿絵として扱います。動物を主役に、組織はその応用。出典：MA-5 再野生化（sim）／Yellowstone 1995。</div>
+        <div id="s5-ask" class="ask">あなたの組織に、<span class="hl">前例の届かない場所</span>はあるか</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="268" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="48.19" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="51.69" data-duration="45.19" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="99.38" data-duration="47.06" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="148.95" data-duration="52.9" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="204.34" data-duration="60.38" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 (1.0-51.69) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-wolf",{opacity:0,scale:0.6},0);
+      tl.set("#s1-leaves svg",{opacity:0,scale:0.2},0);
+      tl.set("#s1-fact",{opacity:0},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},2.0);
+      tl.to("#s1-wolf",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.5)"},3.0);
+      tl.to("#s1-fact",{opacity:1,duration:0.5,ease:"power2.out"},9.25);
+      tl.to("#s1-leaves svg",{opacity:1,scale:1,duration:0.5,stagger:0.18,ease:"back.out(1.7)"},16.0);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},24.51);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+        if (s>1) tl.set("#scene"+(s-1),{opacity:0},t+0.6);
+      }
+
+      /* S2 (51.69-99.38) */
+      xfade(2,51.69);
+      tl.set("#s2-head",{opacity:0,y:30},51.69);
+      tl.set("#s2-ants svg",{opacity:0,scale:0.6},51.69);
+      tl.set("#s2-bars .barcard",{opacity:0,y:30},51.69);
+      tl.set("#s2-b1 .bar-fill",{scaleX:0},51.69);
+      tl.set("#s2-b2 .bar-fill",{scaleX:0},51.69);
+      tl.set("#s2-concl",{opacity:0,scale:0.82},51.69);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},52.2);
+      tl.to("#s2-ants svg",{opacity:1,scale:1,duration:0.5,stagger:0.1,ease:"back.out(1.5)"},55.58);
+      tl.to("#s2-bars .barcard",{opacity:1,y:0,duration:0.5,stagger:0.15,ease:"power3.out"},81.59);
+      tl.to("#s2-b1 .bar-fill",{scaleX:1,duration:0.9,ease:"power2.out"},82.5);
+      tl.to("#s2-b2 .bar-fill",{scaleX:1,duration:0.9,ease:"power2.out"},83.4);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},91.04);
+
+      /* S3 (99.38-148.95) */
+      xfade(3,99.38);
+      tl.set("#s3-head",{opacity:0,y:30},99.38);
+      tl.set("#s3-speech",{opacity:0,scale:0.8},99.38);
+      tl.set("#s3-x",{opacity:0,scale:0.4},99.38);
+      tl.set("#s3-ants svg",{opacity:0,scale:0.6},99.38);
+      tl.set("#s3-note2",{opacity:0},99.38);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},99.38);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},99.9);
+      tl.to("#s3-speech",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},104.97);
+      tl.to("#s3-ants svg",{opacity:1,scale:1,duration:0.45,stagger:0.1,ease:"back.out(1.5)"},106.5);
+      tl.to("#s3-x",{opacity:1,scale:1,duration:0.5,ease:"back.out(2)"},118.17);
+      tl.to("#s3-note2",{opacity:1,duration:0.5,ease:"power2.out"},132.61);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},142.25);
+
+      /* S4 (148.95-204.34) */
+      xfade(4,148.95);
+      tl.set("#s4-head",{opacity:0,y:30},148.95);
+      tl.set("#s4-iso",{opacity:0,scale:0.8},148.95);
+      tl.set("#s4-num",{opacity:0,scale:0.6},148.95);
+      tl.set("#s4-crit",{opacity:0},148.95);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},148.95);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},149.5);
+      tl.to("#s4-iso",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.5)"},152.79);
+      tl.to("#s4-num",{opacity:1,scale:1,duration:0.7,ease:"back.out(1.7)"},173.98);
+      tl.to("#s4-crit",{opacity:1,duration:0.5,ease:"power2.out"},183.53);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},196.91);
+
+      /* S5 (204.34-268) */
+      xfade(5,204.34);
+      tl.set("#s5-head",{opacity:0,y:30},204.34);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},204.34);
+      tl.set("#s5-chips .chip",{opacity:0,y:18},204.34);
+      tl.set("#s5-note",{opacity:0},204.34);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},204.34);
+      tl.set("#s5-brand",{opacity:0},204.34);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},204.9);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},207.5);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},214.68);
+      tl.to("#s5-chips .chip",{opacity:1,y:0,duration:0.4,stagger:0.12,ease:"back.out(1.6)"},221.29);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},228.58);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},237.63);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},256.15);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},261.0);
+
+      var GROUPS = [
+        {s:1.1,e:9.25,t:"1995年、アメリカのイエローストーン国立公園に、およそ70年ぶりにオオカミが戻されました。"},
+        {s:9.25,e:12.2,t:"その数、わずか十数頭。"},
+        {s:12.2,e:15.19,t:"すると、不思議なことが起きます。"},
+        {s:15.19,e:24.51,t:"増えすぎて草を食べ尽くしていたシカが、谷を避けるようになり、枯れていた柳やポプラがよみがえり、ビーバーや鳥が帰ってきた。"},
+        {s:24.51,e:31.62,t:"頂点の捕食者を、たった一つ戻しただけで、生態系が上から下まで作りかえられたのです。"},
+        {s:31.62,e:34.44,t:"これを、再野生化と呼びます。"},
+        {s:34.44,e:41.06,t:"今日は、この一握りのオオカミが教えてくれる、固まった群れの動かし方を読み解きます。"},
+        {s:41.06,e:49.17,t:"先に断っておくと、これは生物学そのものではなく、組織という生態系を見るための比喩、レンズです。"},
+        {s:51.79,e:55.58,t:"まず、固まった組織が、なぜ固まるのか。"},
+        {s:55.58,e:58.67,t:"それは、アリ型の群れだからです。"},
+        {s:58.67,e:64.35,t:"アリは、仲間が通った道のにおいをたどり、皆が同じ道を行きます。"},
+        {s:64.35,e:68.47,t:"人気のあるやり方を、互いに見ながら模倣し合う。"},
+        {s:68.47,e:76.94,t:"これは安定をもたらす一方で、いったん、前からこうだ、という道ができると、誰もそこから外れられなくなります。"},
+        {s:76.94,e:81.59,t:"格子状に並べたエージェントのシミュレーションでも、はっきり出ます。"},
+        {s:81.59,e:91.04,t:"仲間に合わせる力、つまり同調を強くすると、もっと良いやり方が目の前にあっても、その採用率は、ゼロに張りつく。"},
+        {s:91.04,e:96.83,t:"群れは、より良い道を見つけられないのではなく、見つけても踏み出せないのです。"},
+        {s:99.48,e:104.97,t:"では、上から、変われ、挑戦しろ、と号令をかければいいのか。"},
+        {s:104.97,e:108.11,t:"ここが、直感に反するところです。"},
+        {s:108.11,e:118.17,t:"同じシミュレーションで、群れ全体の同調を、ほんの少し緩めてみても、良いやり方の採用率は、ゼロのまま、びくともしませんでした。"},
+        {s:118.17,e:119.54,t:"なぜか。"},
+        {s:119.54,e:123.09,t:"同調の引力には、閾値があるからです。"},
+        {s:123.09,e:128.56,t:"周りがまだ動いていない以上、一人だけ抜け駆けするのは、損になる。"},
+        {s:128.56,e:132.61,t:"だから中途半端な号令は、誰にも届かない。"},
+        {s:132.61,e:142.25,t:"同調を完全にゼロにすれば群れは動きますが、何百人もの組織で、全員の足並みを同時に崩すのは、現実には起こせません。"},
+        {s:142.25,e:146.39,t:"号令は、固まった群れには、空振りするのです。"},
+        {s:149.05,e:152.79,t:"唯一効いたのは、まったく別の一手でした。"},
+        {s:152.79,e:158.35,t:"群れの本体から、物理的に切り離した、小さな細胞を一つ作る。"},
+        {s:158.35,e:163.01,t:"前例のにおいが届かない場所で、独自のルールを走らせる。"},
+        {s:163.01,e:173.98,t:"すると、その隔離された細胞だけが良いやり方を見つけ、実績を出し、やがて群れ全体の採用率は、九割を超えるところまで跳ね上がりました。"},
+        {s:173.98,e:177.71,t:"ちょうど、オオカミの細胞を、群れに戻すように。"},
+        {s:177.71,e:180.37,t:"ただし、条件があります。"},
+        {s:180.37,e:183.53,t:"細胞は、小さすぎてはいけない。"},
+        {s:183.53,e:187.8,t:"母集団のおよそ三割という、臨界質量が要る。"},
+        {s:187.8,e:196.91,t:"そして再結合のとき、その細胞を多数派のやり方に飲み込ませてしまうと、採用率は再び、ゼロへ転落します。"},
+        {s:196.91,e:199.6,t:"自律を守ったまま戻すこと。"},
+        {s:199.6,e:201.8,t:"これが、要石です。"},
+        {s:204.44,e:207.5,t:"ここから、三つの予測が立ちます。"},
+        {s:207.5,e:214.68,t:"一つ、固まった組織を、励ましや精神論で動かそうとしても、採用率は上がらない。"},
+        {s:214.68,e:221.29,t:"二つ、効くのは、前例の重力が届かない隔離空間を、物理的に作ること。"},
+        {s:221.29,e:228.58,t:"アマゾンの少人数チーム、ハイアールの小さな会社群、社内の出島組織が、その形です。"},
+        {s:228.58,e:235.08,t:"三つ、その細胞の自律を奪って本体に吸収すれば、効果は消えて元に戻る。"},
+        {s:235.08,e:237.63,t:"最後に、大事なことを。"},
+        {s:237.63,e:244.91,t:"今日の話は、頂点の小さな再投入が系全体を作りかえる、という型を借りた比喩です。"},
+        {s:244.91,e:251.57,t:"シミュレーションが示すのは機構であって、特定のやり方が必ず効くという保証ではありません。"},
+        {s:251.57,e:256.15,t:"主役はあくまで動物たちで、組織はその応用です。"},
+        {s:256.15,e:264.7,t:"固まった群れを動かす解毒剤は、号令ではなく、前例の届かない場所を一つ、意図して作ることなのかもしれません。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

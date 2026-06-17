@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.10em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 68px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1340px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+      .flock { display: flex; gap: 40px; align-items: flex-end; justify-content: center; }
+      .bignum { font-weight: 900; font-size: 210px; color: #2f6f4f; font-variant-numeric: tabular-nums;
+        line-height: 1; letter-spacing: -0.03em; }
+      .bignum-label { font-weight: 800; font-size: 36px; color: #6b7370; }
+      .row-mid { display: flex; gap: 46px; align-items: center; justify-content: center; }
+      .diagram { width: 1040px; height: 380px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .draw { fill: none; stroke: #d9893b; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 27px; font-weight: 800; fill: #6b7370; }
+      .cards2 { display: flex; gap: 44px; justify-content: center; }
+      .card2 { width: 620px; border-radius: 20px; padding: 28px 34px; text-align: left;
+        background: #fff; border: 2px solid #2f6f4f; }
+      .card2-t { font-weight: 900; font-size: 37px; color: #2f6f4f; }
+      .card2-d { font-weight: 700; font-size: 28px; color: #1d2321; line-height: 1.42; margin-top: 10px; }
+      .sum-list { display: flex; flex-direction: column; gap: 15px; width: 1300px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 33px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 37px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 44px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1340px; line-height: 1.5; }
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="244">
+
+      <!-- S1 フック 1.0-49.99 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">ダンバー数 ── 脳が決める「群れの上限」</div>
+        <div id="s1-head" class="head">なぜ組織は<span class="hl">ある日</span>急に壊れるのか</div>
+        <div id="s1-chars" class="flock">
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="30" fill="#7a5230"/><circle cx="224" cy="142" r="30" fill="#7a5230"/><ellipse cx="140" cy="150" rx="84" ry="90" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="62" ry="72" fill="#b98a5e"/><circle cx="117" cy="153" r="8" fill="#1d2321"/><circle cx="163" cy="153" r="8" fill="#1d2321"/><path d="M114,204 Q140,218 166,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="30" fill="#7a5230"/><circle cx="224" cy="142" r="30" fill="#7a5230"/><ellipse cx="140" cy="150" rx="84" ry="90" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="62" ry="72" fill="#b98a5e"/><circle cx="117" cy="153" r="8" fill="#1d2321"/><circle cx="163" cy="153" r="8" fill="#1d2321"/><path d="M114,204 Q140,218 166,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="30" fill="#7a5230"/><circle cx="224" cy="142" r="30" fill="#7a5230"/><ellipse cx="140" cy="150" rx="84" ry="90" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="62" ry="72" fill="#b98a5e"/><circle cx="117" cy="153" r="8" fill="#1d2321"/><circle cx="163" cy="153" r="8" fill="#1d2321"/><path d="M114,204 Q140,218 166,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="30" fill="#7a5230"/><circle cx="224" cy="142" r="30" fill="#7a5230"/><ellipse cx="140" cy="150" rx="84" ry="90" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="62" ry="72" fill="#b98a5e"/><circle cx="117" cy="153" r="8" fill="#1d2321"/><circle cx="163" cy="153" r="8" fill="#1d2321"/><path d="M114,204 Q140,218 166,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="30" fill="#7a5230"/><circle cx="224" cy="142" r="30" fill="#7a5230"/><ellipse cx="140" cy="150" rx="84" ry="90" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="62" ry="72" fill="#b98a5e"/><circle cx="117" cy="153" r="8" fill="#1d2321"/><circle cx="163" cy="153" r="8" fill="#1d2321"/><path d="M114,204 Q140,218 166,204" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">顔と評判を覚えていられる数には、<span class="gn">脳が決めた天井</span>がある。人を増やすほど、ある日いっせいに協力が崩れる</div>
+      </div></div>
+
+      <!-- S2 脳が群れの上限を決める 49.99-90.41 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:58px">脳の大きさが、<span class="hl">群れの大きさ</span>を決める</div>
+        <div id="s2-mid" class="row-mid">
+          <svg id="s2-chimp" width="220" height="220" viewBox="0 0 280 280" aria-label="chimp"><circle cx="56" cy="142" r="36" fill="#7a5230"/><circle cx="224" cy="142" r="36" fill="#7a5230"/><circle cx="56" cy="142" r="19" fill="#9a6f48"/><circle cx="224" cy="142" r="19" fill="#9a6f48"/><ellipse cx="140" cy="150" rx="86" ry="92" fill="#5a3a22"/><ellipse cx="140" cy="166" rx="64" ry="74" fill="#b98a5e"/><ellipse cx="116" cy="152" rx="13" ry="15" fill="#fff"/><ellipse cx="164" cy="152" rx="13" ry="15" fill="#fff"/><circle cx="117" cy="155" r="7" fill="#1d2321"/><circle cx="163" cy="155" r="7" fill="#1d2321"/><path d="M114,206 Q140,220 166,206" stroke="#3a2415" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div id="s2-num" class="bignum">150</div>
+            <div id="s2-numlabel" class="bignum-label">ダンバー数 ≈ 顔と評判を覚えていられる上限</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl">新皮質が大きい種ほど、大きな群れ。毛づくろいの時間に<span class="gn">上限</span>がある</div>
+      </div></div>
+
+      <!-- S3 壁はガクッと来る 90.41-144.96 -->
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s3-head" class="head" style="font-size:56px">じわじわでなく、<span class="hl">ガクッ</span>と来る</div>
+        <svg id="s3-diagram" class="diagram" viewBox="0 0 1040 380">
+          <line class="axis" x1="100" y1="330" x2="960" y2="330" />
+          <line class="axis" x1="100" y1="50" x2="100" y2="330" />
+          <text class="glabel" x="38" y="46" fill="#2f6f4f">結束（協力）</text>
+          <text class="glabel" x="800" y="366" fill="#6b7370">人数 N →</text>
+          <path id="s3-curve" class="draw" d="M122,108 L440,114 L492,300 L940,305" />
+          <text x="300" y="96" class="glabel" font-size="36" fill="#2f6f4f">0.89</text>
+          <text x="610" y="295" class="glabel" font-size="36" fill="#d9893b">0.04</text>
+          <text class="glabel" x="406" y="360" fill="#6b7370">45人</text>
+          <text class="glabel" x="500" y="360" fill="#d9893b">55人</text>
+          <circle id="s3-drop" cx="492" cy="300" r="13" fill="#d9893b" style="transform-box:fill-box; transform-origin:center;" />
+        </svg>
+        <div id="s3-concl" class="concl orange">連続的な希薄化でなく、鋭い壁。<span class="hl">高い協力そのもの</span>が消える</div>
+      </div></div>
+
+      <!-- S4 150は定数でない 144.96-187.95 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">「150」は定数でない ── 壁は<span class="hl">容量</span>に比例</div>
+        <div id="s4-cards" class="cards2">
+          <div class="card2" id="s4-a">
+            <div class="card2-t">① 容量そのものを上げる</div>
+            <div class="card2-d">誰が何をしたかを見えるようにする。お互いが見える透明性で、覚えていられる相手を増やす</div>
+          </div>
+          <div class="card2" id="s4-b">
+            <div class="card2-t">② 容量を超えない単位に分ける</div>
+            <div class="card2-d">二枚のピザで足りるチーム、分隊、小さな会社の集まり。壁の手前の大きさに保つ</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl orange">人を足して管理職を増やすだけでは、<span class="hl">壁は越えられない</span></div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 187.95-244 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:50px">人を足すだけでは、<span class="hl">壁は越えられない</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 人数だけ増やして単位を分けなければ、ある日いっせいに協力が崩れる</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 評判が見えるようにすると、同じ人数でも壁は遠ざかる</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 壁を越えた群れは、チンパンジー型の派閥と政治へ落ちる</div>
+        </div>
+        <div id="s5-note" class="note">※「有界な容量が規模の壁を生む」という機構の写像で、特定組織にとっての最適な人数を保証するものではありません。150は幅のある推定値です。動物を主役に、組織はその応用として読みます。出典：Dunbar（社会脳仮説／ダンバー数）。</div>
+        <div id="s5-ask" class="ask">あなたの組織は、もう<span class="hl">壁の手前</span>まで来ていないか</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="244" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="46.49" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="49.99" data-duration="37.92" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="90.41" data-duration="52.06" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="144.96" data-duration="40.49" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="187.95" data-duration="52.42" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 (1.0-49.99) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-chars svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.8);
+      tl.to("#s1-chars svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.12,ease:"back.out(1.5)"},2.8);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},22.92);
+      tl.to("#s1-chars svg",{x:"+=14",duration:0.4,yoyo:true,repeat:3,stagger:0.05,ease:"sine.inOut"},31.16);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+        if (s>1) tl.set("#scene"+(s-1),{opacity:0},t+0.6);
+      }
+
+      /* S2 (49.99-90.41) */
+      xfade(2,49.99);
+      tl.set("#s2-head",{opacity:0,y:30},49.99);
+      tl.set("#s2-chimp",{opacity:0,scale:0.6},49.99);
+      tl.set("#s2-num",{opacity:0,scale:0.7},49.99);
+      tl.set("#s2-numlabel",{opacity:0},49.99);
+      tl.set("#s2-concl",{opacity:0,scale:0.82},49.99);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},50.5);
+      tl.to("#s2-chimp",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},53.5);
+      tl.to("#s2-num",{opacity:1,scale:1,duration:0.7,ease:"back.out(1.6)"},78.5);
+      tl.to("#s2-numlabel",{opacity:1,duration:0.5,ease:"power2.out"},80.2);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},83.0);
+
+      /* S3 (90.41-144.96) */
+      xfade(3,90.41);
+      tl.set("#s3-head",{opacity:0,y:30},90.41);
+      tl.set("#s3-diagram",{opacity:0,y:24},90.41);
+      tl.set("#s3-curve",{strokeDasharray:1400,strokeDashoffset:1400},90.41);
+      tl.set("#s3-drop",{opacity:0,scale:0},90.41);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},90.41);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},90.9);
+      tl.to("#s3-diagram",{opacity:1,y:0,duration:0.5,ease:"power2.out"},94.15);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:2.6,ease:"power1.inOut"},117.0);
+      tl.to("#s3-drop",{opacity:1,scale:1,duration:0.5,ease:"back.out(2)"},128.78);
+      tl.to("#s3-drop",{scale:1.5,duration:0.5,yoyo:true,repeat:3,ease:"sine.inOut"},129.5);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},139.86);
+
+      /* S4 (144.96-187.95) */
+      xfade(4,144.96);
+      tl.set("#s4-head",{opacity:0,y:30},144.96);
+      tl.set("#s4-a",{opacity:0,x:-40},144.96);
+      tl.set("#s4-b",{opacity:0,x:40},144.96);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},144.96);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},145.5);
+      tl.to("#s4-a",{opacity:1,x:0,duration:0.55,ease:"power2.out"},163.19);
+      tl.to("#s4-b",{opacity:1,x:0,duration:0.55,ease:"power2.out"},171.5);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},180.71);
+
+      /* S5 (187.95-244) */
+      xfade(5,187.95);
+      tl.set("#s5-head",{opacity:0,y:30},187.95);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},187.95);
+      tl.set("#s5-note",{opacity:0},187.95);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},187.95);
+      tl.set("#s5-brand",{opacity:0},187.95);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},188.5);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},198.21);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},204.48);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},210.05);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},217.35);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},235.52);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},239.5);
+
+      var GROUPS = [
+        {s:1.1,e:6.26,t:"サルやチンパンジーの群れには、なぜか、ちょうどいい大きさがあります。"},
+        {s:6.26,e:9.44,t:"小さすぎても、大きすぎても続かない。"},
+        {s:9.44,e:17.06,t:"霊長類を調べた研究者ダンバーは、群れの大きさが、その種の脳の大きさで決まることに気づきました。"},
+        {s:17.06,e:22.92,t:"仲間の顔と関係を覚えていられる数には、脳の容量という天井がある。"},
+        {s:22.92,e:26.7,t:"そして同じことが、人の組織にも起きます。"},
+        {s:26.7,e:31.16,t:"人手が足りないなら増やせばいい、管理職を足せば回る。"},
+        {s:31.16,e:37.85,t:"ところが、ある人数を境に、同じやり方をしているのに、協力が急に崩れる。"},
+        {s:37.85,e:41.07,t:"じわじわではなく、ある日いっせいに。"},
+        {s:41.07,e:47.44,t:"先に断ると、これは生物学ではなく、組織を読むための比喩、レンズです。"},
+        {s:50.09,e:53.5,t:"まず、群れの大きさが何で決まるかです。"},
+        {s:53.5,e:59.65,t:"霊長類は、新皮質という脳の部分が大きい種ほど、大きな群れを作ります。"},
+        {s:59.65,e:67.82,t:"群れの結束は、グルーミング、毛づくろいで保たれますが、一頭が毛づくろいに割ける時間には、限りがある。"},
+        {s:67.82,e:73.41,t:"だから、安定して付き合える相手の数には、上から天井がかかります。"},
+        {s:73.41,e:78.5,t:"この関係から人間の数を推定すると、おおよそ百五十前後。"},
+        {s:78.5,e:81.38,t:"これが、いわゆるダンバー数です。"},
+        {s:81.38,e:87.86,t:"顔と評判を覚えていられる相手の数には、脳が決めた上限がある、ということです。"},
+        {s:90.51,e:94.15,t:"次に、なぜ天井を超えると壊れるのか。"},
+        {s:94.15,e:99.97,t:"一人ひとりが顔と評判を覚えていられる相手の数を、容量と呼びます。"},
+        {s:99.97,e:105.42,t:"群れが大きくなるほど、評判が届く相手の割合は、下がっていく。"},
+        {s:105.42,e:111.73,t:"監視も評判も届かない相手が増えると、ただ乗りや手抜きをしても、罰されなくなる。"},
+        {s:111.73,e:116.86,t:"すると、お互い様で成り立っていた協力が、支えを失います。"},
+        {s:116.86,e:123.43,t:"ここが肝心ですが、この崩れ方は、じわじわ薄まるのではなく、鋭い壁でした。"},
+        {s:123.43,e:128.78,t:"シミュレーションでは、四十五人までは、高い結束が保たれます。"},
+        {s:128.78,e:133.52,t:"ところが五十五人を境に、それがほぼゼロへ急落する。"},
+        {s:133.52,e:139.86,t:"少しずつではなく、ある規模で、高い協力の状態そのものが、消えてしまう。"},
+        {s:139.86,e:142.42,t:"崖から落ちるように、です。"},
+        {s:145.06,e:150.02,t:"では、百五十が魔法の数字かというと、そうではありません。"},
+        {s:150.02,e:154.87,t:"壁の位置は、一人が覚えていられる容量に比例して動きます。"},
+        {s:154.87,e:160.54,t:"容量が小さければ壁は早く来るし、容量を上げれば壁は遠ざかる。"},
+        {s:160.54,e:163.19,t:"だから打ち手は、二つです。"},
+        {s:163.19,e:166.3,t:"一つは、容量そのものを上げる。"},
+        {s:166.3,e:171.5,t:"誰が何をしたかを見えるようにし、お互いが見える透明性を作る。"},
+        {s:171.5,e:175.32,t:"もう一つは、容量を超えない単位に分ける。"},
+        {s:175.32,e:180.71,t:"二枚のピザで足りる人数のチーム、分隊、小さな会社の集まり。"},
+        {s:180.71,e:185.39,t:"人を足して管理職を増やすだけでは、壁は越えられません。"},
+        {s:188.05,e:189.56,t:"まとめます。"},
+        {s:189.56,e:195.38,t:"群れには脳が決めた上限があり、それを超えると、協力は崖から落ちる。"},
+        {s:195.38,e:198.21,t:"だから三つ、予測できます。"},
+        {s:198.21,e:204.48,t:"一つ、人数だけ増やして単位を分けなければ、ある日いっせいに協力が崩れる。"},
+        {s:204.48,e:210.05,t:"二つ、評判が見えるようにすると、同じ人数でも壁は遠ざかる。"},
+        {s:210.05,e:215.55,t:"三つ、壁を越えた群れは、チンパンジー型の派閥と政治へ落ちる。"},
+        {s:215.55,e:217.35,t:"ひとつ注意を。"},
+        {s:217.35,e:227.09,t:"これは、有界な容量が規模の壁を生むという仕組みを示すもので、特定の組織にとっての最適な人数を保証するものではありません。"},
+        {s:227.09,e:231.41,t:"主役はあくまで動物で、組織はその応用です。"},
+        {s:231.41,e:235.52,t:"百五十という数字も、幅のある推定値です。"},
+        {s:235.52,e:240.34,t:"あなたの組織は、もう壁の手前まで、来ていないでしょうか。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
