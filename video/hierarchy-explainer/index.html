@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.08em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 64px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1340px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+      .flock { display: flex; gap: 50px; align-items: flex-end; justify-content: center; }
+      .twocol { display: flex; gap: 44px; justify-content: center; align-items: stretch; }
+      .tcard { width: 560px; background: #fff; border: 2px solid #e3e0d8; border-radius: 18px; padding: 24px 30px;
+        display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .tcard.wolf { border-color: #2f6f4f; } .tcard.ant { border-color: #6b7370; }
+      .tcard-t { font-weight: 900; font-size: 36px; color: #1d2321; }
+      .tcard-d { font-weight: 700; font-size: 28px; color: #6b7370; line-height: 1.35; }
+      .formula { font-weight: 900; font-size: 44px; color: #1d2321; background: #e6efe9; border-radius: 16px; padding: 16px 40px; }
+      .formula .gn { color: #2f6f4f; } .formula .hl { color: #d9893b; }
+      .bars { display: flex; flex-direction: column; gap: 18px; width: 1180px; }
+      .barrow { display: flex; align-items: center; gap: 24px; }
+      .bar-label { width: 360px; text-align: right; font-weight: 800; font-size: 32px; color: #1d2321; flex-shrink: 0; }
+      .bar-track { flex: 1; height: 46px; background: #ece5d8; border-radius: 10px; overflow: hidden; }
+      .bar-fill { height: 100%; transform-origin: left center; border-radius: 10px; }
+      .bar-fill.lo { background: #d9893b; } .bar-fill.hi { background: #2f6f4f; }
+      .bar-val { width: 90px; font-weight: 900; font-size: 34px; flex-shrink: 0; text-align: left; }
+      .bar-val.lo { color: #d9893b; } .bar-val.hi { color: #2f6f4f; }
+      .collapse { display: flex; gap: 40px; align-items: center; justify-content: center; }
+      .col-card { width: 460px; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 22px 28px; }
+      .col-card.good { border-color: #2f6f4f; } .col-card.bad { border-color: #d9893b; }
+      .col-t { font-weight: 800; font-size: 30px; color: #1d2321; }
+      .col-v { font-weight: 900; font-size: 50px; margin-top: 8px; } .col-card.good .col-v { color: #2f6f4f; } .col-card.bad .col-v { color: #d9893b; }
+      .col-arrow { font-weight: 900; font-size: 56px; color: #d9893b; }
+      .tips { display: flex; flex-direction: column; gap: 14px; width: 1200px; }
+      .tip { display: flex; align-items: center; gap: 22px; background: #e6efe9; border-radius: 16px; padding: 16px 32px; text-align: left; }
+      .tip-n { color: #2f6f4f; font-weight: 900; font-size: 36px; flex-shrink: 0; }
+      .tip-t { font-weight: 800; font-size: 32px; color: #1d2321; }
+      .sum-list { display: flex; flex-direction: column; gap: 15px; width: 1330px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 32px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 15px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 36px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 43px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1340px; line-height: 1.5; }
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="266">
+
+      <!-- S1 フック 1.0-47.52 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">階層設計 ── 全員を同じ型に揃えるな</div>
+        <div id="s1-head" class="head">アリの巣は<span class="hl">全員同じではない</span></div>
+        <div id="s1-chars" class="flock">
+          <svg width="170" height="170" viewBox="0 0 280 280" aria-label="ant"><path d="M120,68 Q104,28 86,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,68 Q176,28 194,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="224" rx="52" ry="48" fill="#6b3320"/><ellipse cx="140" cy="150" rx="40" ry="45" fill="#8a4528"/><circle cx="140" cy="82" r="43" fill="#7a3b22"/><circle cx="126" cy="78" r="7" fill="#fff"/><circle cx="154" cy="78" r="7" fill="#fff"/><circle cx="126" cy="78" r="3" fill="#1d2321"/><circle cx="154" cy="78" r="3" fill="#1d2321"/></svg>
+          <svg width="190" height="190" viewBox="0 0 280 280" aria-label="wolf"><polygon points="70,76 52,12 122,54" fill="#8a97a5"/><polygon points="210,76 228,12 158,54" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="184" rx="52" ry="44" fill="#eef1f4"/><circle cx="111" cy="140" r="10" fill="#c9aa3c"/><circle cx="169" cy="140" r="10" fill="#c9aa3c"/><circle cx="111" cy="140" r="4" fill="#1d2321"/><circle cx="169" cy="140" r="4" fill="#1d2321"/><ellipse cx="140" cy="171" rx="15" ry="10" fill="#1d2321"/></svg>
+          <svg width="170" height="170" viewBox="0 0 280 280" aria-label="ant"><path d="M120,68 Q104,28 86,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,68 Q176,28 194,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="224" rx="52" ry="48" fill="#6b3320"/><ellipse cx="140" cy="150" rx="40" ry="45" fill="#8a4528"/><circle cx="140" cy="82" r="43" fill="#7a3b22"/><circle cx="126" cy="78" r="7" fill="#fff"/><circle cx="154" cy="78" r="7" fill="#fff"/><circle cx="126" cy="78" r="3" fill="#1d2321"/><circle cx="154" cy="78" r="3" fill="#1d2321"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">探索するアリには踏み外す自由、巣の中のアリには規律ある反復。<span class="gn">全員を一つの型に揃えると、コロニーは回らない</span></div>
+      </div></div>
+
+      <!-- S2 層でタスクが違う 47.52-102.17 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:56px">現場は<span class="gn">オオカミ</span>、管理は<span class="hl">アリ</span></div>
+        <div id="s2-cards" class="twocol">
+          <div class="tcard wolf" id="s2-wolf">
+            <svg width="120" height="120" viewBox="0 0 280 280" aria-label="wolf"><polygon points="70,76 52,12 122,54" fill="#8a97a5"/><polygon points="210,76 228,12 158,54" fill="#8a97a5"/><ellipse cx="140" cy="150" rx="94" ry="88" fill="#9aa6b3"/><ellipse cx="140" cy="184" rx="52" ry="44" fill="#eef1f4"/><circle cx="111" cy="140" r="10" fill="#c9aa3c"/><circle cx="169" cy="140" r="10" fill="#c9aa3c"/><circle cx="111" cy="140" r="4" fill="#1d2321"/><circle cx="169" cy="140" r="4" fill="#1d2321"/><ellipse cx="140" cy="171" rx="15" ry="10" fill="#1d2321"/></svg>
+            <div class="tcard-t">現場＝探索</div>
+            <div class="tcard-d">新しいやり方を試す。<br>同調は<b>低い</b>ほうがいい</div>
+          </div>
+          <div class="tcard ant" id="s2-ant">
+            <svg width="110" height="110" viewBox="0 0 280 280" aria-label="ant"><path d="M120,68 Q104,28 86,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M160,68 Q176,28 194,16" stroke="#5a2d1a" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="140" cy="224" rx="52" ry="48" fill="#6b3320"/><ellipse cx="140" cy="150" rx="40" ry="45" fill="#8a4528"/><circle cx="140" cy="82" r="43" fill="#7a3b22"/><circle cx="126" cy="78" r="7" fill="#fff"/><circle cx="154" cy="78" r="7" fill="#fff"/></svg>
+            <div class="tcard-t">管理＝調整</div>
+            <div class="tcard-d">足並みを揃え、ばらつきを抑える。<br>同調は<b>高い</b>ほうがいい</div>
+          </div>
+        </div>
+        <div id="s2-formula" class="formula">組織の力 ＝ <span class="gn">現場の探索力</span> × <span class="hl">管理の調整力</span>（片方ゼロなら全体ゼロ）</div>
+      </div></div>
+
+      <!-- S3 一律は劣る 102.17-151.04 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:56px">最適解は、<span class="hl">一律ではない</span></div>
+        <div id="s3-bars" class="bars">
+          <div class="barrow" id="s3-r1">
+            <div class="bar-label">全社オオカミで揃える</div>
+            <div class="bar-track"><div class="bar-fill lo" style="width:21%"></div></div>
+            <div class="bar-val lo">0.21</div>
+          </div>
+          <div class="barrow" id="s3-r2">
+            <div class="bar-label">全社アリで揃える</div>
+            <div class="bar-track"><div class="bar-fill lo" style="width:2%"></div></div>
+            <div class="bar-val lo">0.00</div>
+          </div>
+          <div class="barrow" id="s3-r3">
+            <div class="bar-label">層別設計（現場低・管理高）</div>
+            <div class="bar-track"><div class="bar-fill hi" style="width:47%"></div></div>
+            <div class="bar-val hi">0.47</div>
+          </div>
+        </div>
+        <div id="s3-concl" class="concl orange">一枚岩に揃えるほど、<span class="hl">どこかの層が確実に死ぬ</span>（非対称＝オフダイアゴナル）</div>
+      </div></div>
+
+      <!-- S4 現場の自律を守る 151.04-204.37 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:54px">ちぐはぐを、<span class="hl">意図して守る</span></div>
+        <div id="s4-collapse" class="collapse">
+          <div class="col-card good" id="s4-c1"><div class="col-t">自律を守った現場</div><div class="col-v">0.76</div></div>
+          <div id="s4-arrow" class="col-arrow">→</div>
+          <div class="col-card bad" id="s4-c2"><div class="col-t">上から同調が漏れた現場</div><div class="col-v">0.00</div></div>
+        </div>
+        <div id="s4-tips" class="tips">
+          <div class="tip" id="s4-t1"><div class="tip-n">①</div><div class="tip-t">現場に探索の自由を残す</div></div>
+          <div class="tip" id="s4-t2"><div class="tip-n">②</div><div class="tip-t">標準プロセスを現場へ押し付けない（境界を引く）</div></div>
+          <div class="tip" id="s4-t3"><div class="tip-n">③</div><div class="tip-t">前例とプロセスの届かない場所を、意図して残す</div></div>
+        </div>
+        <div id="s4-concl" class="concl orange">自律は<span class="hl">守られて初めて機能</span>する</div>
+      </div></div>
+
+      <!-- S5 まとめ3予測 204.37-266 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s5-head" class="head" style="font-size:50px">強い組織は、<span class="hl">全員同じではない</span></div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 全社を一つの型で揃えると、必ずどこかの層が死ぬ（一律は最適でない）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 最適は対角線でなく、現場は低同調・管理は高同調という「ずらした設計」</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 現場の自律が上からの圧で漏れ崩れると、組織の性能ごと崩落する</div>
+        </div>
+        <div id="s5-note" class="note">※機構の写像であって効果を保証するものではありません。アリの分業は型を映す挿絵にすぎず、係数を当てた証明ではない。特定の会社の正しい階層設計を断定するものではありません。動物の行動を主役に、組織はその応用。出典：MA-7 階層別最適化（sim）。</div>
+        <div id="s5-ask" class="ask">あなたの会社は、全層を<span class="hl">同じ型に揃えて</span>いないか</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="266" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="44.02" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="47.52" data-duration="52.15" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="102.17" data-duration="46.37" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="151.04" data-duration="50.83" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="204.37" data-duration="57.72" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 (1.0-47.52) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-chars svg",{opacity:0,scale:0.6,y:24},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.8);
+      tl.to("#s1-chars svg",{opacity:1,scale:1,y:0,duration:0.5,stagger:0.16,ease:"back.out(1.5)"},4.17);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},18.64);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+        if (s>1) tl.set("#scene"+(s-1),{opacity:0},t+0.6);
+      }
+
+      /* S2 (47.52-102.17) */
+      xfade(2,47.52);
+      tl.set("#s2-head",{opacity:0,y:30},47.52);
+      tl.set("#s2-wolf",{opacity:0,x:-40},47.52);
+      tl.set("#s2-ant",{opacity:0,x:40},47.52);
+      tl.set("#s2-formula",{opacity:0,scale:0.85},47.52);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},47.62);
+      tl.to("#s2-wolf",{opacity:1,x:0,duration:0.55,ease:"power2.out"},59.53);
+      tl.to("#s2-ant",{opacity:1,x:0,duration:0.55,ease:"power2.out"},72.85);
+      tl.to("#s2-formula",{opacity:1,scale:1,duration:0.6,ease:"back.out(1.6)"},87.29);
+
+      /* S3 (102.17-151.04) */
+      xfade(3,102.17);
+      tl.set("#s3-head",{opacity:0,y:30},102.17);
+      tl.set("#s3-bars .barrow",{opacity:0,x:-30},102.17);
+      tl.set("#s3-bars .bar-fill",{scaleX:0},102.17);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},102.17);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},102.27);
+      tl.to("#s3-r1",{opacity:1,x:0,duration:0.45,ease:"power3.out"},109.95);
+      tl.to("#s3-r1 .bar-fill",{scaleX:1,duration:0.7,ease:"power2.out"},111.0);
+      tl.to("#s3-r2",{opacity:1,x:0,duration:0.45,ease:"power3.out"},114.0);
+      tl.to("#s3-r2 .bar-fill",{scaleX:1,duration:0.7,ease:"power2.out"},115.0);
+      tl.to("#s3-r3",{opacity:1,x:0,duration:0.45,ease:"power3.out"},118.3);
+      tl.to("#s3-r3 .bar-fill",{scaleX:1,duration:0.9,ease:"back.out(1.4)"},119.3);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},140.42);
+
+      /* S4 (151.04-204.37) */
+      xfade(4,151.04);
+      tl.set("#s4-head",{opacity:0,y:30},151.04);
+      tl.set("#s4-collapse .col-card",{opacity:0,scale:0.8},151.04);
+      tl.set("#s4-arrow",{opacity:0},151.04);
+      tl.set("#s4-tips .tip",{opacity:0,x:-40},151.04);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},151.04);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},151.14);
+      tl.to("#s4-c1",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},172.25);
+      tl.to("#s4-arrow",{opacity:1,duration:0.4,ease:"power2.out"},174.5);
+      tl.to("#s4-c2",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.6)"},176.0);
+      tl.to("#s4-tips .tip",{opacity:1,x:0,duration:0.45,stagger:0.16,ease:"power3.out"},189.22);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},198.31);
+
+      /* S5 (204.37-266) */
+      xfade(5,204.37);
+      tl.set("#s5-head",{opacity:0,y:30},204.37);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},204.37);
+      tl.set("#s5-note",{opacity:0},204.37);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},204.37);
+      tl.set("#s5-brand",{opacity:0},204.37);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},204.47);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},209.85);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},218.39);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},226.56);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},236.11);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},257.17);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},260.5);
+
+      var GROUPS = [
+        {s:1.1,e:4.17,t:"アリの巣には、二種類のアリがいます。"},
+        {s:4.17,e:8.2,t:"外を歩き回り、新しい餌場を探すアリ。"},
+        {s:8.2,e:12.74,t:"そして巣の中で、同じ作業を黙々と繰り返すアリ。"},
+        {s:12.74,e:18.64,t:"この二匹は、同じ巣の仲間なのに、まるで別の生き物のように動きます。"},
+        {s:18.64,e:22.75,t:"探索するアリには、道を踏み外す自由が要る。"},
+        {s:22.75,e:26.55,t:"巣の中のアリには、規律ある反復が要る。"},
+        {s:26.55,e:32.52,t:"もし巣を、全員探索か、全員定型に揃えたら、コロニーは回りません。"},
+        {s:32.52,e:38.6,t:"今日はこのアリの分業から、組織の階層を、どう設計するかを読み解きます。"},
+        {s:38.6,e:44.95,t:"先に断ると、これは生物学ではなく、組織を見るための比喩、レンズです。"},
+        {s:47.62,e:51.19,t:"なぜ、一つの型に揃えてはいけないのか。"},
+        {s:51.19,e:56.13,t:"鍵は、層によって、仕事の性質がまるで違うからです。"},
+        {s:56.13,e:59.53,t:"組織の現場の仕事は、探索です。"},
+        {s:59.53,e:63.7,t:"新しいやり方を試し、より良い方法を見つける。"},
+        {s:63.7,e:68.65,t:"だから、周りに合わせる力、同調は、低いほうがいい。"},
+        {s:68.65,e:72.85,t:"一匹ずつが違う方向へ動く、オオカミに近い。"},
+        {s:72.85,e:77.14,t:"一方、管理の仕事は、調整と整列です。"},
+        {s:77.14,e:80.76,t:"みんなの足並みを揃え、ばらつきを抑える。"},
+        {s:80.76,e:83.81,t:"だから同調は、高いほうがいい。"},
+        {s:83.81,e:87.29,t:"中央の規格に整列する、アリに近い。"},
+        {s:87.29,e:93.94,t:"組織の力は、現場の探索力と、管理の調整力の、掛け算で決まります。"},
+        {s:93.94,e:96.95,t:"片方がゼロなら、全体もゼロ。"},
+        {s:96.95,e:99.61,t:"だから、両方が要るのです。"},
+        {s:102.27,e:106.06,t:"ここから、通俗論と分かれる予測が出ます。"},
+        {s:106.06,e:109.95,t:"シミュレーションで、四つの設計を競わせました。"},
+        {s:109.95,e:113.78,t:"全社をオオカミで揃えると、調整がきかない。"},
+        {s:113.78,e:118.3,t:"全社をアリで揃えると、探索が死んで、ほぼゼロ。"},
+        {s:118.3,e:126.01,t:"最も強かったのは、現場は低同調、管理は高同調という、層ごとにバラバラな設計でした。"},
+        {s:126.01,e:131.93,t:"つまり最適解は、全層を同じ型に揃える、対角線の上にはない。"},
+        {s:131.93,e:135.87,t:"わざと型をずらした、ちぐはぐな組み合わせにある。"},
+        {s:135.87,e:140.42,t:"これを私たちは、非対称、オフダイアゴナルと呼びます。"},
+        {s:140.42,e:145.16,t:"一枚岩に揃えるほど、どこかの層が、確実に死ぬ。"},
+        {s:145.16,e:148.49,t:"揃えることが、強さではないのです。"},
+        {s:151.14,e:155.45,t:"ただし、この差別化は、現実では崩れやすい。"},
+        {s:155.45,e:160.53,t:"管理層の、揃えたいという同調が、現場へ漏れ出すからです。"},
+        {s:160.53,e:164.0,t:"標準プロセスを、現場にも押し付ける。"},
+        {s:164.0,e:169.81,t:"良かれと思って、巣の中のルールを、外を探索するアリにまで、強いる。"},
+        {s:169.81,e:172.25,t:"すると、何が起きるか。"},
+        {s:172.25,e:181.79,t:"シミュレーションでは、上からの結びつきを強めただけで、現場の探索力が、高い水準から、ほぼゼロまで、崩れ落ちました。"},
+        {s:181.79,e:186.23,t:"現場の自律は、放っておいて保たれるものではありません。"},
+        {s:186.23,e:189.22,t:"守られて、初めて機能する。"},
+        {s:189.22,e:193.58,t:"前例とプロセスが届かない場所を、意図して残すこと。"},
+        {s:193.58,e:198.31,t:"アリの巣も、探索するアリには、巣の規律を持ち込まない。"},
+        {s:198.31,e:201.82,t:"境界を引くことが、設計の仕事です。"},
+        {s:204.47,e:205.98,t:"まとめます。"},
+        {s:205.98,e:209.85,t:"動物の分業から見えた、三つの予測です。"},
+        {s:209.85,e:215.62,t:"一つ、全社を一つの型で揃えると、必ず、どこかの層が死ぬ。"},
+        {s:215.62,e:218.39,t:"一律は、最適ではない。"},
+        {s:218.39,e:226.56,t:"二つ、最適は対角線でなく、現場は低同調、管理は高同調という、ずらした設計にある。"},
+        {s:226.56,e:233.22,t:"三つ、現場の自律が、上からの圧で漏れ崩れると、組織の性能ごと崩落する。"},
+        {s:233.22,e:236.11,t:"最後に、大事な注意です。"},
+        {s:236.11,e:240.98,t:"これは機構の写像であって、効果を保証するものではありません。"},
+        {s:240.98,e:246.99,t:"アリの分業は、型を映す挿絵にすぎず、係数を当てた証明ではない。"},
+        {s:246.99,e:251.94,t:"主役はあくまで動物の行動で、組織はその応用です。"},
+        {s:251.94,e:257.17,t:"特定の会社の正しい階層設計を、断定するものではありません。"},
+        {s:257.17,e:262.05,t:"あなたの会社は、全層を、同じ型に揃えていないでしょうか。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

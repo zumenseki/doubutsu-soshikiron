@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 30px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.08em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 66px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1340px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 42px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; line-height: 1.3; }
+      .concl.orange { color: #d9893b; background: #f7ece1; }
+      .row-mid { display: flex; gap: 30px; align-items: center; justify-content: center; }
+      .twocol { display: flex; gap: 44px; justify-content: center; }
+      .tcard { width: 600px; background: #fff; border: 2px solid #e3e0d8; border-radius: 18px; padding: 26px 32px; text-align: left; }
+      .tcard.good { border-color: #2f6f4f; } .tcard.bad { border-color: #d9893b; }
+      .tcard-t { font-weight: 900; font-size: 34px; } .tcard.good .tcard-t { color: #2f6f4f; } .tcard.bad .tcard-t { color: #d9893b; }
+      .tcard-d { font-weight: 700; font-size: 29px; color: #1d2321; line-height: 1.4; margin-top: 12px; }
+      .badge { font-weight: 800; font-size: 30px; color: #6b7370; background: #f1ece4; border-radius: 999px; padding: 10px 28px; }
+      .systems { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+      .sysbox { width: 760px; border-radius: 20px; padding: 24px 30px; font-weight: 900; font-size: 40px; }
+      .sysbox small { display: block; font-weight: 700; font-size: 28px; margin-top: 6px; }
+      .sysbox.goal { background: #f1ece4; color: #6b7370; } .sysbox.goal small { color: #8a8478; }
+      .sysbox.habit { background: #e6efe9; color: #2f6f4f; } .sysbox.habit small { color: #4f8268; }
+      .sysarrow { font-weight: 900; font-size: 38px; color: #d9893b; }
+      .tips { display: flex; flex-direction: column; gap: 16px; width: 1100px; }
+      .tip { display: flex; align-items: center; gap: 22px; background: #e6efe9; border-radius: 16px; padding: 18px 32px; text-align: left; }
+      .tip-n { color: #2f6f4f; font-weight: 900; font-size: 40px; flex-shrink: 0; }
+      .tip-t { font-weight: 800; font-size: 36px; color: #1d2321; }
+      .sum-list { display: flex; flex-direction: column; gap: 14px; width: 1320px; }
+      .sum-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 32px;
+        color: #1d2321; background: #fff; border: 2px solid #e3e0d8; border-radius: 16px; padding: 14px 30px; text-align: left; }
+      .sum-n { color: #2f6f4f; font-weight: 900; font-size: 36px; flex-shrink: 0; }
+      .ask { font-weight: 900; font-size: 42px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 31px; color: #2f6f4f; }
+      .note { font-size: 24px; color: #6b7370; max-width: 1340px; line-height: 1.5; }
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="263">
+
+      <!-- S1 フック 1.0-50.85 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">習慣 ── 続けるのは意志でなく、設計</div>
+        <div id="s1-head" class="head">ラットが「ごほうび」を<span class="hl">捨てる日</span></div>
+        <div id="s1-row" class="row-mid">
+          <svg id="s1-rat" width="230" height="230" viewBox="0 0 280 280" aria-label="rat"><path d="M208,202 Q262,192 248,138" stroke="#c98f9a" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="80" cy="86" r="40" fill="#9a9aa0"/><circle cx="200" cy="86" r="40" fill="#9a9aa0"/><circle cx="80" cy="88" r="22" fill="#d9a6b0"/><circle cx="200" cy="88" r="22" fill="#d9a6b0"/><ellipse cx="140" cy="160" rx="88" ry="80" fill="#aaaab0"/><ellipse cx="140" cy="196" rx="48" ry="40" fill="#c6c6ca"/><circle cx="112" cy="150" r="12" fill="#1d2321"/><circle cx="168" cy="150" r="12" fill="#1d2321"/><ellipse cx="140" cy="190" rx="12" ry="9" fill="#d9a6b0"/><rect x="132" y="200" width="16" height="20" rx="3" fill="#fff"/></svg>
+          <svg id="s1-lever" width="150" height="200" viewBox="0 0 130 190" aria-label="lever"><rect x="54" y="66" width="18" height="105" fill="#6b7370"/><rect x="18" y="166" width="94" height="16" rx="4" fill="#6b7370"/><line x1="63" y1="74" x2="100" y2="40" stroke="#5a4a3a" stroke-width="14" stroke-linecap="round"/><circle cx="102" cy="38" r="16" fill="#d9893b"/></svg>
+        </div>
+        <div id="s1-sub" class="sub">もう欲しくないのに、手が止まらない。<span class="gn">「続く」と「やめられない」</span>の正体を、ラットの行動から読む</div>
+      </div></div>
+
+      <!-- S2 報酬から独立 50.85-98.47 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:56px">習慣＝<span class="hl">報酬から切り離された</span>行動</div>
+        <div id="s2-badge" class="badge">アダムス＆ディキンソン（結果価値の低下 実験）</div>
+        <div id="s2-cards" class="twocol">
+          <div class="tcard good" id="s2-a">
+            <div class="tcard-t">訓練の初め</div>
+            <div class="tcard-d">餌の価値を下げる → 押す回数も減る。<br>報酬を見て、計算している（目当てがある）</div>
+          </div>
+          <div class="tcard bad" id="s2-b">
+            <div class="tcard-t">過剰に反復したあと</div>
+            <div class="tcard-d">餌の価値を下げても → 押し続ける。<br>報酬のひもが外れ、きっかけへの自動反応に</div>
+          </div>
+        </div>
+        <div id="s2-concl" class="concl orange">やる気で押すのでなく、<span class="hl">きっかけが引き金</span>を引く</div>
+      </div></div>
+
+      <!-- S3 二つの系 98.47-145.95 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:56px">脳の<span class="hl">二つの操縦系</span></div>
+        <div id="s3-systems" class="systems">
+          <div id="s3-goal" class="sysbox goal">目標志向<small>報酬を計算して動く（新しい行動はここから）</small></div>
+          <div id="s3-arrow" class="sysarrow">↓ 反復を重ねる ↓</div>
+          <div id="s3-habit" class="sysbox habit">習慣<small>きっかけから自動再生（報酬がなくても回る）</small></div>
+        </div>
+        <div id="s3-concl" class="concl orange">報酬に頼り続ける行動は、<span class="hl">いつまでも習慣にならない</span></div>
+      </div></div>
+
+      <!-- S4 設計 145.95-195.37 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:56px">やる気でなく、<span class="hl">設計</span></div>
+        <div id="s4-tips" class="tips">
+          <div class="tip" id="s4-t1"><div class="tip-n">①</div><div class="tip-t">きっかけを固定する（同じ時間・場所・直前の行動にひもづける）</div></div>
+          <div class="tip" id="s4-t2"><div class="tip-n">②</div><div class="tip-t">行動を小さくする（動き出すまでの摩擦を限界まで減らす）</div></div>
+          <div class="tip" id="s4-t3"><div class="tip-n">③</div><div class="tip-t">ただ回数を重ねる（自動化は意志でなく試行回数で進む）</div></div>
+        </div>
+        <div id="s4-concl" class="concl">意志力の量より、<span class="gn">きっかけの設計</span>が効く</div>
+      </div></div>
+
+      <!-- S5 両刃+3予測 195.37-263 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:20px">
+        <div id="s5-head" class="head" style="font-size:48px">悪癖も同じ機構 ── きっかけを<span class="hl">壊す</span></div>
+        <div id="s5-row" class="row-mid" style="gap:8px">
+          <svg width="150" height="150" viewBox="0 0 280 280" aria-label="rat"><path d="M208,202 Q262,192 248,138" stroke="#c98f9a" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="80" cy="86" r="40" fill="#9a9aa0"/><circle cx="200" cy="86" r="40" fill="#9a9aa0"/><circle cx="80" cy="88" r="22" fill="#d9a6b0"/><circle cx="200" cy="88" r="22" fill="#d9a6b0"/><ellipse cx="140" cy="160" rx="88" ry="80" fill="#aaaab0"/><ellipse cx="140" cy="196" rx="48" ry="40" fill="#c6c6ca"/><circle cx="112" cy="150" r="12" fill="#1d2321"/><circle cx="168" cy="150" r="12" fill="#1d2321"/></svg>
+          <div style="position:relative; width:120px; height:160px;">
+            <svg width="120" height="160" viewBox="0 0 130 190" aria-label="lever"><rect x="54" y="66" width="18" height="105" fill="#b7b2a8"/><rect x="18" y="166" width="94" height="16" rx="4" fill="#b7b2a8"/><line x1="63" y1="74" x2="100" y2="40" stroke="#b0a496" stroke-width="14" stroke-linecap="round"/><circle cx="102" cy="38" r="16" fill="#cbb9a4"/></svg>
+            <div style="position:absolute; left:14px; top:34px; font-weight:900; font-size:84px; color:#d9893b;">✕</div>
+          </div>
+          <div class="badge" style="color:#d9893b; background:#f7ece1;">通知を切る・物理的に遠ざける＝レバーを抜く</div>
+        </div>
+        <div id="s5-sum" class="sum-list">
+          <div class="sum-item" id="s5-i1"><span class="sum-n">①</span> 習慣化はやる気でなく反復回数で進む（報酬に頼る行動は習慣にならない）</div>
+          <div class="sum-item" id="s5-i2"><span class="sum-n">②</span> 定着した習慣は報酬が薄れても回る（悪癖は、きっかけを壊すしかない）</div>
+          <div class="sum-item" id="s5-i3"><span class="sum-n">③</span> 続けたい行動は、きっかけを固定し摩擦を下げるほど定着する</div>
+        </div>
+        <div id="s5-note" class="note">※機構の写像であって効果を保証する理論ではありません。「習慣化に必要な日数」のような具体値は個人差・課題差が大きいため扱いません。ラットのレバー押しを主役に、人の習慣はその応用として読みます。出典：Adams &amp; Dickinson（結果価値低下と習慣）／二重系（目標志向 vs 習慣）。</div>
+        <div id="s5-ask" class="ask">続けたいことは、やる気不足か。それとも<span class="hl">きっかけが未設計</span>か</div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="263" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="47.35" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="50.85" data-duration="45.12" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="98.47" data-duration="44.98" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="145.95" data-duration="46.92" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="195.37" data-duration="64.25" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 (1.0-50.85) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-rat",{opacity:0,scale:0.6},0);
+      tl.set("#s1-lever",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0,y:24},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.8);
+      tl.to("#s1-rat",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},8.0);
+      tl.to("#s1-lever",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.5)"},9.0);
+      tl.to("#s1-rat",{x:18,duration:0.4,yoyo:true,repeat:5,ease:"sine.inOut"},24.46);
+      tl.to("#s1-sub",{opacity:1,y:0,duration:0.6,ease:"power2.out"},31.48);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+        if (s>1) tl.set("#scene"+(s-1),{opacity:0},t+0.6);
+      }
+
+      /* S2 (50.85-98.47) */
+      xfade(2,50.85);
+      tl.set("#s2-head",{opacity:0,y:30},50.85);
+      tl.set("#s2-badge",{opacity:0,y:20},50.85);
+      tl.set("#s2-a",{opacity:0,x:-40},50.85);
+      tl.set("#s2-b",{opacity:0,x:40},50.85);
+      tl.set("#s2-concl",{opacity:0,scale:0.82},50.85);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},52.32);
+      tl.to("#s2-badge",{opacity:1,y:0,duration:0.45,ease:"power2.out"},56.84);
+      tl.to("#s2-a",{opacity:1,x:0,duration:0.55,ease:"power2.out"},63.09);
+      tl.to("#s2-b",{opacity:1,x:0,duration:0.55,ease:"power2.out"},71.41);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},86.28);
+
+      /* S3 (98.47-145.95) */
+      xfade(3,98.47);
+      tl.set("#s3-head",{opacity:0,y:30},98.47);
+      tl.set("#s3-goal",{opacity:0,y:24},98.47);
+      tl.set("#s3-arrow",{opacity:0},98.47);
+      tl.set("#s3-habit",{opacity:0,y:24},98.47);
+      tl.set("#s3-concl",{opacity:0,scale:0.82},98.47);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},99.9);
+      tl.to("#s3-goal",{opacity:1,y:0,duration:0.5,ease:"power3.out"},103.24);
+      tl.to("#s3-arrow",{opacity:1,duration:0.4,ease:"power2.out"},117.75);
+      tl.to("#s3-habit",{opacity:1,y:0,duration:0.5,ease:"back.out(1.5)"},113.65);
+      tl.to("#s3-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},131.44);
+
+      /* S4 (145.95-195.37) */
+      xfade(4,145.95);
+      tl.set("#s4-head",{opacity:0,y:30},145.95);
+      tl.set("#s4-tips .tip",{opacity:0,x:-40},145.95);
+      tl.set("#s4-concl",{opacity:0,scale:0.82},145.95);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},147.38);
+      tl.to("#s4-t1",{opacity:1,x:0,duration:0.5,ease:"power3.out"},156.98);
+      tl.to("#s4-t2",{opacity:1,x:0,duration:0.5,ease:"power3.out"},164.97);
+      tl.to("#s4-t3",{opacity:1,x:0,duration:0.5,ease:"power3.out"},172.25);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},188.65);
+
+      /* S5 (195.37-263) */
+      xfade(5,195.37);
+      tl.set("#s5-head",{opacity:0,y:30},195.37);
+      tl.set("#s5-row",{opacity:0,scale:0.85},195.37);
+      tl.set("#s5-sum .sum-item",{opacity:0,y:22},195.37);
+      tl.set("#s5-note",{opacity:0},195.37);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},195.37);
+      tl.set("#s5-brand",{opacity:0},195.37);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},195.9);
+      tl.to("#s5-row",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},221.99);
+      tl.to("#s5-i1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},199.7);
+      tl.to("#s5-i2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},209.09);
+      tl.to("#s5-i3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.5)"},228.02);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},238.99);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},250.42);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},255.0);
+
+      var GROUPS = [
+        {s:1.1,e:4.48,t:"三日坊主は、意志が弱いからでしょうか。"},
+        {s:4.48,e:8.0,t:"ラットの実験は、別の答えを出します。"},
+        {s:8.0,e:13.01,t:"檻の中のラットに、レバーを押せば餌が出る、と教え込みます。"},
+        {s:13.01,e:20.02,t:"最初、餌をたっぷり与えて空腹でなくしておくと、ラットはレバーを押す回数を減らします。"},
+        {s:20.02,e:22.25,t:"餌が欲しいから押す。"},
+        {s:22.25,e:24.46,t:"目当てがある行動です。"},
+        {s:24.46,e:31.48,t:"ところが、何千回も押させたあとでは、餌の魅力を消しても、ラットはレバーを押し続けます。"},
+        {s:31.48,e:34.52,t:"もう欲しくないのに、手が止まらない。"},
+        {s:34.52,e:41.18,t:"今日はこの、続く、と、やめられない、の正体を、ラットの行動から読み解きます。"},
+        {s:41.18,e:48.3,t:"先に断ると、これは生物学ではなく、続ける仕組みを考えるための比喩、レンズです。"},
+        {s:50.95,e:52.32,t:"一つ目。"},
+        {s:52.32,e:56.84,t:"習慣とは、報酬から行動が切り離されることです。"},
+        {s:56.84,e:63.09,t:"アダムスとディキンソンという、ふたりの研究者が、この境目を実験で示しました。"},
+        {s:63.09,e:68.1,t:"訓練の初めは、餌の価値を下げれば、レバー押しは減ります。"},
+        {s:68.1,e:71.41,t:"報酬を見て、計算しているのです。"},
+        {s:71.41,e:77.1,t:"ところが、過剰に反復したあとでは、餌の価値を下げても、押し続ける。"},
+        {s:77.1,e:83.47,t:"行動が報酬のひもから外れて、レバーという、きっかけへの自動反応になったのです。"},
+        {s:83.47,e:86.28,t:"これが、習慣の正体です。"},
+        {s:86.28,e:88.76,t:"やる気で押しているのではない。"},
+        {s:88.76,e:91.72,t:"きっかけが、引き金を引いている。"},
+        {s:91.72,e:95.92,t:"だから、いちいち考えなくても、回り出すのです。"},
+        {s:98.57,e:99.9,t:"二つ目。"},
+        {s:99.9,e:103.24,t:"脳には、二つの操縦系があります。"},
+        {s:103.24,e:108.0,t:"ひとつは、報酬を計算して動く、目標志向の系。"},
+        {s:108.0,e:113.65,t:"もうひとつは、きっかけから行動へと、自動再生する、習慣の系。"},
+        {s:113.65,e:117.75,t:"新しい行動は、必ず前者から始まります。"},
+        {s:117.75,e:122.46,t:"そして反復を重ねるうちに、後者へと、乗り換わっていく。"},
+        {s:122.46,e:126.09,t:"ここに、通俗論との分かれ道があります。"},
+        {s:126.09,e:131.44,t:"ごほうびや、やる気で動いている行動は、いつまでも前の系のまま。"},
+        {s:131.44,e:137.86,t:"つまり、報酬に頼り続ける行動は、いつまで経っても、習慣にならないのです。"},
+        {s:137.86,e:143.4,t:"定着した習慣は、報酬がなくても、考えなくても、回ります。"},
+        {s:146.05,e:147.38,t:"三つ目。"},
+        {s:147.38,e:152.28,t:"だとすれば、続けるコツは、やる気ではなく、設計です。"},
+        {s:152.28,e:154.13,t:"鍵は、三つ。"},
+        {s:154.13,e:156.98,t:"ひとつ、きっかけを固定する。"},
+        {s:156.98,e:161.9,t:"同じ時間、同じ場所、同じ直前の行動にひもづける。"},
+        {s:161.9,e:164.97,t:"歯磨きのあとに必ず、のように。"},
+        {s:164.97,e:167.87,t:"ふたつ、行動を小さくする。"},
+        {s:167.87,e:172.25,t:"きっかけから動き出すまでの摩擦を、限界まで減らす。"},
+        {s:172.25,e:175.28,t:"みっつ、ただ回数を重ねる。"},
+        {s:175.28,e:180.44,t:"自動化は、意志の強さではなく、試行の回数で進みます。"},
+        {s:180.44,e:184.46,t:"たまに当たるごほうびは、始めの一歩を助けます。"},
+        {s:184.46,e:188.65,t:"けれど、定着させるのは、きっかけと反復です。"},
+        {s:188.65,e:192.81,t:"意志力の量より、きっかけの設計が、効くのです。"},
+        {s:195.47,e:199.7,t:"最後に、通俗論と分かれる、三つの予測です。"},
+        {s:199.7,e:204.88,t:"ひとつ、習慣化は、やる気でなく、反復回数で進む。"},
+        {s:204.88,e:209.09,t:"報酬に頼り続ける行動は、習慣になりません。"},
+        {s:209.09,e:214.44,t:"ふたつ、定着した習慣は、報酬が薄れても、回り続ける。"},
+        {s:214.44,e:218.32,t:"だから悪癖は、もう楽しくなくても消えない。"},
+        {s:218.32,e:221.99,t:"意志ではなく、きっかけを壊すしかありません。"},
+        {s:221.99,e:225.2,t:"通知を切る、物理的に遠ざける。"},
+        {s:225.2,e:228.02,t:"ラットから、レバーを抜くように。"},
+        {s:228.02,e:234.68,t:"みっつ、続けたい行動は、きっかけを固定し、摩擦を下げるほど、定着する。"},
+        {s:234.68,e:238.99,t:"続ける力は、根性ではなく、仕組みでつくる。"},
+        {s:238.99,e:244.54,t:"なお、これは機構の写像であって、効果を保証する理論ではありません。"},
+        {s:244.54,e:250.42,t:"ラットのレバー押しを主役に、人の習慣は、その応用として読んでいます。"},
+        {s:250.42,e:254.56,t:"あなたが続けたいことは、やる気が足りないのでしょうか。"},
+        {s:254.56,e:259.56,t:"それとも、きっかけが、まだ設計されていないだけ、でしょうか。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
