@@ -67,3 +67,19 @@ scripts/threads/queue.json
 # _*.json = フック一括importのローカル作業ファイル(_hooks_import.json 等)。
 scripts/threads/_*.json
 # .env / .env.* は上の秘密ルールで既にグローバル無視（.env.example のみ追跡）。
+
+# --- 動画/音声レンダー成果物（YouTube が本拠地・git 履歴肥大回避・2026-07-18） ---
+*.mp4
+*.wav
+*.mp3
+renders/
+
+# --- AI ツール dir（公開 repo に含めない・2026-07-18） ---
+.agents/
+.claude/
+.codex/
+
+# --- note 運用/戦略・Threads 運用（価格/内部戦略・既存 privatize 方針の穴埋め・2026-07-18） ---
+docs/note運用.md
+scripts/threads/
+note-embed/HANDOFF-shindan.md

@@ -1,0 +1,82 @@
+<svg viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>発信ループが回した実績（生産は本物・反応は進行中）</title>
+  <desc>★5改善ループ用の静止画インサート。上段=ループが生産した本物の数字（記事38/動画38/§0検品FAIL0/SNS下書き32記事分）、下段=市場反応は進行中で数字を作らない（診断完了数=未計測・YouTube=0・note会員=launch段階）。§0憲法に従い output と reaction を分けて正直に出す。</desc>
+  <style>
+    text{font-family:system-ui,'Segoe UI','Hiragino Sans','Noto Sans JP',sans-serif;}
+    .ttl{font-weight:800;font-size:54px;fill:#1d2321;}
+    .sub{font-size:27px;fill:#5a5a55;}
+    .secG{font-weight:700;font-size:30px;fill:#0F6E56;}
+    .secN{font-weight:700;font-size:30px;fill:#8a8276;}
+    .num{font-weight:800;font-size:104px;fill:#0F6E56;}
+    .numU{font-weight:700;font-size:34px;fill:#0F6E56;}
+    .tlab{font-weight:700;font-size:31px;fill:#1d2321;}
+    .tsub{font-size:21px;fill:#5a5a55;}
+    .rlab{font-weight:700;font-size:32px;fill:#1d2321;}
+    .rval{font-size:30px;fill:#7a746a;}
+    .pill{font-weight:700;font-size:22px;fill:#8a6d1e;}
+    .foot{font-size:25px;fill:#5a5a55;}
+  </style>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="#faf8f4"/>
+
+  <!-- header -->
+  <text class="ttl" x="100" y="92">発信ループが回した実績</text>
+  <text class="sub" x="103" y="138">「作った量（output）」＝本物。市場の反応とは分けて、正直に出す。</text>
+
+  <!-- ===== 上段：本物の数字（output） ===== -->
+  <rect x="100" y="180" width="1720" height="378" rx="18" fill="#ffffff" stroke="#1D9E75" stroke-width="2.5"/>
+  <text class="secG" x="132" y="228">✅ 本物の数字 — ループが生産した量（2026-06 時点）</text>
+
+  <!-- tiles -->
+  <g>
+    <rect x="130" y="256" width="385" height="276" rx="12" fill="#E1F5EE"/>
+    <text class="num"  x="322" y="392" text-anchor="middle">38<tspan class="numU"> 本</tspan></text>
+    <text class="tlab" x="322" y="452" text-anchor="middle">記事</text>
+    <text class="tsub" x="322" y="492" text-anchor="middle">Content Collections（site/）</text>
+  </g>
+  <g>
+    <rect x="555" y="256" width="385" height="276" rx="12" fill="#E1F5EE"/>
+    <text class="num"  x="747" y="392" text-anchor="middle">38<tspan class="numU"> 本</tspan></text>
+    <text class="tlab" x="747" y="452" text-anchor="middle">動画</text>
+    <text class="tsub" x="747" y="492" text-anchor="middle">解説 17 ＋ ショート 21</text>
+  </g>
+  <g>
+    <rect x="980" y="256" width="385" height="276" rx="12" fill="#E1F5EE"/>
+    <text class="num"  x="1172" y="392" text-anchor="middle">0<tspan class="numU"> FAIL</tspan></text>
+    <text class="tlab" x="1172" y="452" text-anchor="middle">§0 自動検品（全38本）</text>
+    <text class="tsub" x="1172" y="492" text-anchor="middle">WARN 0・verify-article.py</text>
+  </g>
+  <g>
+    <rect x="1405" y="256" width="385" height="276" rx="12" fill="#E1F5EE"/>
+    <text class="num"  x="1597" y="392" text-anchor="middle">32<tspan class="numU"> 記事分</tspan></text>
+    <text class="tlab" x="1597" y="452" text-anchor="middle">SNS 告知下書き</text>
+    <text class="tsub" x="1597" y="492" text-anchor="middle">×3ch（X / Threads / LinkedIn）</text>
+  </g>
+
+  <!-- ===== 下段：市場反応＝進行中 ===== -->
+  <rect x="100" y="586" width="1720" height="270" rx="18" fill="#ffffff" stroke="#c3bcad" stroke-width="2"/>
+  <text class="secN" x="132" y="634">🔄 市場の反応 — 進行中（数字は作らない＝§0）</text>
+
+  <!-- rows -->
+  <g>
+    <text class="rlab" x="140" y="700">診断 完了数</text>
+    <text class="rval" x="560" y="700">未計測（¥0・完全静的の設計）</text>
+    <rect x="1560" y="676" width="118" height="34" rx="17" fill="#F4ECD2"/>
+    <text class="pill" x="1619" y="700" text-anchor="middle">進行中</text>
+  </g>
+  <g>
+    <text class="rlab" x="140" y="758">YouTube 視聴</text>
+    <text class="rval" x="560" y="758">0（チャンネル開設 6/22 予定）</text>
+    <rect x="1560" y="734" width="118" height="34" rx="17" fill="#F4ECD2"/>
+    <text class="pill" x="1619" y="758" text-anchor="middle">進行中</text>
+  </g>
+  <g>
+    <text class="rlab" x="140" y="816">note 会員 / 購入</text>
+    <text class="rval" x="560" y="816">launch 段階</text>
+    <rect x="1560" y="792" width="118" height="34" rx="17" fill="#F4ECD2"/>
+    <text class="pill" x="1619" y="816" text-anchor="middle">進行中</text>
+  </g>
+
+  <!-- footer §0 -->
+  <text class="foot" x="100" y="930">§0：これは実測モデルでなく仮説生成ツール。生産は本物・反応は進行中。<tspan font-weight="700" fill="#1d2321">盛らないことが、信頼の条件。</tspan></text>
+</svg>

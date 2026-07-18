@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 70px 120px 185px;
+        gap: 32px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.14em;
+        background: #e6efe9; padding: 8px 28px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 72px; line-height: 1.3; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1250px; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 44px; color: #2f6f4f; background: #e6efe9;
+        padding: 14px 40px; border-radius: 999px; }
+
+      /* S2 情報フロー断絶 */
+      .flow { display: flex; align-items: center; gap: 40px; justify-content: center; }
+      .fbox { background: #fff; border: 2px solid #e3e0d8; border-radius: 18px; padding: 28px 34px; width: 380px; }
+      .fbox .ft { font-weight: 900; font-size: 40px; color: #1d2321; }
+      .fbox .fs { font-weight: 600; font-size: 28px; color: #6b7370; margin-top: 8px; line-height: 1.4; }
+      .fbox.top { border-color: #c9b9a4; }
+      .wall { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+      .wall-x { font-weight: 900; font-size: 72px; color: #d9893b; line-height: 1; }
+      .wall-l { font-weight: 800; font-size: 26px; color: #d9893b; }
+
+      /* S3 右下がりグラフ + 3劣化 */
+      .graph-row { display: flex; align-items: center; gap: 56px; justify-content: center; }
+      .graph { width: 820px; height: 470px; }
+      .axis { stroke: #6b7370; stroke-width: 3; }
+      .curveDown { fill: none; stroke: #2f6f4f; stroke-width: 10; stroke-linecap: round; }
+      .glabel { font-family: "Noto Sans JP", sans-serif; font-size: 30px; font-weight: 700; }
+      .deg-list { display: flex; flex-direction: column; gap: 20px; text-align: left; width: 480px; }
+      .deg-item { display: flex; align-items: center; gap: 20px; font-weight: 800; font-size: 38px; color: #1d2321; }
+      .deg-x { color: #d9893b; font-weight: 900; font-size: 44px; }
+
+      /* S4 Edmondson 2x2 */
+      .matrix-wrap { display: flex; align-items: center; gap: 26px; }
+      .yax { font-weight: 800; font-size: 28px; color: #6b7370; writing-mode: vertical-rl; }
+      .mcol { display: flex; flex-direction: column; gap: 14px; }
+      .matrix { display: grid; grid-template-columns: 300px 300px; grid-template-rows: 170px 170px; gap: 16px; }
+      .quad { border-radius: 16px; padding: 22px 26px; background: #fff; border: 2px solid #e3e0d8;
+        display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+      .quad-n { font-weight: 900; font-size: 36px; color: #1d2321; }
+      .quad-s { font-weight: 600; font-size: 24px; color: #6b7370; }
+      .quad.learn { background: #2f6f4f; border-color: #2f6f4f; }
+      .quad.learn .quad-n { color: #fff; }
+      .quad.learn .quad-s { color: #cfe3d8; }
+      .xax { font-weight: 800; font-size: 28px; color: #6b7370; }
+
+      /* S5 効く/効かない */
+      .split { display: flex; gap: 44px; justify-content: center; align-items: stretch; }
+      .col { border-radius: 22px; padding: 32px 40px; width: 560px; display: flex; flex-direction: column; gap: 16px; }
+      .col.eff { background: #fff; border: 2px solid #e3e0d8; }
+      .col.noeff { background: #e6efe9; }
+      .col-head { font-weight: 900; font-size: 40px; }
+      .col.eff .col-head { color: #6b7370; }
+      .col.noeff .col-head { color: #2f6f4f; }
+      .col-item { font-weight: 700; font-size: 36px; color: #1d2321; line-height: 1.4; }
+      .ask { font-weight: 900; font-size: 48px; color: #1d2321; }
+      .brand { font-weight: 800; font-size: 32px; color: #2f6f4f; }
+      .note { font-size: 26px; color: #6b7370; max-width: 1250px; line-height: 1.5; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="160">
+
+      <!-- S1 フック 1.0-28.2 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">恐怖 ⇄ 学習</div>
+        <div id="s1-head" class="head"><span class="hl">悪い知らせ</span>が上がらない組織</div>
+        <div id="s1-char"><svg width="230" height="230" viewBox="0 0 280 280" aria-label="ant">
+          <path d="M120,66 Q104,28 88,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M160,66 Q176,28 192,18" stroke="#5a2d1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M108,150 L60,130 M108,165 L58,170 M108,180 L64,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <path d="M172,150 L220,130 M172,165 L222,170 M172,180 L216,205" stroke="#5a2d1a" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="140" cy="226" rx="50" ry="50" fill="#6b3320"/>
+          <ellipse cx="140" cy="150" rx="38" ry="42" fill="#8a4528"/>
+          <circle cx="140" cy="80" r="42" fill="#7a3b22"/>
+          <circle cx="125" cy="75" r="8" fill="#fff"/><circle cx="155" cy="75" r="8" fill="#fff"/>
+          <circle cx="126" cy="76" r="4" fill="#1d2321"/><circle cx="154" cy="76" r="4" fill="#1d2321"/>
+        </svg></div>
+        <div id="s1-sub" class="sub">恐怖が高い群れでは、誰も実験せず、最も価値ある情報＝失敗が、隠される</div>
+      </div></div>
+
+      <!-- S2 Nokia 28.2-57.1 -->
+      <div id="scene2" class="scene"><div class="scene-content">
+        <div id="s2-head" class="head" style="font-size:62px">Nokia ── <span class="hl">恐怖が情報を止めた</span></div>
+        <div id="s2-flow" class="flow">
+          <div class="fbox" id="s2-f1"><div class="ft">現場</div><div class="fs">不利な現実に気づいている</div></div>
+          <div class="wall" id="s2-wall"><div class="wall-x">✕</div><div class="wall-l">叱責への恐怖</div></div>
+          <div class="fbox top" id="s2-f2"><div class="ft">トップ</div><div class="fs">現場が見えない</div></div>
+        </div>
+        <div id="s2-concl" class="concl">中間管理職が叱責を恐れ、<span class="hl">率直に伝えられない</span></div>
+      </div></div>
+
+      <!-- S3 3つの劣化 57.1-84.7 -->
+      <div id="scene3" class="scene"><div class="scene-content">
+        <div id="s3-head" class="head" style="font-size:60px">恐怖は<span class="hl">"同時に"</span>3つを殺す</div>
+        <div id="s3-row" class="graph-row">
+          <svg id="s3-graph" class="graph" viewBox="0 0 760 480">
+            <line class="axis" x1="90" y1="40" x2="90" y2="420" />
+            <line class="axis" x1="90" y1="420" x2="710" y2="420" />
+            <text class="glabel" x="28" y="50" fill="#2f6f4f">学習</text>
+            <text class="glabel" x="600" y="465" fill="#d9893b">恐怖 →</text>
+            <path id="s3-curve" class="curveDown" d="M115,80 C320,100 430,380 700,408" />
+          </svg>
+          <div class="deg-list" id="s3-degs">
+            <div class="deg-item" id="s3-d1"><span class="deg-x">✕</span> 探索を止める</div>
+            <div class="deg-item" id="s3-d2"><span class="deg-x">✕</span> 長期を軽視する</div>
+            <div class="deg-item" id="s3-d3"><span class="deg-x">✕</span> 習慣へ退行する</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S4 心理的安全性 2x2 84.7-118.1 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:58px">高い基準 <span class="gn">×</span> 高い安全</div>
+        <div id="s4-matrix" class="matrix-wrap">
+          <div class="yax">基準　高 →</div>
+          <div class="mcol">
+            <div class="matrix">
+              <div class="quad" id="s4-q1"><div class="quad-n">不安</div><div class="quad-s">高基準・低安全</div></div>
+              <div class="quad learn" id="s4-q2"><div class="quad-n">学習</div><div class="quad-s">率直・失敗から学ぶ</div></div>
+              <div class="quad" id="s4-q3"><div class="quad-n">無関心</div><div class="quad-s">低基準・低安全</div></div>
+              <div class="quad" id="s4-q4"><div class="quad-n">快適</div><div class="quad-s">低基準・高安全</div></div>
+            </div>
+            <div class="xax">心理的安全性　高 →</div>
+          </div>
+        </div>
+        <div id="s4-concl" class="concl">恐怖は下げ、<span class="hl">説明責任は保つ</span>（Google）</div>
+      </div></div>
+
+      <!-- S5 効く/効かない 118.1-160 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:28px">
+        <div id="s5-head" class="head" style="font-size:56px">恐怖は、ここまで</div>
+        <div id="s5-split" class="split">
+          <div class="col eff" id="s5-eff">
+            <div class="col-head">効く</div>
+            <div class="col-item">不誠実・不作為・規律違反</div>
+          </div>
+          <div class="col noeff" id="s5-noeff">
+            <div class="col-head">効かない</div>
+            <div class="col-item gn" style="font-weight:900">創意 ／ 率直さ ／ 主体性</div>
+          </div>
+        </div>
+        <div id="s5-ask" class="ask">知識労働の大半は、恐怖の<span class="hl">"外側"</span></div>
+        <div id="s5-brand" class="brand">動物から組織を読む ── 詳しくは概要欄の記事へ</div>
+        <div id="s5-note" class="note">※理論の型が事例に見えるという挿絵で、単一原因の断定ではありません。出典：Vuori &amp; Huy (2016)／Edmondson／Google re:Work。</div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="160" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="24.67" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="28.2" data-duration="26.4" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="57.1" data-duration="25.1" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="84.7" data-duration="30.91" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="118.1" data-duration="38.81" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      /* S1 フック (1.0-28.2) — cue: 価値ある情報13.75 / 隠れる18.53 */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-head",{opacity:0,y:40},0);
+      tl.set("#s1-char",{opacity:0,scale:0.6},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-head",{opacity:1,y:0,duration:0.7,ease:"power3.out"},1.5);
+      tl.to("#s1-char",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.5)"},2.4);
+      tl.to("#s1-char",{scale:0.92,y:12,duration:0.9,ease:"power2.inOut",yoyo:true,repeat:1},8.2);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},13.8);
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S2 Nokia (28.2-57.1) — cue: 現場31.72 / 叱責38.55 / 止めた51.03 */
+      xfade(2,28.2);
+      tl.set("#s2-head",{opacity:0,y:30},28.2);
+      tl.set("#s2-f1",{opacity:0,x:-50},28.2);
+      tl.set("#s2-wall",{opacity:0,scale:0.5},28.2);
+      tl.set("#s2-f2",{opacity:0,x:50},28.2);
+      tl.set("#s2-concl",{opacity:0,scale:0.8},28.2);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},28.7);
+      tl.to("#s2-f1",{opacity:1,x:0,duration:0.5,ease:"power2.out"},31.7);
+      tl.to("#s2-f2",{opacity:1,x:0,duration:0.5,ease:"power2.out"},33.0);
+      tl.to("#s2-wall",{opacity:1,scale:1,duration:0.5,ease:"back.out(2)"},38.6);
+      tl.to("#s2-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},51.0);
+
+      /* S3 3劣化 (57.1-84.7) — cue: 探索62.87 / 長期65.91 / 習慣69.04 / グラフ75.76 */
+      xfade(3,57.1);
+      tl.set("#s3-head",{opacity:0,y:30},57.1);
+      tl.set("#s3-degs .deg-item",{opacity:0,x:40},57.1);
+      tl.set("#s3-curve",{strokeDasharray:1200,strokeDashoffset:1200},57.1);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},57.6);
+      tl.to("#s3-d1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},62.9);
+      tl.to("#s3-d2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},65.9);
+      tl.to("#s3-d3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.6)"},69.0);
+      tl.to("#s3-curve",{strokeDashoffset:0,duration:3.0,ease:"power1.inOut"},75.8);
+
+      /* S4 心理的安全性 (84.7-118.1) — cue: 安全性結論87.2 / 高基準高安全103.72 / 別物112.93 */
+      xfade(4,84.7);
+      tl.set("#s4-head",{opacity:0,y:30},84.7);
+      tl.set("#s4-matrix .quad",{opacity:0,scale:0.8},84.7);
+      tl.set("#s4-concl",{opacity:0,scale:0.8},84.7);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},85.2);
+      tl.to("#s4-q3",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.6)"},87.4);
+      tl.to("#s4-q1",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.6)"},88.4);
+      tl.to("#s4-q4",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.6)"},89.4);
+      tl.to("#s4-q2",{opacity:1,scale:1,duration:0.55,ease:"back.out(2)"},103.7);
+      tl.to("#s4-concl",{opacity:1,scale:1,duration:0.5,ease:"back.out(1.8)"},112.9);
+
+      /* S5 効く/効かない (118.1-160) — cue: 課長118.2 / 効く135.08 / 効かない138.59 / 外側143.94 / §0注149.68 */
+      xfade(5,118.1);
+      tl.set("#s5-head",{opacity:0,y:30},118.1);
+      tl.set("#s5-eff",{opacity:0,x:-40},118.1);
+      tl.set("#s5-noeff",{opacity:0,x:40},118.1);
+      tl.set("#s5-ask",{opacity:0,scale:0.85},118.1);
+      tl.set("#s5-brand",{opacity:0},118.1);
+      tl.set("#s5-note",{opacity:0},118.1);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.55,ease:"power3.out"},118.4);
+      tl.to("#s5-eff",{opacity:1,x:0,duration:0.55,ease:"power2.out"},135.1);
+      tl.to("#s5-noeff",{opacity:1,x:0,duration:0.55,ease:"power2.out"},138.6);
+      tl.to("#s5-ask",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},143.9);
+      tl.to("#s5-note",{opacity:1,duration:0.5,ease:"power1.out"},149.7);
+      tl.to("#s5-brand",{opacity:1,duration:0.5,ease:"power1.out"},152.5);
+
+      var GROUPS = [
+        {s:1.1,e:8.09,t:"組織の最重要メカニズムを一つ挙げるなら、恐怖と学習はトレードオフだ、ということです。"},
+        {s:8.09,e:13.75,t:"恐怖が高い群れでは、誰も実験せず、誰も悪い知らせを上げません。"},
+        {s:13.75,e:18.53,t:"悪い知らせとは、組織にとって最も価値のある情報です。"},
+        {s:18.53,e:21.03,t:"それが、上がってこなくなる。"},
+        {s:21.03,e:25.62,t:"硬直した組織の正体は、多くの場合、これです。"},
+        {s:28.3,e:31.72,t:"かつて携帯電話の王者だった、ノキア。"},
+        {s:31.72,e:38.55,t:"スマートフォン競争に敗れた理由を、ある研究は、組織内の恐怖の感情に求めました。"},
+        {s:38.55,e:46.84,t:"中間管理職は、上司の激しい叱責を恐れ、技術的に不利な現実を、率直に伝えられなかった。"},
+        {s:46.84,e:51.03,t:"トップには現場が見えず、現場は声を上げられない。"},
+        {s:51.03,e:54.54,t:"恐怖が、情報の流れを止めたのです。"},
+        {s:57.2,e:60.91,t:"恐怖は、単にやる気を下げるのではありません。"},
+        {s:60.91,e:62.87,t:"もっと厄介です。"},
+        {s:62.87,e:65.91,t:"視野を狭め、探索を止める。"},
+        {s:65.91,e:69.04,t:"近視眼になり、長期を軽視する。"},
+        {s:69.04,e:72.45,t:"そして、慣れた習慣へと退行する。"},
+        {s:72.45,e:75.76,t:"この三つの劣化を、同時に起こします。"},
+        {s:75.76,e:82.15,t:"選択肢が縮んだ盤の上で、組織は、目先の局所最適に固まっていきます。"},
+        {s:84.8,e:87.2,t:"逆向きの証拠もあります。"},
+        {s:87.2,e:98.15,t:"グーグルのプロジェクト、アリストテレスは、高業績チームを分ける最大の要因が、個々の優秀さではなく、心理的安全性だと結論づけました。"},
+        {s:98.15,e:103.72,t:"率直に発言し、失敗を認めても罰されない、という感覚です。"},
+        {s:103.72,e:108.14,t:"狙うのは、高い基準と、高い安全の両立。"},
+        {s:108.14,e:112.93,t:"失敗への恐怖は下げ、結果への説明責任は保つ。"},
+        {s:112.93,e:115.56,t:"この二つは、別物です。"},
+        {s:118.2,e:123.29,t:"ある製造業の課長が、ミスをした部下を、全員の前で詰める。"},
+        {s:123.29,e:126.55,t:"短期的には、現場は引き締まります。"},
+        {s:126.55,e:131.18,t:"けれど翌週から、小さな異常は、報告されなくなる。"},
+        {s:131.18,e:135.08,t:"大事故の芽が、見えない場所で育ち始めます。"},
+        {s:135.08,e:138.59,t:"恐怖は、不誠実や不作為には効く。"},
+        {s:138.59,e:143.94,t:"けれど、創意や率直さ、主体性には、原理的に効きません。"},
+        {s:143.94,e:149.68,t:"知識労働の大半は、恐怖の正当な使用域の、外側にあります。"},
+        {s:149.68,e:156.87,t:"なお、これは理論の型が事例に見えるという挿絵で、単一の原因を断定するものではありません。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body { margin: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: #faf8f4; font-family: "Noto Sans JP", sans-serif; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+        overflow: hidden; background: #faf8f4; }
+      #scene1 { z-index: 1; }
+      #scene2 { z-index: 2; opacity: 0; } #scene3 { z-index: 3; opacity: 0; }
+      #scene4 { z-index: 4; opacity: 0; } #scene5 { z-index: 5; opacity: 0; }
+      #scene6 { z-index: 6; opacity: 0; } #scene7 { z-index: 7; opacity: 0; }
+      .scene-content { display: flex; flex-direction: column; justify-content: center;
+        align-items: center; width: 100%; height: 100%; padding: 64px 120px 185px;
+        gap: 26px; box-sizing: border-box; text-align: center; }
+      .kicker { font-weight: 800; font-size: 30px; color: #2f6f4f; letter-spacing: 0.10em;
+        background: #e6efe9; padding: 9px 30px; border-radius: 999px; }
+      .head { font-weight: 900; font-size: 64px; line-height: 1.28; color: #1d2321; letter-spacing: -0.02em; }
+      .sub { font-weight: 600; font-size: 36px; color: #6b7370; max-width: 1300px; line-height: 1.4; }
+      .hl { color: #d9893b; }
+      .gn { color: #2f6f4f; }
+      .concl { font-weight: 800; font-size: 40px; color: #2f6f4f; background: #e6efe9;
+        padding: 13px 38px; border-radius: 999px; }
+
+      /* ブラウザ風カード（実プロダクト画面） */
+      .device { background: #fff; border: 1px solid #e3e0d8; border-radius: 18px;
+        box-shadow: 0 26px 64px rgba(29,35,33,0.13); overflow: hidden; }
+      .device-bar { height: 42px; background: #eef0ec; display: flex; align-items: center;
+        gap: 9px; padding: 0 20px; border-bottom: 1px solid #e3e0d8; }
+      .dot { width: 13px; height: 13px; border-radius: 50%; }
+      .device-url { margin-left: 16px; font-size: 21px; font-weight: 700; color: #6b7370; letter-spacing: 0.01em; }
+      .device img { display: block; width: 1180px; height: auto; }
+      #s5-dev img { width: 1040px; } /* S5はファネルと同居で最密→画面を少し縮める */
+
+      /* S1 痛点 */
+      .pains { display: flex; flex-direction: column; gap: 15px; }
+      .pain { font-weight: 900; font-size: 46px; color: #1d2321; background: #fff;
+        border: 2px solid #e3e0d8; border-left: 8px solid #d9893b; border-radius: 14px;
+        padding: 14px 40px; min-width: 760px; }
+
+      /* S4 自動化範囲図 */
+      .auto-row { display: flex; gap: 40px; justify-content: center; align-items: stretch; }
+      .auto-col { width: 720px; border-radius: 22px; padding: 30px 38px; display: flex;
+        flex-direction: column; gap: 18px; }
+      .auto-col.full { background: #e6efe9; border: 2px solid #2f6f4f; }
+      .auto-col.human { background: #fff; border: 2px solid #d9893b; }
+      .ac-tag { font-weight: 900; font-size: 34px; }
+      .auto-col.full .ac-tag { color: #2f6f4f; }
+      .auto-col.human .ac-tag { color: #d9893b; }
+      .ac-flow { display: flex; flex-wrap: wrap; gap: 10px 8px; justify-content: center; }
+      .chip { font-weight: 800; font-size: 30px; color: #1d2321; background: #fff;
+        border: 2px solid #cfe0d6; border-radius: 12px; padding: 9px 20px; }
+      .auto-col.human .chip { border-color: #efd6bd; background: #fdf6ee; }
+      .ac-note { font-weight: 800; font-size: 28px; }
+      .auto-col.full .ac-note { color: #2f6f4f; }
+      .auto-col.human .ac-note { color: #d9893b; }
+
+      /* S5 ファネル */
+      .funnel { display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap; max-width: 1500px; }
+      .fstep { font-weight: 900; font-size: 33px; color: #1d2321; background: #fff;
+        border: 2px solid #e3e0d8; border-radius: 14px; padding: 14px 26px; }
+      .fstep.free { border-color: #2f6f4f; background: #e6efe9; color: #2f6f4f; }
+      .farrow { font-weight: 900; font-size: 34px; color: #c9b9a4; }
+
+      /* S6 反応 */
+      .stats { display: flex; gap: 30px; justify-content: center; }
+      .stat { width: 360px; background: #fff; border: 2px solid #e3e0d8; border-radius: 18px;
+        padding: 26px 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+      .st-label { font-weight: 800; font-size: 32px; color: #6b7370; }
+      .st-val { font-weight: 900; font-size: 40px; color: #2f6f4f; }
+      .prog { display: inline-block; font-weight: 900; font-size: 30px; color: #d9893b;
+        background: #f6e3d3; border-radius: 999px; padding: 8px 30px; }
+
+      /* S7 §0 + endcard */
+      .brand { font-weight: 900; font-size: 44px; color: #2f6f4f; }
+      .note { font-size: 28px; color: #6b7370; max-width: 1320px; line-height: 1.5; }
+      .endcard { display: flex; flex-direction: column; gap: 10px; align-items: center;
+        background: #1d2321; border-radius: 20px; padding: 28px 56px; }
+      .ec-line { font-weight: 800; font-size: 32px; color: #faf8f4; letter-spacing: 0.01em; }
+      .ec-line .u { color: #8fd0ac; }
+      .ec-badge { font-weight: 900; font-size: 28px; color: #1d2321; background: #8fd0ac; border-radius: 999px; padding: 7px 26px; margin-top: 4px; }
+
+      /* 字幕 */
+      #caps { position: absolute; left: 0; bottom: 52px; width: 1920px; z-index: 50;
+        display: flex; justify-content: center; pointer-events: none; }
+      .cap { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: fit-content;
+        max-width: 1560px; padding: 16px 42px; background: rgba(29,35,33,0.82); border-radius: 16px;
+        color: #fff; font-weight: 700; font-size: 40px; line-height: 1.45; text-align: center;
+        opacity: 0; visibility: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080"
+         data-start="0" data-duration="174">
+
+      <!-- S1 課題 1.0-24.86 -->
+      <div id="scene1" class="scene"><div class="scene-content">
+        <div id="s1-kicker" class="kicker">建設の現場AI診断 ── 固定費¥0・人手0・3分</div>
+        <div id="s1-pains" class="pains">
+          <div class="pain" id="s1-p1">「言わないと動かない」</div>
+          <div class="pain" id="s1-p2">「若手がすぐ辞める」</div>
+          <div class="pain" id="s1-p3">「ヒヤリが上がってこない」</div>
+        </div>
+        <div id="s1-sub" class="sub">性格ではなく、<span class="gn">群れの設計</span>の問題かもしれない。</div>
+      </div></div>
+
+      <!-- S2 診断ライブ 24.86-53.12 -->
+      <div id="scene2" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s2-head" class="head" style="font-size:50px">15問・60秒・登録不要・<span class="gn">無料</span></div>
+        <div id="s2-dev" class="device">
+          <div class="device-bar"><span class="dot" style="background:#e3837a"></span><span class="dot" style="background:#e6c24e"></span><span class="dot" style="background:#7bbf86"></span><span class="device-url">zumenseki.github.io/doubutsu-soshikiron/shindan</span></div>
+          <img src="assets/01-intro.png" alt="診断トップ" />
+        </div>
+      </div></div>
+
+      <!-- S3 カルテ 53.12-86.03 -->
+      <div id="scene3" class="scene"><div class="scene-content" style="gap:22px">
+        <div id="s3-head" class="head" style="font-size:48px">結果は<span class="hl">7タイプ</span>＋4軸レーダー＝<span class="gn">自動カルテ</span></div>
+        <div id="s3-dev" class="device">
+          <div class="device-bar"><span class="dot" style="background:#e3837a"></span><span class="dot" style="background:#e6c24e"></span><span class="dot" style="background:#7bbf86"></span><span class="device-url">恐怖ハイエナ型 ── 弱点と打ち手まで自動生成</span></div>
+          <img src="assets/03-result-card.png" alt="診断カルテ" />
+        </div>
+      </div></div>
+
+      <!-- S4 自動化範囲図 86.03-106.99 -->
+      <div id="scene4" class="scene"><div class="scene-content">
+        <div id="s4-head" class="head" style="font-size:52px">どこを<span class="gn">自動</span>に、どこに<span class="hl">人</span>を残したか</div>
+        <div id="s4-row" class="auto-row">
+          <div class="auto-col full" id="s4-full">
+            <div class="ac-tag">全自動 ・ API不要 ・ ¥0</div>
+            <div class="ac-flow">
+              <span class="chip">採点</span><span class="chip">判定</span><span class="chip">カルテ生成</span><span class="chip">キット提示</span>
+            </div>
+            <div class="ac-note">サーバもAIも使わず、ブラウザ内で完結</div>
+          </div>
+          <div class="auto-col human" id="s4-human">
+            <div class="ac-tag">あえて人を残す</div>
+            <div class="ac-flow">
+              <span class="chip">個別相談</span><span class="chip">研修</span>
+            </div>
+            <div class="ac-note">＝ここが稼ぎ頭</div>
+          </div>
+        </div>
+      </div></div>
+
+      <!-- S5 価値の届け方 106.99-128.46 -->
+      <div id="scene5" class="scene"><div class="scene-content" style="gap:20px">
+        <div id="s5-head" class="head" style="font-size:48px">無料診断から、<span class="gn">明日使える道具</span>へ</div>
+        <div id="s5-dev" class="device">
+          <div class="device-bar"><span class="dot" style="background:#e3837a"></span><span class="dot" style="background:#e6c24e"></span><span class="dot" style="background:#7bbf86"></span><span class="device-url">この型の実務キット → 記事・相談へ</span></div>
+          <img src="assets/04-result-kit.png" alt="実務キットとCTA" />
+        </div>
+        <div id="s5-funnel" class="funnel">
+          <span class="fstep free">無料診断</span><span class="farrow">→</span>
+          <span class="fstep">記事・キット</span><span class="farrow">→</span>
+          <span class="fstep">個別相談</span><span class="farrow">→</span>
+          <span class="fstep">研修</span>
+        </div>
+      </div></div>
+
+      <!-- S6 反応 128.46-149.82 -->
+      <div id="scene6" class="scene"><div class="scene-content">
+        <div id="s6-head" class="head" style="font-size:54px">公開して<span class="hl">終わりにしない</span></div>
+        <div id="s6-sub" class="sub">建設の関係者へ直接届け、使われる兆しを追う。</div>
+        <div id="s6-stats" class="stats">
+          <div class="stat" id="s6-st1"><div class="st-label">診断完了</div><div class="st-val">◯件</div></div>
+          <div class="stat" id="s6-st2"><div class="st-label">相談</div><div class="st-val">◯件</div></div>
+          <div class="stat" id="s6-st3"><div class="st-label">購入</div><div class="st-val">◯件</div></div>
+        </div>
+        <div id="s6-prog" class="prog">数字は現在進行中 ── 盛らずに正直に</div>
+      </div></div>
+
+      <!-- S7 §0 + endcard 149.82-174 -->
+      <div id="scene7" class="scene"><div class="scene-content" style="gap:24px">
+        <div id="s7-head" class="head" style="font-size:50px">係数を当てたモデルでは<span class="hl">ない</span></div>
+        <div id="s7-note" class="note">行動学の知見で<span class="gn">"仮説を立てる"</span>道具です。だから誇張せず、現場で確かめながら直していきます。</div>
+        <div id="s7-brand" class="brand">動物から、組織を読む</div>
+        <div id="s7-end" class="endcard">
+          <div class="ec-line">診断 ▸ <span class="u">zumenseki.github.io/doubutsu-soshikiron/shindan</span></div>
+          <div class="ec-line">コード ▸ <span class="u">github.com/zumenseki/doubutsu-soshikiron</span></div>
+          <div class="ec-badge">固定費 ¥0 ・ API不要</div>
+        </div>
+      </div></div>
+
+      <div id="caps"></div>
+
+      <audio id="bgm" src="bgm.mp3" data-start="0" data-duration="174" data-track-index="0" data-volume="1.0"></audio>
+      <audio id="nar1" src="narration/ch1.mp3" data-start="1.0" data-duration="21.86" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar2" src="narration/ch2.mp3" data-start="24.86" data-duration="26.26" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar3" src="narration/ch3.mp3" data-start="53.12" data-duration="30.91" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar4" src="narration/ch4.mp3" data-start="86.03" data-duration="18.96" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar5" src="narration/ch5.mp3" data-start="106.99" data-duration="19.46" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar6" src="narration/ch6.mp3" data-start="128.46" data-duration="19.37" data-track-index="1" data-volume="1.0"></audio>
+      <audio id="nar7" src="narration/ch7.mp3" data-start="149.82" data-duration="20.11" data-track-index="1" data-volume="1.0"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      function xfade(s,t){
+        tl.set("#scene"+s+" .scene-content",{y:60},t-0.1);
+        tl.to("#scene"+s,{opacity:1,duration:0.5,ease:"power2.inOut"},t);
+        tl.to("#scene"+s+" .scene-content",{y:0,duration:0.55,ease:"power3.out"},t);
+      }
+
+      /* S1 課題 (1.0-24.86) */
+      tl.set("#s1-kicker",{opacity:0,y:24},0);
+      tl.set("#s1-p1",{opacity:0,x:-40},0);
+      tl.set("#s1-p2",{opacity:0,x:-40},0);
+      tl.set("#s1-p3",{opacity:0,x:-40},0);
+      tl.set("#s1-sub",{opacity:0},0);
+      tl.to("#s1-kicker",{opacity:1,y:0,duration:0.5,ease:"power2.out"},1.1);
+      tl.to("#s1-p1",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},1.7);
+      tl.to("#s1-p2",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},3.4);
+      tl.to("#s1-p3",{opacity:1,x:0,duration:0.45,ease:"back.out(1.5)"},5.2);
+      tl.to("#s1-sub",{opacity:1,duration:0.6,ease:"power1.out"},10.75);
+
+      /* S2 診断ライブ (24.86-53.12) */
+      xfade(2,24.86);
+      tl.set("#s2-head",{opacity:0,y:30},24.86);
+      tl.set("#s2-dev",{opacity:0,scale:0.95},24.86);
+      tl.to("#s2-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},25.2);
+      tl.to("#s2-dev",{opacity:1,scale:1,duration:0.7,ease:"power2.out"},25.9);
+
+      /* S3 カルテ (53.12-86.03) */
+      xfade(3,53.12);
+      tl.set("#s3-head",{opacity:0,y:30},53.12);
+      tl.set("#s3-dev",{opacity:0,scale:0.95},53.12);
+      tl.to("#s3-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},53.5);
+      tl.to("#s3-dev",{opacity:1,scale:1,duration:0.7,ease:"power2.out"},54.2);
+
+      /* S4 自動化範囲図 (86.03-106.99) — cue: 全自動89.68 / 人に残す97.51 / 稼ぎ頭102.43 */
+      xfade(4,86.03);
+      tl.set("#s4-head",{opacity:0,y:30},86.03);
+      tl.set("#s4-full",{opacity:0,x:-50},86.03);
+      tl.set("#s4-human",{opacity:0,x:50},86.03);
+      tl.to("#s4-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},86.4);
+      tl.to("#s4-full",{opacity:1,x:0,duration:0.6,ease:"power2.out"},89.68);
+      tl.to("#s4-human",{opacity:1,x:0,duration:0.6,ease:"power2.out"},97.51);
+
+      /* S5 価値 (106.99-128.46) — cue: キット112.61 / 段階的120.0 */
+      xfade(5,106.99);
+      tl.set("#s5-head",{opacity:0,y:30},106.99);
+      tl.set("#s5-dev",{opacity:0,scale:0.95},106.99);
+      tl.set("#s5-funnel",{opacity:0,y:24},106.99);
+      tl.to("#s5-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},107.3);
+      tl.to("#s5-dev",{opacity:1,scale:1,duration:0.7,ease:"power2.out"},108.0);
+      tl.to("#s5-funnel",{opacity:1,y:0,duration:0.55,ease:"back.out(1.5)"},120.0);
+
+      /* S6 反応 (128.46-149.82) — cue: 直接届け131.32 / 数字これから139.7 / 正直141.63 */
+      xfade(6,128.46);
+      tl.set("#s6-head",{opacity:0,y:30},128.46);
+      tl.set("#s6-sub",{opacity:0,y:24},128.46);
+      tl.set("#s6-st1",{opacity:0,y:30},128.46);
+      tl.set("#s6-st2",{opacity:0,y:30},128.46);
+      tl.set("#s6-st3",{opacity:0,y:30},128.46);
+      tl.set("#s6-prog",{opacity:0,scale:0.85},128.46);
+      tl.to("#s6-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},128.8);
+      tl.to("#s6-sub",{opacity:1,y:0,duration:0.5,ease:"power2.out"},131.32);
+      tl.to("#s6-st1",{opacity:1,y:0,duration:0.45,ease:"back.out(1.6)"},134.4);
+      tl.to("#s6-st2",{opacity:1,y:0,duration:0.45,ease:"back.out(1.6)"},135.6);
+      tl.to("#s6-st3",{opacity:1,y:0,duration:0.45,ease:"back.out(1.6)"},136.8);
+      tl.to("#s6-prog",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.7)"},141.63);
+
+      /* S7 §0 + endcard (149.82-174) — cue: 仮説152.27 / 動物から164.78 */
+      xfade(7,149.82);
+      tl.set("#s7-head",{opacity:0,y:30},149.82);
+      tl.set("#s7-note",{opacity:0,y:24},149.82);
+      tl.set("#s7-brand",{opacity:0,scale:0.85},149.82);
+      tl.set("#s7-end",{opacity:0,y:30},149.82);
+      tl.to("#s7-head",{opacity:1,y:0,duration:0.5,ease:"power3.out"},150.2);
+      tl.to("#s7-note",{opacity:1,y:0,duration:0.55,ease:"power2.out"},152.27);
+      tl.to("#s7-brand",{opacity:1,scale:1,duration:0.55,ease:"back.out(1.6)"},164.78);
+      tl.to("#s7-end",{opacity:1,y:0,duration:0.6,ease:"power2.out"},166.6);
+
+      var GROUPS = [
+        {s:1.1,e:3.06,t:"言わないと動かない。"},
+        {s:3.06,e:5.14,t:"若手がすぐ辞める。"},
+        {s:5.14,e:7.27,t:"ヒヤリが上がってこない。"},
+        {s:7.27,e:10.75,t:"建設の現場で、よく聞く悩みです。"},
+        {s:10.75,e:16.33,t:"でもこれは、人の性格ではなく、群れの設計の問題かもしれません。"},
+        {s:16.33,e:22.81,t:"固定費ゼロ、人手ゼロでカルテが出る、建設向けのAI診断を、三分で。"},
+        {s:24.96,e:27.07,t:"現場どうぶつ診断。"},
+        {s:27.07,e:31.21,t:"十五問、およそ六十秒、登録もいりません。"},
+        {s:31.21,e:32.7,t:"無料です。"},
+        {s:32.7,e:36.18,t:"恐怖、報酬、学習、連携。"},
+        {s:36.18,e:39.87,t:"この四つの軸で、現場のいまを見立てます。"},
+        {s:39.87,e:42.92,t:"答えて、診断するを押すだけ。"},
+        {s:42.92,e:51.05,t:"採点も、このあとのカルテづくりも、サーバーもAIも使わず、ぜんぶブラウザの中で、自動で動きます。"},
+        {s:53.22,e:57.64,t:"結果は、七つのタイプの一つと、四軸のレーダー。"},
+        {s:57.64,e:61.22,t:"たとえばこの現場は、恐怖ハイエナ型。"},
+        {s:61.22,e:64.69,t:"数字と未達への緊張で走る群れです。"},
+        {s:64.69,e:68.89,t:"いちばんの弱点は、悪い情報が遅れる構造。"},
+        {s:68.89,e:71.97,t:"事故や離職のリスクにつながりやすい。"},
+        {s:71.97,e:77.73,t:"打ち手は、ミス報告を叱る対象から外すと、朝礼で宣言すること。"},
+        {s:77.73,e:80.49,t:"ここまで、人手ゼロで自動。"},
+        {s:80.49,e:83.97,t:"印刷すれば、そのままカルテになります。"},
+        {s:86.13,e:89.68,t:"どこを自動にして、どこに人を残したか。"},
+        {s:89.68,e:97.51,t:"採点、判定、カルテ、キットの提示までは、APIも使わず、固定費ゼロで全自動。"},
+        {s:97.51,e:102.43,t:"そのうえで、相談と研修だけは、あえて人に残します。"},
+        {s:102.43,e:104.93,t:"ここが、稼ぎ頭です。"},
+        {s:107.09,e:112.61,t:"結果からは、その型に合った実務キットや、有料記事へつながります。"},
+        {s:112.61,e:116.35,t:"たとえば、ヒヤリが上がる十分朝礼キット。"},
+        {s:116.35,e:120.0,t:"明日の現場で、そのまま使える道具です。"},
+        {s:120.0,e:126.4,t:"無料の診断から、記事、相談、研修へと、段階的に価値を届けます。"},
+        {s:128.56,e:131.32,t:"公開して終わりには、しません。"},
+        {s:131.32,e:139.7,t:"これから、建設の関係者へ直接届けて、診断が使われるか、相談や購入につながるかを見ていきます。"},
+        {s:139.7,e:141.63,t:"数字はこれから。"},
+        {s:141.63,e:147.77,t:"よく見せるために盛ることはせず、現在進行中のまま、正直にお見せします。"},
+        {s:149.92,e:152.27,t:"最後に、正直に。"},
+        {s:152.27,e:159.59,t:"これは、係数を実測したモデルではなく、行動学の知見で、仮説を立てるための道具です。"},
+        {s:159.59,e:164.78,t:"だからこそ、誇張せず、現場で確かめながら、直していきます。"},
+        {s:164.78,e:167.37,t:"動物から、組織を読む。"},
+        {s:167.37,e:169.87,t:"現場どうぶつ診断でした。"},
+      ];
+
+      var capRoot = document.getElementById("caps");
+      GROUPS.forEach(function(g,i){
+        var el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-"+i; el.textContent = g.t;
+        capRoot.appendChild(el);
+        tl.set(el,{opacity:0,y:14,visibility:"visible"},g.s-0.02);
+        tl.to(el,{opacity:1,y:0,duration:0.18,ease:"power2.out"},g.s);
+        tl.to(el,{opacity:0,duration:0.12,ease:"power2.in"},g.e-0.12);
+        tl.set(el,{visibility:"hidden"},g.e);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
