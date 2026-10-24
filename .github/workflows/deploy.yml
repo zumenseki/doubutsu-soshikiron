@@ -24,6 +24,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # withastro/action は check-latest を透過しない（inputs は path / node-version / package-manager のみ）。
+      # 先に check-latest: true の setup-node で最新 22.x を runner の toolcache に入れておくと、
+      # withastro/action 内部の setup-node（toolcache 優先・同じ 22 指定）がその最新版を拾う
+      # ＝runner 同梱の古い Node で build しない（2026-10-21 Node セキュリティリリース対応）。
+      - name: Setup Node (check-latest で修正版を取得)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          check-latest: true
       - name: Build Astro site (in site/)
         uses: withastro/action@v3
         with:
